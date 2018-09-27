@@ -10,5 +10,5 @@ package Clases;
  * @author Erick Contreras
  */
 public class ClaseGeneral {
-    public static boolean yaLogeado = false;
+    public static boolean yaLogeado = false;  //buen booleano
 }
