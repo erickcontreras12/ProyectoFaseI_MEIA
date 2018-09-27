@@ -6,6 +6,9 @@
 package Interfaz;
 
 import java.awt.Color;
+import javax.swing.*;
+import java.io.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -93,6 +96,11 @@ public class Registro extends javax.swing.JFrame {
         jTextField8.setText("jTextField8");
 
         jBtnRutaFoto.setText("...");
+        jBtnRutaFoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnRutaFotoActionPerformed(evt);
+            }
+        });
 
         jBtnRegistrar.setText("Registrar");
         jBtnRegistrar.setActionCommand("");
@@ -193,6 +201,21 @@ public class Registro extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jBtnRutaFotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnRutaFotoActionPerformed
+        // TODO add your handling code here:
+         JFileChooser dialogo = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Foto de perfil", "jpg");
+        File ficheroImagen;
+        String rutaArchivo;
+        dialogo.setFileFilter(filtro);
+        int valor = dialogo.showOpenDialog(this);
+        if (valor == JFileChooser.APPROVE_OPTION) {
+            ficheroImagen = dialogo.getSelectedFile();
+            rutaArchivo = ficheroImagen.getPath();
+            jTextField8.setText(rutaArchivo);
+        }
+    }//GEN-LAST:event_jBtnRutaFotoActionPerformed
 
     /**
      * @param args the command line arguments
