@@ -78,6 +78,11 @@ public class Registro extends javax.swing.JFrame {
                 jUsuarioActionPerformed(evt);
             }
         });
+        jUsuario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jUsuarioKeyTyped(evt);
+            }
+        });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/LOGO_MEIA2 p.png"))); // NOI18N
 
@@ -93,15 +98,56 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel7.setText("Correo alterno");
 
+        jNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jNombreKeyTyped(evt);
+            }
+        });
+
         jApellido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jApellidoActionPerformed(evt);
+            }
+        });
+        jApellido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jApellidoKeyTyped(evt);
+            }
+        });
+
+        jPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jPasswordKeyTyped(evt);
             }
         });
 
         jLabel8.setText("Teléfono");
 
         jLabel9.setText("Fotografía");
+
+        jFechaNacimiento.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jFechaNacimientoKeyTyped(evt);
+            }
+        });
+
+        jCorreo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jCorreoKeyTyped(evt);
+            }
+        });
+
+        jTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTelefonoKeyTyped(evt);
+            }
+        });
+
+        jPathFoto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jPathFotoKeyTyped(evt);
+            }
+        });
 
         jBtnRutaFoto.setText("...");
         jBtnRutaFoto.addActionListener(new java.awt.event.ActionListener() {
@@ -118,7 +164,7 @@ public class Registro extends javax.swing.JFrame {
             }
         });
 
-        jCBMes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jCBMes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", " " }));
 
         jLabel10.setText("DD");
 
@@ -126,7 +172,7 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel12.setText("YYYY");
 
-        jCBAnio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jCBAnio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", " " }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -281,17 +327,16 @@ public class Registro extends javax.swing.JFrame {
                 maxReorganizacion = descriptor[8].substring(19);
                 //Valida si hay que hacer reorganizacion en la bitacora
                 if (split.length <= Integer.valueOf(maxReorganizacion)) {
-                  if (archivo.escribirArchivo("bitacora", contenido, error)) {
-                    actualizarDescriptor("bitacora");
-                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
-                  }else {
-                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                    if (archivo.escribirArchivo("bitacora", contenido, error)) {
+                        actualizarDescriptor("bitacora");
+                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                    }
+                    //Se da la reorganizacion
+                } else {
+
                 }
-                //Se da la reorganizacion
-                }else{
-                    
-                } 
-                
 
             } else {
 
@@ -367,6 +412,63 @@ public class Registro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jApellidoActionPerformed
 
+    private void jUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jUsuarioKeyTyped
+        // TODO add your handling code here:
+         if (jUsuario.getText().length()==20) {
+             evt.consume();
+        } 
+        
+    }//GEN-LAST:event_jUsuarioKeyTyped
+
+    private void jNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jNombreKeyTyped
+        // TODO add your handling code here:
+         if (jNombre.getText().length()==30) {
+             evt.consume();
+        } 
+    }//GEN-LAST:event_jNombreKeyTyped
+
+    private void jApellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jApellidoKeyTyped
+        // TODO add your handling code here:
+         if (jApellido.getText().length()==30) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jApellidoKeyTyped
+
+    private void jPasswordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordKeyTyped
+        // TODO add your handling code here:
+         if (jPassword.getText().length()==40) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jPasswordKeyTyped
+
+    private void jFechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jFechaNacimientoKeyTyped
+        // TODO add your handling code here:
+         if (jFechaNacimiento.getText().length()==2) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jFechaNacimientoKeyTyped
+
+    private void jCorreoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCorreoKeyTyped
+        // TODO add your handling code here:
+         if (jCorreo.getText().length()==40) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jCorreoKeyTyped
+
+    private void jTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTelefonoKeyTyped
+        // TODO add your handling code here:
+         if (jTelefono.getText().length()==8) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jTelefonoKeyTyped
+
+    private void jPathFotoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPathFotoKeyTyped
+        // TODO add your handling code here:
+         if (jPathFoto.getText().length()==200) {
+             evt.consume();
+        }
+    }//GEN-LAST:event_jPathFotoKeyTyped
+
     /**
      * Metodo para validar que el usuario llene todo de forma correcta y obtener
      * los datos si se cumplen todas las restricciones
@@ -402,8 +504,10 @@ public class Registro extends javax.swing.JFrame {
         }
 
         nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
-                + jPassword.getText() + "|" + rol + "|" + "Fecha" + "|" + jCorreo.getText() + "|"
-                + jCorreo.getText() + "|" + jPathFoto.getText() + "|" + "1";
+                + jPassword.getText() + "|" + rol + "|" + 
+                jFechaNacimiento.getText() + "/" + jCBMes.getSelectedItem().toString() + "/" + jCBAnio.getSelectedItem().toString()
+                + "|" + jCorreo.getText()+ "|"+jTelefono.getText()
+                + "|" + jPathFoto.getText() + "|" + "1";
         return nuevo;
     }
 
@@ -466,6 +570,9 @@ public class Registro extends javax.swing.JFrame {
             }
         }
     }
+    
+    
+    
 
     /**
      * @param args the command line arguments

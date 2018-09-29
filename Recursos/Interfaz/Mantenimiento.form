@@ -24,30 +24,29 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-              <Component id="jFotografia" min="-2" pref="73" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jUsuario" min="-2" max="-2" attributes="0"/>
-                  <Component id="jRol" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace pref="260" max="32767" attributes="0"/>
+              <Component id="jBtnLogOut" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
           </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="119" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+              <Component id="jFotografia" min="-2" pref="91" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jBtnLogOut" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jBtnBaja" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
-                          <Component id="jBtnActualizacion" min="-2" max="-2" attributes="0"/>
-                          <Component id="jBtnUsuario" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
-                          <Component id="jBtnBackup" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jUsuario" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jBtnBaja" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
+                              <Component id="jBtnActualizacion" min="-2" max="-2" attributes="0"/>
+                              <Component id="jBtnUsuario" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
+                              <Component id="jBtnBackup" alignment="1" min="-2" pref="157" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jRol" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="115" max="-2" attributes="0"/>
                   </Group>
@@ -64,18 +63,13 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="jRol" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                              <Component id="jUsuario" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="jFotografia" min="-2" pref="81" max="-2" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                      <Component id="jRol" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="jUsuario" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="34" max="32767" attributes="0"/>
+              <EmptySpace pref="64" max="32767" attributes="0"/>
               <Component id="jBtnActualizacion" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
               <Component id="jBtnBaja" min="-2" max="-2" attributes="0"/>
@@ -86,6 +80,11 @@
               <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
               <Component id="jBtnLogOut" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+              <Component id="jFotografia" min="-2" pref="104" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
