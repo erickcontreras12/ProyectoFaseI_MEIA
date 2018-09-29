@@ -5,9 +5,12 @@
  */
 package Interfaz;
 
+import Clases.Archivo;
+import Clases.ClaseGeneral;
 import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
+import java.util.Date;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -16,10 +19,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Registro extends javax.swing.JFrame {
 
+    public String[] split;
+    public boolean hayError;    //booleano para saber si hay un error al ingresar los datos
+    //Variables para llevar el conteo de los usuarios en ambos archivos
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
+
     /**
      * Creates new form Registro
      */
     public Registro() {
+        split = null;
+        hayError = false;
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
     }
@@ -33,7 +45,7 @@ public class Registro extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
+        jUsuario = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -41,25 +53,29 @@ public class Registro extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        jNombre = new javax.swing.JTextField();
+        jApellido = new javax.swing.JTextField();
+        jPassword = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        jFechaNacimiento = new javax.swing.JTextField();
+        jCorreo = new javax.swing.JTextField();
+        jTelefono = new javax.swing.JTextField();
+        jPathFoto = new javax.swing.JTextField();
         jBtnRutaFoto = new javax.swing.JButton();
         jBtnRegistrar = new javax.swing.JButton();
+        jCBMes = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jCBAnio = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(391, 432));
+        setPreferredSize(new java.awt.Dimension(450, 500));
 
-        jTextField1.setText("jTextField1");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jUsuarioActionPerformed(evt);
             }
         });
 
@@ -77,23 +93,15 @@ public class Registro extends javax.swing.JFrame {
 
         jLabel7.setText("Correo alterno");
 
-        jTextField2.setText("jTextField2");
-
-        jTextField3.setText("jTextField3");
-
-        jTextField4.setText("jTextField4");
+        jApellido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jApellidoActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Teléfono");
 
         jLabel9.setText("Fotografía");
-
-        jTextField5.setText("jTextField5");
-
-        jTextField6.setText("jTextField6");
-
-        jTextField7.setText("jTextField7");
-
-        jTextField8.setText("jTextField8");
 
         jBtnRutaFoto.setText("...");
         jBtnRutaFoto.addActionListener(new java.awt.event.ActionListener() {
@@ -104,6 +112,21 @@ public class Registro extends javax.swing.JFrame {
 
         jBtnRegistrar.setText("Registrar");
         jBtnRegistrar.setActionCommand("");
+        jBtnRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnRegistrarActionPerformed(evt);
+            }
+        });
+
+        jCBMes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel10.setText("DD");
+
+        jLabel11.setText("MM");
+
+        jLabel12.setText("YYYY");
+
+        jCBAnio.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -112,39 +135,49 @@ public class Registro extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6))
+                        .addGap(46, 46, 46)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(46, 46, 46)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel3)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel9))))
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(31, 31, 31)
-                                .addComponent(jLabel1))
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jBtnRutaFoto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel6)))
+                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPathFoto, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jBtnRutaFoto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jTelefono, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jCorreo, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jNombre, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jApellido, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPassword, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel10)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel11)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jCBMes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel12)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jCBAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -159,36 +192,41 @@ public class Registro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCBMes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel12)
+                    .addComponent(jCBAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPathFoto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBtnRutaFoto))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jBtnRegistrar)
@@ -198,13 +236,13 @@ public class Registro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUsuarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jUsuarioActionPerformed
 
     private void jBtnRutaFotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnRutaFotoActionPerformed
         // TODO add your handling code here:
-         JFileChooser dialogo = new JFileChooser();
+        JFileChooser dialogo = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Foto de perfil", "jpg");
         File ficheroImagen;
         String rutaArchivo;
@@ -213,9 +251,221 @@ public class Registro extends javax.swing.JFrame {
         if (valor == JFileChooser.APPROVE_OPTION) {
             ficheroImagen = dialogo.getSelectedFile();
             rutaArchivo = ficheroImagen.getPath();
-            jTextField8.setText(rutaArchivo);
+            jPathFoto.setText(rutaArchivo);
         }
     }//GEN-LAST:event_jBtnRutaFotoActionPerformed
+
+    private void jBtnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnRegistrarActionPerformed
+        // TODO add your handling code here:
+        //Objeto para leer y escribir en los archivos
+        Archivo archivo = new Archivo();
+
+        //
+        /*split representa los datos de la bitacora, esto para poder tener el control
+        y hacer la reorganizacion cuando sea necesario*/
+        split = archivo.leerArchivo("bitacora");
+        String[] descriptor = archivo.leerArchivo("desc_bitacora");
+        String contenido = ""; //variable para almacenar un error o los datos del nuevo usuario
+        String error = ""; //variable para almacenar el error al escribir un archivo
+        String maxReorganizacion = "";
+
+        contenido = llenarContenido();
+
+        //Luego de que se obtuvo el contenido, valida si hubo algun error
+        if (hayError) {
+            JOptionPane.showMessageDialog(null, contenido);
+        } else {
+
+            //Valida si hay un usuario logeado
+            if (ClaseGeneral.yaLogeado) {
+                maxReorganizacion = descriptor[8].substring(19);
+                //Valida si hay que hacer reorganizacion en la bitacora
+                if (split.length <= Integer.valueOf(maxReorganizacion)) {
+                  if (archivo.escribirArchivo("bitacora", contenido, error)) {
+                    actualizarDescriptor("bitacora");
+                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                  }else {
+                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                }
+                //Se da la reorganizacion
+                }else{
+                    
+                } 
+                
+
+            } else {
+
+                /*Ya que no hay ningun usuario logeado, es un registro por lo que no deberia tocarse
+            la bitacora asi que la insercion del nuevo usuario se hace en el archivo usuario*/
+                if (archivo.escribirArchivo("usuario", contenido, error)) {
+                    actualizarDescriptor("usuario");
+                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
+                    Login log = new Login();
+                    log.show();
+                    this.hide();
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                }
+
+                //Se modifica el descriptor
+            }
+
+        }
+
+
+    }//GEN-LAST:event_jBtnRegistrarActionPerformed
+
+    public void actualizarDescriptor(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            ClaseGeneral.usuarioActual = jUsuario.getText();
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public void contarUsuarios(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[9].equals("1")) {
+                    activos++;
+                } else if (datos[9].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
+
+    private void jApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jApellidoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jApellidoActionPerformed
+
+    /**
+     * Metodo para validar que el usuario llene todo de forma correcta y obtener
+     * los datos si se cumplen todas las restricciones
+     *
+     * @return
+     */
+    public String llenarContenido() {
+        String nuevo = "";
+
+        //Valida que no quede ningun campo vacio
+        if (jUsuario.getText().equals("") || jNombre.getText().equals("") || jApellido.getText().equals("")
+                || jPassword.getText().equals("") || jFechaNacimiento.getText().equals("")
+                || jCorreo.getText().equals("") || jTelefono.getText().equals("") || jPathFoto.getText().equals("")) {
+            hayError = true;
+            return "No puede dejar ningun campo vacio";
+        }
+
+        //Valida que el usuario no exista
+        if (existeUsuario()) {
+            return "Este usuario ya existe, utilice otro";
+        }
+
+        //Valida la seguridad del password
+        //ESTO TE TOCA GG
+        //Ya que paso todas las validaciones y no hubo ningun error obtiene los datos
+        //Valida si hay usuarios
+        int rol = 10;
+        hayAdmin();
+        if (ClaseGeneral.hayUsuarios) {
+            rol = 0;
+        } else {
+            rol = 1;
+        }
+
+        nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
+                + jPassword.getText() + "|" + rol + "|" + "Fecha" + "|" + jCorreo.getText() + "|"
+                + jCorreo.getText() + "|" + jPathFoto.getText() + "|" + "1";
+        return nuevo;
+    }
+
+    public boolean existeUsuario() {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+
+                    if (jUsuario.getText().equals(datos[0])) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee usuarios
+        usuarios = archivo.leerArchivo("usuario");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+
+                    if (jUsuario.getText().equals(datos[0])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void hayAdmin() {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    ClaseGeneral.hayUsuarios = true;
+                    break;
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee usuarios
+        usuarios = archivo.leerArchivo("usuario");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+                    ClaseGeneral.hayUsuarios = true;
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -253,9 +503,17 @@ public class Registro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField jApellido;
     private javax.swing.JButton jBtnRegistrar;
     private javax.swing.JButton jBtnRutaFoto;
+    private javax.swing.JComboBox<String> jCBAnio;
+    private javax.swing.JComboBox<String> jCBMes;
+    private javax.swing.JTextField jCorreo;
+    private javax.swing.JTextField jFechaNacimiento;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -264,13 +522,10 @@ public class Registro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jNombre;
+    private javax.swing.JTextField jPassword;
+    private javax.swing.JTextField jPathFoto;
+    private javax.swing.JTextField jTelefono;
+    private javax.swing.JTextField jUsuario;
     // End of variables declaration//GEN-END:variables
 }

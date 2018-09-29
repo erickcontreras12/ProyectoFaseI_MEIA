@@ -5,7 +5,10 @@
  */
 package Interfaz;
 
+import Clases.Archivo;
+import Clases.ClaseGeneral;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,8 +20,26 @@ public class Mantenimiento extends javax.swing.JFrame {
      * Creates new form Mantenimiento
      */
     public Mantenimiento() {
+        
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
+        
+        jUsuario.setText(ClaseGeneral.usuarioActual);
+        if(ClaseGeneral.rol.equals("1")){
+            jRol.setText("Administrador");
+        }else{
+            jRol.setText("Usuario");
+        }
+        //Falta la foto en el jFotografia
+        
+        
+        if(ClaseGeneral.esAdmin){
+            jBtnBackup.enable(true);
+            jBtnUsuario.enable(true);
+        }else{
+            jBtnBackup.enable(false);
+            jBtnUsuario.enable(false);
+        }
     }
 
     /**
@@ -31,52 +52,87 @@ public class Mantenimiento extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jLNombre = new javax.swing.JLabel();
+        jUsuario = new javax.swing.JLabel();
         jBtnActualizacion = new javax.swing.JButton();
         jBtnBaja = new javax.swing.JButton();
-        jBtnBusqueda = new javax.swing.JButton();
         jBtnUsuario = new javax.swing.JButton();
         jBtnLogOut = new javax.swing.JButton();
+        jFotografia = new javax.swing.JLabel();
+        jRol = new javax.swing.JLabel();
+        jBtnBackup = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(391, 432));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/LOGO_MEIA2 p.png"))); // NOI18N
 
-        jLNombre.setText("Nombre usuario");
+        jUsuario.setText("Nombre usuario");
 
         jBtnActualizacion.setText("Actualizar/Modificar datos");
+        jBtnActualizacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnActualizacionActionPerformed(evt);
+            }
+        });
 
         jBtnBaja.setText("Baja");
+        jBtnBaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBajaActionPerformed(evt);
+            }
+        });
 
-        jBtnBusqueda.setText("Búsqueda usuarios");
-
-        jBtnUsuario.setText("Acción usuarios");
+        jBtnUsuario.setText("Usuarios");
+        jBtnUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnUsuarioActionPerformed(evt);
+            }
+        });
 
         jBtnLogOut.setText("Cerrar sesion");
+        jBtnLogOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnLogOutActionPerformed(evt);
+            }
+        });
+
+        jFotografia.setText("jLabel2");
+
+        jRol.setText("Rol");
+
+        jBtnBackup.setText("Realizar BackUp");
+        jBtnBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBackupActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(121, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jUsuario)
+                    .addComponent(jRol))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(119, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLNombre)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1)
-                        .addContainerGap())
+                        .addComponent(jBtnLogOut)
+                        .addGap(34, 34, 34))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jBtnBaja, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jBtnActualizacion)
-                            .addComponent(jBtnBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBtnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(113, 113, 113))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jBtnLogOut)
-                        .addGap(34, 34, 34))))
+                            .addComponent(jBtnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBtnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(115, 115, 115))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -86,26 +142,113 @@ public class Mantenimiento extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLNombre)))
-                .addGap(39, 39, 39)
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jRol)
+                                .addGap(11, 11, 11)
+                                .addComponent(jUsuario))
+                            .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(jBtnActualizacion)
                 .addGap(26, 26, 26)
                 .addComponent(jBtnBaja)
-                .addGap(27, 27, 27)
-                .addComponent(jBtnBusqueda)
-                .addGap(29, 29, 29)
+                .addGap(35, 35, 35)
                 .addComponent(jBtnUsuario)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                .addGap(31, 31, 31)
+                .addComponent(jBtnBackup)
+                .addGap(53, 53, 53)
                 .addComponent(jBtnLogOut)
                 .addGap(37, 37, 37))
         );
 
-        jLNombre.getAccessibleContext().setAccessibleName("Nombre usuario");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jBtnLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnLogOutActionPerformed
+        // TODO add your handling code here:
+        int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea cerrar sesion?");
+        if (opc == 0) {
+            ClaseGeneral.yaLogeado = false;
+            Login login = new Login();
+            login.show();
+            this.hide();
+        }
+    }//GEN-LAST:event_jBtnLogOutActionPerformed
+
+    private void jBtnUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnUsuarioActionPerformed
+        // TODO add your handling code here:
+        Usuarios usuarios = new Usuarios();
+        usuarios.show();
+        this.hide();
+    }//GEN-LAST:event_jBtnUsuarioActionPerformed
+
+    private void jBtnBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBajaActionPerformed
+        // TODO add your handling code here:
+        int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea darse de baja?");
+        if (opc == 0) {
+            if(ClaseGeneral.esAdmin){
+                JOptionPane.showMessageDialog(null,"Usted es un administrador no puede darse de baja");
+            }else{
+                JOptionPane.showMessageDialog(null,"Usted se ha dado de baja");
+                actualizarDatos();
+                ClaseGeneral.yaLogeado = false;
+                Login login = new Login();
+                login.show();
+                this.hide();
+            }
+            
+        }
+    }//GEN-LAST:event_jBtnBajaActionPerformed
+
+    private void jBtnActualizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnActualizacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jBtnActualizacionActionPerformed
+
+    private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jBtnBackupActionPerformed
+
+    public void actualizarDatos(){
+        Archivo archivo = new Archivo();
+        String[] datosUsuario = null, split = null;
+        split = archivo.leerArchivo("usuario");
+        int posicion = 0;
+        
+        for (int i = 0; i < split.length; i++) {
+            if(split[i] != null){
+            datosUsuario = split[i].split("\\|");
+            if(datosUsuario[0].equals(ClaseGeneral.usuarioActual)){
+                posicion = i;
+                break;
+            }
+            }
+        }
+        
+        datosUsuario[9] = "0";
+        
+        //Rearma la linea de los datos del usuario
+        String cadena = "";
+        for (int i = 0; i < datosUsuario.length; i++) {
+            if(i == datosUsuario.length - 1){
+                cadena += datosUsuario[i];
+                break;
+            }
+            cadena += datosUsuario[i] + "|";
+        }
+        
+        split[posicion] = cadena;
+        
+        //Rearma todo el contenido del split para escribirlo en el archivo
+        String error = "";
+        cadena = "";
+        for (int i = 0; i < split.length; i++) {
+            if(split[i] != null){
+                archivo.escribirArchivo("usuario", cadena, error);
+            }
+        }
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -137,17 +280,21 @@ public class Mantenimiento extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Mantenimiento().setVisible(true);
+                
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnActualizacion;
+    private javax.swing.JButton jBtnBackup;
     private javax.swing.JButton jBtnBaja;
-    private javax.swing.JButton jBtnBusqueda;
     private javax.swing.JButton jBtnLogOut;
     private javax.swing.JButton jBtnUsuario;
-    private javax.swing.JLabel jLNombre;
+    private javax.swing.JLabel jFotografia;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jRol;
+    private javax.swing.JLabel jUsuario;
     // End of variables declaration//GEN-END:variables
 }

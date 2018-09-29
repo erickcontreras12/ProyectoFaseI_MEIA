@@ -5,8 +5,11 @@
  */
 package Interfaz;
 
+import Clases.ClaseGeneral;
+import Clases.Archivo;
 import Interfaz.*;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,10 +17,13 @@ import java.awt.Color;
  */
 public class Login extends javax.swing.JFrame {
 
+    public String[] split;
+
     /**
      * Creates new form NewJFrame
      */
     public Login() {
+        split = null;
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
     }
@@ -47,11 +53,18 @@ public class Login extends javax.swing.JFrame {
 
         jLabel3.setText("Contraseña");
 
-        jUsuario.setText("jTextField1");
-
-        jPassword.setText("jTextField1");
+        jUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jUsuarioActionPerformed(evt);
+            }
+        });
 
         jBtnLog.setText("Iniciar sesión");
+        jBtnLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnLogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -94,6 +107,85 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jBtnLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnLogActionPerformed
+        // TODO add your handling code here:
+        boolean usuarioEncontrado = false;
+        Archivo archivo = new Archivo();
+        split = archivo.leerArchivo("usuario");
+        String[] datosUsuario = null;
+
+        //Si split obtiene un valor nulo es porque no existe el archivo, por ende tampoco ningun usuario
+        if (split == null) {
+            mostrarMensaje();
+        } else {
+            //Busca en el archivo si el usuario que se ingreso existe
+            for (int i = 0; i < split.length; i++) {
+                if(split[i]!=null){
+                datosUsuario = split[i].split("\\|");
+                if (datosUsuario[0].equals(jUsuario.getText())) {
+                    usuarioEncontrado = true;
+                    break;
+                }
+                }
+            }
+
+            if (usuarioEncontrado) {
+                
+                    //Valida si el usuario esta activo o no
+                    if (datosUsuario[9].equals("1")) {
+
+                        //Ya que esta activo, valida si es admin o no
+                        if (datosUsuario[4].equals("1")) {
+                            ClaseGeneral.esAdmin = true;
+                        } else {
+                            ClaseGeneral.esAdmin = false;
+                        }
+
+                        //Valida si el password es correcto
+                        if (datosUsuario[3].equals(jPassword.getText())) {
+                            //Ya que valida que todo bien, todo correcto, ingresa
+                            ClaseGeneral.usuarioActual = datosUsuario[1];
+                            ClaseGeneral.rol = datosUsuario[4];
+                            ClaseGeneral.rutaFotografia = datosUsuario[8];
+
+                            ClaseGeneral.yaLogeado = true;
+                            Mantenimiento ingresando = new Mantenimiento();
+                            ingresando.show();
+                            this.hide();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password incorrecto");
+                        }
+
+                        
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Usuario inactivo, solicite a un admin que lo active");
+                    }
+
+            }else{
+                mostrarMensaje();
+            }
+        }
+    }//GEN-LAST:event_jBtnLogActionPerformed
+
+    private void jUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jUsuarioActionPerformed
+
+    /**
+     * Metodo que muestra un mensaje para enviar al usuario
+     */
+    public void mostrarMensaje() {
+        int opc = JOptionPane.showConfirmDialog(null, "El usuario no existe, desea registrarse?");
+        if (opc == 0) {
+            Registro cambio = new Registro();
+            cambio.show();
+            this.hide();
+        } else {
+            jUsuario.setText("");
+            jPassword.setText("");
+        }
+    }
 
     /**
      * @param args the command line arguments
