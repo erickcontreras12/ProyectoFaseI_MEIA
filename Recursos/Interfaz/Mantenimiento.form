@@ -135,9 +135,6 @@
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jFotografia">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel2"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jRol">
       <Properties>

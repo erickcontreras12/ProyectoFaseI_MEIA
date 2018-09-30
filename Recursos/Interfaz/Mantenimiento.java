@@ -25,11 +25,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Mantenimiento extends javax.swing.JFrame {
 
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
+
     /**
      * Creates new form Mantenimiento
      */
     public Mantenimiento() {
 
+         buscarUsuario(ClaseGeneral.usuarioActual);
+        
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
 
@@ -52,6 +58,7 @@ public class Mantenimiento extends javax.swing.JFrame {
             jBtnBackup.hide();
             jBtnUsuario.hide();
         }
+
     }
 
     /**
@@ -106,8 +113,6 @@ public class Mantenimiento extends javax.swing.JFrame {
                 jBtnLogOutActionPerformed(evt);
             }
         });
-
-        jFotografia.setText("jLabel2");
 
         jRol.setText("Rol");
 
@@ -204,6 +209,7 @@ public class Mantenimiento extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "Usted se ha dado de baja");
                 actualizarDatos();
+                actualizarDescriptor2("usuario");
                 ClaseGeneral.yaLogeado = false;
                 Login login = new Login();
                 login.show();
@@ -216,8 +222,8 @@ public class Mantenimiento extends javax.swing.JFrame {
     private void jBtnActualizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnActualizacionActionPerformed
         // TODO add your handling code here:
         ModificacionDatos cambio = new ModificacionDatos();
-            cambio.show();
-            this.hide();
+        cambio.show();
+        this.hide();
     }//GEN-LAST:event_jBtnActualizacionActionPerformed
 
     private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
@@ -247,6 +253,49 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jBtnBackupActionPerformed
 
+    boolean encontrado = false;
+     public void buscarUsuario(String usuario) {
+        Archivo archivo = new Archivo();
+        encontrado = false;
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+                    if (usuario.equals(datos[1])) {
+                        encontrado = true;
+                        ClaseGeneral.datosUsuarioBuscado = datos;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee usuarios
+        if (!encontrado) {
+            usuarios = null;
+            usuarios = archivo.leerArchivo("usuario");
+            if (usuarios != null) {
+                for (int i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i] != null) {
+                        datos = usuarios[i].split("\\|");
+                        if (usuario.equals(datos[1])) {
+                            encontrado = true;
+                            ClaseGeneral.datosUsuarioBuscado = datos;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Actualiza el descriptor del backup
+     * @param descriptor 
+     */
     public void actualizarDescriptor(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
@@ -283,7 +332,6 @@ public class Mantenimiento extends javax.swing.JFrame {
         Date fecha = new Date();
         nuevo = ClaseGeneral.rutaDestino + "|" + ClaseGeneral.usuarioActual + "|" + fecha.toString();
         return nuevo;
-
     }
 
     public void Copiar(File origen, File destino) {
@@ -308,45 +356,105 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Actualiza el archivo usuario
+     */
     public void actualizarDatos() {
         Archivo archivo = new Archivo();
-        String[] datosUsuario = null, split = null;
-        split = archivo.leerArchivo("usuario");
+        String[] datosUsuario = null, split = null, splitaux = null, cambiar = null;
+
         int posicion = 0;
 
+        split = archivo.leerArchivo("usuario");
+        splitaux = split;
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
                 datosUsuario = split[i].split("\\|");
-                if (datosUsuario[0].equals(ClaseGeneral.usuarioActual)) {
+                if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
                     posicion = i;
-                    break;
+                    splitaux[posicion] = "";
+                    cambiar = datosUsuario;
+                } else {
+                    splitaux[i] = split[i];
                 }
             }
         }
 
-        datosUsuario[9] = "0";
+        cambiar[9] = "0";
 
         //Rearma la linea de los datos del usuario
         String cadena = "";
-        for (int i = 0; i < datosUsuario.length; i++) {
-            if (i == datosUsuario.length - 1) {
-                cadena += datosUsuario[i];
+        for (int i = 0; i < cambiar.length; i++) {
+            if (i == cambiar.length - 1) {
+                cadena += cambiar[i];
                 break;
             }
-            cadena += datosUsuario[i] + "|";
+            cadena += cambiar[i] + "|";
         }
 
-        split[posicion] = cadena;
+        splitaux[posicion] = cadena;
 
         //Rearma todo el contenido del split para escribirlo en el archivo
+        archivo.limpiarArchivo("usuario");
         String error = "";
         cadena = "";
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("usuario", cadena, error);
+        for (int i = 0; i < splitaux.length; i++) {
+            if (splitaux[i] != null) {
+                archivo.escribirArchivo2("usuario", splitaux[i], error);
             }
         }
 
+    }
+
+    /**
+     * Actualiza el descriptor de usuario
+     *
+     * @param descriptor
+     */
+    public void actualizarDescriptor2(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            ClaseGeneral.usuarioActual = jUsuario.getText();
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public void contarUsuarios(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[9].equals("1")) {
+                    activos++;
+                } else if (datos[9].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
     }
 
     /**
