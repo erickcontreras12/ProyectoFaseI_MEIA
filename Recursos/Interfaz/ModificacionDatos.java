@@ -9,19 +9,28 @@ import Clases.Archivo;
 import Clases.ClaseGeneral;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
  * @author Erick Contreras
  */
 public class ModificacionDatos extends javax.swing.JFrame {
-
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
     /**
      * Creates new form ModificacionDatos
      */
@@ -184,6 +193,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
                 ClaseGeneral.rutaFotografia = rutaArchivo;
             }
             modificarDatosBuscado("foto", rutaArchivo);
+            
         }
     }//GEN-LAST:event_jBtnFotoActionPerformed
 
@@ -192,7 +202,8 @@ public class ModificacionDatos extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Desea modificar la contraseña?");
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese la nueva contraseña");
-            modificarDatosBuscado("pass", cambio);
+            modificarDatosBuscado("pass", Encriptar(cambio));
+            
         }
     }//GEN-LAST:event_jBtnPasswordActionPerformed
 
@@ -202,6 +213,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo correo");
             modificarDatosBuscado("correo", cambio);
+            
         }
     }//GEN-LAST:event_jBtnCorreoActionPerformed
 
@@ -218,6 +230,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
 
                 fecha = formatoDelTexto.parse(strFecha);
                  modificarDatosBuscado("fecha", formatoDelTexto.format(fecha));
+                 
 
             } catch (ParseException ex) {
 
@@ -233,9 +246,35 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo número");
             modificarDatosBuscado("tel", cambio);
+            
         }
     }//GEN-LAST:event_jBtnTelefonoActionPerformed
 
+     public static String Encriptar(String texto) {
+        String cifrar = "MEIA"; //llave para encriptar datos
+        String base64EncryptedString = "";
+ 
+        try {
+ 
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digestOfPassword = md.digest(cifrar.getBytes("utf-8"));
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+ 
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+ 
+            byte[] plainTextBytes = texto.getBytes("utf-8");
+            byte[] buf = cipher.doFinal(plainTextBytes);
+            byte[] base64Bytes = Base64.encodeBase64(buf);
+
+            base64EncryptedString = new String(base64Bytes);
+ 
+        } catch (Exception ex) {
+        }
+        return base64EncryptedString;
+    }
+    
     boolean encontrado = false;
 
     public void buscarUsuario(String usuario) {
@@ -354,7 +393,54 @@ public class ModificacionDatos extends javax.swing.JFrame {
                 archivo.escribirArchivo2(nombreEscribir, splitaux[i], error);
             }
         }
+        actualizarDescriptor2(nombreEscribir);
+    }
 
+    
+    public void actualizarDescriptor2(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public void contarUsuarios(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[9].equals("1")) {
+                    activos++;
+                } else if (datos[9].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
     }
 
     /**

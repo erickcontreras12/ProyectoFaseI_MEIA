@@ -10,8 +10,17 @@ import Clases.ClaseGeneral;
 import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -19,6 +28,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Registro extends javax.swing.JFrame {
 
+    List<Integer> inferiores = new ArrayList<>();
+    List<Integer> superiores = new ArrayList<>();
+    List<Integer> puntuaciones = new ArrayList<>();
+    File Archivo = new File("C:\\MEIA\\resultado.txt");
+    File Archivo2 = new File("C:\\MEIA\\puntuacion.txt");
+    File Archivo3 = new File("C:\\MEIA\\usuario.txt");
+    int puntuacion = 0;
     public String[] split;
     public boolean hayError;    //booleano para saber si hay un error al ingresar los datos
     //Variables para llevar el conteo de los usuarios en ambos archivos
@@ -317,65 +333,68 @@ public class Registro extends javax.swing.JFrame {
 
         contenido = llenarContenido();
 
-        //Luego de que se obtuvo el contenido, valida si hubo algun error
-        if (hayError) {
-            JOptionPane.showMessageDialog(null, contenido);
-        } else {
-
-            //Valida si hay un usuario logeado
-            if (ClaseGeneral.yaLogeado) {
-                maxReorganizacion = descriptor[8].substring(19);
-                //Valida si hay que hacer reorganizacion en la bitacora
-                if (split.length == Integer.valueOf(maxReorganizacion)) {
-                    String[] usuariosaux = archivo.leerArchivo("bitacora");
-                    if (usuariosaux != null) {
-                        for (int i = 0; i < usuariosaux.length; i++) {
-                            if (usuariosaux[i] != null) {
-                                archivo.escribirArchivo("usuario", usuariosaux[i], "");
-                            }
-                        }
-
-                        archivo.limpiarArchivo("bitacora");
-                        actualizarDescriptor("bitacora");
-                        actualizarDescriptor("usuario");
-                    }
-
-                    //Se da la reorganizacion
-                } else {
-
-                }
-
-                if (archivo.escribirArchivo("bitacora", contenido, error)) {
-                    actualizarDescriptor("bitacora");
-                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
-                    Usuarios usuarios = new Usuarios();
-                    usuarios.show();
-                    this.hide();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
-                }
-
+        if (!contenido.equals("")) {
+            //Luego de que se obtuvo el contenido, valida si hubo algun error
+            if (hayError) {
+                JOptionPane.showMessageDialog(null, contenido);
             } else {
 
-                /*Ya que no hay ningun usuario logeado, es un registro por lo que no deberia tocarse
-            la bitacora asi que la insercion del nuevo usuario se hace en el archivo usuario*/
-                if (archivo.escribirArchivo("usuario", contenido, error)) {
-                    actualizarDescriptor("usuario");
-                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
+                //Valida si hay un usuario logeado
+                if (ClaseGeneral.yaLogeado) {
+                    maxReorganizacion = descriptor[8].substring(19);
+                    //Valida si hay que hacer reorganizacion en la bitacora
+                    if (split.length == Integer.valueOf(maxReorganizacion)) {
+                        String[] usuariosaux = archivo.leerArchivo("bitacora");
+                        if (usuariosaux != null) {
+                            for (int i = 0; i < usuariosaux.length; i++) {
+                                if (usuariosaux[i] != null) {
+                                    archivo.escribirArchivo("usuario", usuariosaux[i], "");
+                                }
+                            }
 
-                    Login log = new Login();
-                    log.show();
-                    this.hide();
+                            archivo.limpiarArchivo("bitacora");
+                            actualizarDescriptor("bitacora");
+                            actualizarDescriptor("usuario");
+                        }
+
+                        //Se da la reorganizacion
+                    } else {
+
+                    }
+
+                    if (archivo.escribirArchivo("bitacora", contenido, error)) {
+                        actualizarDescriptor("bitacora");
+                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                        Usuarios usuarios = new Usuarios();
+                        usuarios.show();
+                        this.hide();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                    }
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+
+                    /*Ya que no hay ningun usuario logeado, es un registro por lo que no deberia tocarse
+            la bitacora asi que la insercion del nuevo usuario se hace en el archivo usuario*/
+                    if (archivo.escribirArchivo("usuario", contenido, error)) {
+                        actualizarDescriptor("usuario");
+                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
+
+                        Login log = new Login();
+                        log.show();
+                        this.hide();
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                    }
+
+                    //Se modifica el descriptor
                 }
 
-                //Se modifica el descriptor
             }
-
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Revisar la informacion ingresada");
         }
-
 
     }//GEN-LAST:event_jBtnRegistrarActionPerformed
 
@@ -511,22 +530,195 @@ public class Registro extends javax.swing.JFrame {
 
         //Valida la seguridad del password
         //ESTO TE TOCA GG
-        //Ya que paso todas las validaciones y no hubo ningun error obtiene los datos
-        //Valida si hay usuarios
-        int rol = 10;
-        hayAdmin();
-        if (ClaseGeneral.hayUsuarios) {
-            rol = 0;
+        leerArchivos();
+        String pass = jPassword.getText();
+
+        if (pass.length() < puntuaciones.get(0)) {
+            JOptionPane.showMessageDialog(null, "Por favor ingrese una contrasenia de minimo " + puntuaciones.get(0) + " caracteres", "Error", HEIGHT);
+            jPassword.setText("");
         } else {
-            rol = 1;
+            puntuacion = puntuaciones.get(1) * pass.length();
+
+            int mayus = 0;
+            int letras = 0;
+            int num = 0;
+            int simb = 0;
+            for (int i = 0; i < pass.length(); i++) {
+                char c = pass.charAt(i);
+
+                if (Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) {
+                    mayus++;
+                }
+
+                if ((Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) || (Integer.valueOf(c) > 96 && Integer.valueOf(c) < 123)) {
+                    letras++;
+                }
+
+                if (Integer.valueOf(c) > 47 && Integer.valueOf(c) < 58) {
+                    num++;
+                }
+
+                if ((Integer.valueOf(c) > 34 && (Integer.valueOf(c) < 38)) || (Integer.valueOf(c) == 47) || (Integer.valueOf(c) == 63)) {
+                    simb++;
+                }
+
+            }
+
+            puntuacion += puntuaciones.get(2) * mayus;
+            puntuacion += puntuaciones.get(3) + letras;
+            puntuacion += puntuaciones.get(4) + num;
+            puntuacion += simb * (pass.length() + puntuaciones.get(5));
+
+            if (simb == 0 && num == 0) {
+                puntuacion -= puntuaciones.get(6);
+            }
+
+            if (simb == 0 && letras == 0) {
+                puntuacion -= puntuaciones.get(7);
+            }
+
         }
 
-        nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
-                + jPassword.getText() + "|" + rol + "|"
-                + jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText()
-                + "|" + jCorreo.getText() + "|" + jTelefono.getText()
-                + "|" + jPathFoto.getText() + "|" + "1";
-        return nuevo;
+        if (validarpass(puntuacion)) {
+            //Ya que paso todas las validaciones y no hubo ningun error obtiene los datos
+            //Valida si hay usuarios
+            int rol = 10;
+            hayAdmin();
+            if (ClaseGeneral.hayUsuarios) {
+                rol = 0;
+            } else {
+                rol = 1;
+            }
+
+            String encriptado = Encriptar(jPassword.getText());
+            nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
+                    + encriptado + "|" + rol + "|"
+                    + jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText()
+                    + "|" + jCorreo.getText() + "|" + jTelefono.getText()
+                    + "|" + jPathFoto.getText() + "|" + "1";
+
+            return nuevo;
+        } else {
+            return nuevo;
+        }
+    }
+
+    /**
+     * Metodo que maneja el MD5 y por medio de un cifrador trabaja con base 64
+     *
+     * @param texto
+     * @return
+     */
+    public static String Encriptar(String texto) {
+ 
+        String cifrar = "MEIA"; //llave para encriptar datos
+        String base64EncryptedString = "";
+ 
+        try {
+ 
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digestOfPassword = md.digest(cifrar.getBytes("utf-8"));
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+ 
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+            Cipher cipher = Cipher.getInstance("DESede");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+ 
+            byte[] plainTextBytes = texto.getBytes("utf-8");
+            byte[] buf = cipher.doFinal(plainTextBytes);
+            byte[] base64Bytes = Base64.encodeBase64(buf);
+
+            base64EncryptedString = new String(base64Bytes);
+ 
+        } catch (Exception ex) {
+        }
+        return base64EncryptedString;
+    }
+
+    public void leerArchivos() {
+        if (Archivo.exists() == true) {
+            FileReader LecturaArchivo;
+            try {
+                LecturaArchivo = new FileReader(Archivo);
+                BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo);
+                String Linea = "";
+                try {
+                    Linea = LeerArchivo.readLine();
+                    String[] split;
+                    while (Linea != null) {
+                        split = Linea.split(",");
+
+                        int a = Integer.parseInt(split[0]);
+                        int b;
+                        if (split[1].equals("0") || split[0].equals("0")) {
+                            b = 0;
+                        } else {
+                            b = Integer.parseInt(split[1]);
+                        }
+
+                        inferiores.add(a);
+                        superiores.add(b);
+
+                        Linea = LeerArchivo.readLine();
+                    }
+
+                    LecturaArchivo.close();
+                    LeerArchivo.close();
+
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+
+        if (Archivo2.exists() == true) {
+            FileReader LecturaArchivo1;
+            try {
+                LecturaArchivo1 = new FileReader(Archivo2);
+                BufferedReader LeerArchivo = new BufferedReader(LecturaArchivo1);
+                String Linea = "";
+                try {
+                    Linea = LeerArchivo.readLine();
+                    String[] split;
+                    while (Linea != null) {
+                        split = Linea.split("\n");
+
+                        for (int i = 0; i < split.length; i++) {
+                            int a = Integer.parseInt(split[i]);
+                            puntuaciones.add(a);
+                        }
+
+                        Linea = LeerArchivo.readLine();
+                    }
+
+                    LecturaArchivo1.close();
+                    LeerArchivo.close();
+
+                } catch (Exception e) {
+
+                }
+            } catch (Exception e) {
+
+            }
+
+        }
+    }
+
+    public boolean validarpass(int puntuacion) {
+        if (puntuacion <= superiores.get(0)) {
+            JOptionPane.showMessageDialog(rootPane, "Muy insegura su contraseña");
+            jPassword.setText("");
+            return false;
+        } else if ((puntuacion >= inferiores.get(1) && puntuacion <= superiores.get(1))) {
+            JOptionPane.showMessageDialog(rootPane, "Su contraseña es nivel seguridad medio");
+        } else if ((puntuacion >= inferiores.get(2) && puntuacion <= superiores.get(2))) {
+            JOptionPane.showMessageDialog(rootPane, "Su contraseña es nivel seguridad alta");
+        } else if ((puntuacion >= inferiores.get(3))) {
+            JOptionPane.showMessageDialog(rootPane, "Su contraseña es nivel seguridad muy alta");
+        }
+        return true;
     }
 
     public boolean existeUsuario() {

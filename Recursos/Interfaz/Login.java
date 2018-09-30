@@ -9,7 +9,14 @@ import Clases.ClaseGeneral;
 import Clases.Archivo;
 import Interfaz.*;
 import java.awt.Color;
+import java.security.MessageDigest;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
+import org.apache.commons.codec.binary.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -142,8 +149,10 @@ public class Login extends javax.swing.JFrame {
                             ClaseGeneral.esAdmin = false;
                         }
 
+                        String pass = Desencriptar(datosUsuario[3]);
+  
                         //Valida si el password es correcto
-                        if (datosUsuario[3].equals(jPassword.getText())) {
+                        if (pass.equals(jPassword.getText())) {
                             //Ya que valida que todo bien, todo correcto, ingresa
                             ClaseGeneral.usuarioActual = datosUsuario[1];
                             ClaseGeneral.rol = datosUsuario[4];
@@ -168,6 +177,32 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jBtnLogActionPerformed
 
+           
+      public static String Desencriptar(String textoEncriptado) {
+ 
+        String secretKey = "MEIA"; //llave para desenciptar datos
+        String base64EncryptedString = "";
+ 
+        try {
+            byte[] message = Base64.decodeBase64(textoEncriptado.getBytes("utf-8"));
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digestOfPassword = md.digest(secretKey.getBytes("utf-8"));
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede");
+ 
+            Cipher decipher = Cipher.getInstance("DESede");
+            decipher.init(Cipher.DECRYPT_MODE, key);
+ 
+            byte[] plainText = decipher.doFinal(message);
+ 
+            base64EncryptedString = new String(plainText, "UTF-8");
+ 
+        } catch (Exception ex) {
+        }
+        return base64EncryptedString;
+}
+    
+    
     private void jUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jUsuarioActionPerformed
