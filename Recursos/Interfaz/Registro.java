@@ -332,8 +332,9 @@ public class Registro extends javax.swing.JFrame {
         String error = ""; //variable para almacenar el error al escribir un archivo
         String maxReorganizacion = "";
 
+        
         contenido = llenarContenido();
-
+       
         if (!contenido.equals("")) {
             //Luego de que se obtuvo el contenido, valida si hubo algun error
             if (hayError) {
@@ -562,7 +563,7 @@ public class Registro extends javax.swing.JFrame {
 
         //Valida la seguridad del password
         //ESTO TE TOCA GG
-        leerArchivos();
+       if( leerArchivos()){
         String pass = jPassword.getText();
 
         if (pass.length() < puntuaciones.get(0)) {
@@ -643,10 +644,13 @@ public class Registro extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
                 return "";
             }
-
+        
         } else {
             return nuevo;
         }
+       }else{
+           return "";
+       }
     }
 
     /**
@@ -681,8 +685,8 @@ public class Registro extends javax.swing.JFrame {
         return base64EncryptedString;
     }
 
-    public void leerArchivos() {
-        if (Archivo.exists() == true) {
+    public boolean leerArchivos() {
+        if (Archivo.exists()) {
             FileReader LecturaArchivo;
             try {
                 LecturaArchivo = new FileReader(Archivo);
@@ -717,9 +721,13 @@ public class Registro extends javax.swing.JFrame {
             } catch (Exception e) {
 
             }
+        }else
+        {
+            JOptionPane.showMessageDialog(rootPane, "No existe el archivo "+Archivo.getName()+" en la ruta "+ Archivo.getPath());
+            return false;
         }
 
-        if (Archivo2.exists() == true) {
+        if (Archivo2.exists()) {
             FileReader LecturaArchivo1;
             try {
                 LecturaArchivo1 = new FileReader(Archivo2);
@@ -749,7 +757,12 @@ public class Registro extends javax.swing.JFrame {
 
             }
 
+        }else{
+            JOptionPane.showMessageDialog(rootPane, "No existe el archivo "+Archivo2.getName()+" en la ruta "+ Archivo2.getPath());
+            return false;
         }
+        
+        return true;
     }
 
     public boolean validarpass(int puntuacion) {
