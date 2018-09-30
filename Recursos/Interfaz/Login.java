@@ -147,7 +147,7 @@ public class Login extends javax.swing.JFrame {
                             //Ya que valida que todo bien, todo correcto, ingresa
                             ClaseGeneral.usuarioActual = datosUsuario[1];
                             ClaseGeneral.rol = datosUsuario[4];
-                            ClaseGeneral.rutaFotografia = datosUsuario[7];
+                            ClaseGeneral.rutaFotografia = datosUsuario[8];
 
                             ClaseGeneral.yaLogeado = true;
                             Mantenimiento ingresando = new Mantenimiento();

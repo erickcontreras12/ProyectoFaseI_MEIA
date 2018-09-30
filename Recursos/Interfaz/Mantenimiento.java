@@ -9,8 +9,15 @@ import Clases.Archivo;
 import Clases.ClaseGeneral;
 import java.awt.Color;
 import java.awt.Image;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -212,7 +219,91 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
         // TODO add your handling code here:
+        JFileChooser dialogo = new JFileChooser();
+        dialogo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        File FicheroDestino = null;
+
+        int valor = dialogo.showOpenDialog(this);
+        if (valor == JFileChooser.APPROVE_OPTION) {
+            FicheroDestino = dialogo.getSelectedFile();
+        }
+        if (FicheroDestino != null) {
+            String destino = FicheroDestino.getAbsolutePath() + "\\MEIA_Backup\\";
+            ClaseGeneral.rutaDestino = destino;
+            String Origen = "C:\\MEIA";
+            Archivo archivo = new Archivo();
+            archivo.leerArchivo("bitacora_backup");
+            if (archivo.escribirArchivo("bitacora_backup", llenarContenido(), "")) {
+            actualizarDescriptor("bitacora_backup");
+            }                        
+            Copiar(new File(Origen), new File(destino));
+
+        }
+
+
     }//GEN-LAST:event_jBtnBackupActionPerformed
+
+    public void actualizarDescriptor(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            ClaseGeneral.usuarioActual = jUsuario.getText();
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de registros en el archivo original
+        split[5] = "#_registros:" + (contarRegistros("bitacora_backup")-1);
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public int contarRegistros(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        return split.length;
+
+    }
+
+    public String llenarContenido() {
+        String nuevo = "";
+        Date fecha = new Date();
+        nuevo = ClaseGeneral.rutaDestino + "|" + ClaseGeneral.usuarioActual + "|" + fecha.toString();
+        return nuevo;
+
+    }
+
+    public void Copiar(File origen, File destino) {
+        if (origen.isDirectory()) {
+            String[] Rutas = origen.list();
+
+            for (int i = 0; i < Rutas.length; i++) {
+
+                if (!destino.exists()) {
+                    destino.mkdir();
+                }
+                File viejo = new File(origen + "\\" + Rutas[i]);
+                File nuevo = new File(destino + "\\" + Rutas[i]);
+
+                try {
+                    Files.copy(Paths.get(viejo.getAbsolutePath()), Paths.get(nuevo.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
+    }
 
     public void actualizarDatos() {
         Archivo archivo = new Archivo();

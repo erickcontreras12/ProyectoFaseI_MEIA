@@ -20,6 +20,7 @@ public class ClaseGeneral {
     public static boolean hayUsuarios = false; 
     public static String[] datosUsuarioBuscado = null; //String para la busqueda de usuarios
     public static boolean busqueda = false; //Booleano para validar que se esta modificando un usario diferente al logeado
-    
-    
+    //Variables de backup
+     public static String rutaDestino = "";
+     
 }
