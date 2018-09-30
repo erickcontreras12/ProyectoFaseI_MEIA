@@ -343,6 +343,7 @@ public class Registro extends javax.swing.JFrame {
             //Luego de que se obtuvo el contenido, valida si hubo algun error
             if (hayError) {
                 JOptionPane.showMessageDialog(null, contenido);
+                hayError = false;
             } else {
 
                 //Valida si hay un usuario logeado
