@@ -7,6 +7,7 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,6 +17,9 @@ import javax.swing.JOptionPane;
 public class Usuarios extends javax.swing.JFrame {
 
     boolean encontrado = false;
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
 
     /**
      * Creates new form Usuarios
@@ -134,6 +138,7 @@ public class Usuarios extends javax.swing.JFrame {
             int opc = JOptionPane.showConfirmDialog(null, "El usuario se encontro, desea modificarlo?");
             if (opc == 0) {
                 ClaseGeneral.busqueda = true;
+                ClaseGeneral.usuariobuscado=buscado;
                 ModificacionDatos md = new ModificacionDatos();
                 md.show();
                 this.hide();
@@ -146,11 +151,12 @@ public class Usuarios extends javax.swing.JFrame {
     private void jBtnDarBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnDarBajaActionPerformed
         // TODO add your handling code here:
         String buscado = JOptionPane.showInputDialog(rootPane, "Ingrese el usuario que desea dar de baja");
-        buscarUsuario(buscado);        
+        buscarUsuario(buscado);
         if (encontrado) {
             int opc = JOptionPane.showConfirmDialog(null, "El usuario se encontro, desea darle de baja?");
             if (opc == 0) {
-                    darBaja();
+                darBaja();                
+                actualizarDescriptor2("usuario");
             }
         } else {
             JOptionPane.showMessageDialog(null, "Este usuario no existe, no fue encontrado");
@@ -197,63 +203,120 @@ public class Usuarios extends javax.swing.JFrame {
     public void darBaja() {
         Archivo archivo = new Archivo();
         boolean estaEnBitacora = false;
-        String[] datosUsuario = null, split = null;
-        int posicion = 0;
+        String[] datosUsuario = null, split = null, splitaux = null, cambiar = null;
 
+        int posicion = 0;
         split = archivo.leerArchivo("bitacora");
+        splitaux = split;
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
                 datosUsuario = split[i].split("\\|");
                 if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
                     posicion = i;
-                    break;
+                    estaEnBitacora = true;
+                    splitaux[posicion] = "";
+                } else {
+                    splitaux[i] = split[i];
                 }
             }
         }
 
         if (!estaEnBitacora) {
+            split = null;
+            splitaux = null;
             split = archivo.leerArchivo("usuario");
+            splitaux = split;
             for (int i = 0; i < split.length; i++) {
                 if (split[i] != null) {
                     datosUsuario = split[i].split("\\|");
                     if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
                         posicion = i;
-                        break;
+                        splitaux[posicion] = "";
+                        cambiar = datosUsuario;
+                    } else {
+                        splitaux[i] = split[i];
                     }
                 }
             }
         }
-
-        datosUsuario[9] = "0";
+        cambiar[9] = "0";
 
         //Rearma la linea de los datos del usuario
         String cadena = "";
-        for (int i = 0; i < datosUsuario.length; i++) {
-            if (i == datosUsuario.length - 1) {
-                cadena += datosUsuario[i];
+        for (int i = 0; i < cambiar.length; i++) {
+            if (i == cambiar.length - 1) {
+                cadena += cambiar[i];
                 break;
             }
-            cadena += datosUsuario[i] + "|";
+            cadena += cambiar[i] + "|";
         }
+
+        splitaux[posicion] = cadena;
 
         String nombreEscribir = "";
         if (estaEnBitacora) {
-            split = archivo.leerArchivo("bitacora");
             nombreEscribir = "bitacora";
         } else {
             nombreEscribir = "usuario";
         }
-        split[posicion] = cadena;
+        splitaux[posicion] = cadena;
 
         //Rearma todo el contenido del split para escribirlo en el archivo
+        archivo.limpiarArchivo(nombreEscribir);
         String error = "";
         cadena = "";
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("usuario", cadena, error);
+        for (int i = 0; i < splitaux.length; i++) {
+            if (splitaux[i] != null) {
+                archivo.escribirArchivo2(nombreEscribir, splitaux[i], error);
             }
         }
 
+    }
+
+    public void actualizarDescriptor2(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public void contarUsuarios(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[9].equals("1")) {
+                    activos++;
+                } else if (datos[9].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
     }
 
     /**

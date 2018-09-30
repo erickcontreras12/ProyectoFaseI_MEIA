@@ -27,8 +27,13 @@ public class ModificacionDatos extends javax.swing.JFrame {
      */
     public ModificacionDatos() {
         initComponents();
+        if (!ClaseGeneral.busqueda) {
         jUsuario.setText(ClaseGeneral.usuarioActual);
         buscarUsuario(ClaseGeneral.usuarioActual);
+        }else{
+            jUsuario.setText(ClaseGeneral.usuariobuscado);
+        }
+   
     }
 
     /**

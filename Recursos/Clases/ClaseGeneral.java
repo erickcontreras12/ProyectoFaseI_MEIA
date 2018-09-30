@@ -15,6 +15,7 @@ public class ClaseGeneral {
     public static boolean esAdmin = false;  //Booleano para validar si el usuario logeado/a logear es admin
     //Usuario logeado/a logear/a registrar para saber quien modifica los archivos
     public static String usuarioActual = "Erick";
+    public static String usuariobuscado = "";
     public static String usuario = "";
     public static String rol = "";
     public static String rutaFotografia = "";
@@ -24,5 +25,6 @@ public class ClaseGeneral {
     public static boolean busqueda = false; //Booleano para validar que se esta modificando un usario diferente al logeado
     //Variables de backup
     public static String rutaDestino = "";
+    
 
 }
