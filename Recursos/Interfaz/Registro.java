@@ -326,16 +326,33 @@ public class Registro extends javax.swing.JFrame {
             if (ClaseGeneral.yaLogeado) {
                 maxReorganizacion = descriptor[8].substring(19);
                 //Valida si hay que hacer reorganizacion en la bitacora
-                if (split.length <= Integer.valueOf(maxReorganizacion)) {
-                    if (archivo.escribirArchivo("bitacora", contenido, error)) {
+                if (split.length == Integer.valueOf(maxReorganizacion)) {
+                    String[] usuariosaux = archivo.leerArchivo("bitacora");
+                    if (usuariosaux != null) {
+                        for (int i = 0; i < usuariosaux.length; i++) {
+                            if (usuariosaux[i] != null) {
+                                archivo.escribirArchivo("usuario", usuariosaux[i], "");
+                            }
+                        }
+
+                        archivo.limpiarArchivo("bitacora");
                         actualizarDescriptor("bitacora");
-                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                        actualizarDescriptor("usuario");
                     }
+
                     //Se da la reorganizacion
                 } else {
 
+                }
+
+                if (archivo.escribirArchivo("bitacora", contenido, error)) {
+                    actualizarDescriptor("bitacora");
+                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                    Usuarios usuarios = new Usuarios();
+                    usuarios.show();
+                    this.hide();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
                 }
 
             } else {
@@ -345,6 +362,7 @@ public class Registro extends javax.swing.JFrame {
                 if (archivo.escribirArchivo("usuario", contenido, error)) {
                     actualizarDescriptor("usuario");
                     JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
+
                     Login log = new Login();
                     log.show();
                     this.hide();
@@ -414,58 +432,58 @@ public class Registro extends javax.swing.JFrame {
 
     private void jUsuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jUsuarioKeyTyped
         // TODO add your handling code here:
-         if (jUsuario.getText().length()==20) {
-             evt.consume();
-        } 
-        
+        if (jUsuario.getText().length() == 20) {
+            evt.consume();
+        }
+
     }//GEN-LAST:event_jUsuarioKeyTyped
 
     private void jNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jNombreKeyTyped
         // TODO add your handling code here:
-         if (jNombre.getText().length()==30) {
-             evt.consume();
-        } 
+        if (jNombre.getText().length() == 30) {
+            evt.consume();
+        }
     }//GEN-LAST:event_jNombreKeyTyped
 
     private void jApellidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jApellidoKeyTyped
         // TODO add your handling code here:
-         if (jApellido.getText().length()==30) {
-             evt.consume();
+        if (jApellido.getText().length() == 30) {
+            evt.consume();
         }
     }//GEN-LAST:event_jApellidoKeyTyped
 
     private void jPasswordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordKeyTyped
         // TODO add your handling code here:
-         if (jPassword.getText().length()==40) {
-             evt.consume();
+        if (jPassword.getText().length() == 40) {
+            evt.consume();
         }
     }//GEN-LAST:event_jPasswordKeyTyped
 
     private void jFechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jFechaNacimientoKeyTyped
         // TODO add your handling code here:
-         if (jFechaNacimiento.getText().length()==2) {
-             evt.consume();
+        if (jFechaNacimiento.getText().length() == 2) {
+            evt.consume();
         }
     }//GEN-LAST:event_jFechaNacimientoKeyTyped
 
     private void jCorreoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCorreoKeyTyped
         // TODO add your handling code here:
-         if (jCorreo.getText().length()==40) {
-             evt.consume();
+        if (jCorreo.getText().length() == 40) {
+            evt.consume();
         }
     }//GEN-LAST:event_jCorreoKeyTyped
 
     private void jTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTelefonoKeyTyped
         // TODO add your handling code here:
-         if (jTelefono.getText().length()==8) {
-             evt.consume();
+        if (jTelefono.getText().length() == 8) {
+            evt.consume();
         }
     }//GEN-LAST:event_jTelefonoKeyTyped
 
     private void jPathFotoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPathFotoKeyTyped
         // TODO add your handling code here:
-         if (jPathFoto.getText().length()==200) {
-             evt.consume();
+        if (jPathFoto.getText().length() == 200) {
+            evt.consume();
         }
     }//GEN-LAST:event_jPathFotoKeyTyped
 
@@ -504,9 +522,9 @@ public class Registro extends javax.swing.JFrame {
         }
 
         nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
-                + jPassword.getText() + "|" + rol + "|" + 
-                jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" +jFechaNacimiento.getText() 
-                + "|" + jCorreo.getText()+ "|"+jTelefono.getText()
+                + jPassword.getText() + "|" + rol + "|"
+                + jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText()
+                + "|" + jCorreo.getText() + "|" + jTelefono.getText()
                 + "|" + jPathFoto.getText() + "|" + "1";
         return nuevo;
     }
@@ -570,9 +588,6 @@ public class Registro extends javax.swing.JFrame {
             }
         }
     }
-    
-    
-    
 
     /**
      * @param args the command line arguments

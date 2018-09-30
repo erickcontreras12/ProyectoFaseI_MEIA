@@ -34,8 +34,8 @@ public class Mantenimiento extends javax.swing.JFrame {
      */
     public Mantenimiento() {
 
-         buscarUsuario(ClaseGeneral.usuarioActual);
-        
+        buscarUsuario(ClaseGeneral.usuarioActual);
+
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
 
@@ -187,6 +187,17 @@ public class Mantenimiento extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea cerrar sesion?");
         if (opc == 0) {
             ClaseGeneral.yaLogeado = false;
+            Archivo archivo = new Archivo();
+            String[] usuarios = archivo.leerArchivo("bitacora");
+            if (usuarios != null) {
+                for (int i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i] != null) {
+                        archivo.escribirArchivo("usuario", usuarios[i], "");
+                    }
+                }
+                archivo.limpiarArchivo("bitacora");
+            }
+
             Login login = new Login();
             login.show();
             this.hide();
@@ -254,7 +265,8 @@ public class Mantenimiento extends javax.swing.JFrame {
     }//GEN-LAST:event_jBtnBackupActionPerformed
 
     boolean encontrado = false;
-     public void buscarUsuario(String usuario) {
+
+    public void buscarUsuario(String usuario) {
         Archivo archivo = new Archivo();
         encontrado = false;
         String[] datos;
@@ -291,10 +303,11 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         }
     }
-    
+
     /**
      * Actualiza el descriptor del backup
-     * @param descriptor 
+     *
+     * @param descriptor
      */
     public void actualizarDescriptor(String descriptor) {
         Archivo archivo = new Archivo();
