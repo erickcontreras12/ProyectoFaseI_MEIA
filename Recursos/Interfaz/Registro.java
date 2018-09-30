@@ -7,12 +7,15 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Usuario;
 import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.crypto.Cipher;
@@ -29,6 +32,7 @@ import org.apache.commons.codec.binary.Base64;
 public class Registro extends javax.swing.JFrame {
 
     List<Integer> inferiores = new ArrayList<>();
+    List<Usuario> ordenar = new ArrayList<>();
     List<Integer> superiores = new ArrayList<>();
     List<Integer> puntuaciones = new ArrayList<>();
     File Archivo = new File("C:\\MEIA\\resultado.txt");
@@ -357,6 +361,23 @@ public class Registro extends javax.swing.JFrame {
                             actualizarDescriptor("usuario");
                         }
 
+                        String[] usuariosdesordenados = archivo.leerArchivo("usuario");
+
+                        for (int i = 0; i < usuariosdesordenados.length; i++) {
+                            if (usuariosdesordenados[i] != null) {
+                                String[] datos = usuariosdesordenados[i].split("\\|");
+                                ordenar.add(new Usuario(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8], datos[9]));
+                            }
+                        }
+
+                        Collections.sort(ordenar, (Usuario obj1, Usuario obj2) -> obj1.getUsuario().compareTo(obj2.getUsuario()));
+
+                        archivo.limpiarArchivo("usuario");
+                        for (int i = 0; i < ordenar.size(); i++) {
+                            if (ordenar.get(i) != null) {
+                                archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
+                            }
+                        }
                         //Se da la reorganizacion
                     } else {
 
@@ -378,6 +399,25 @@ public class Registro extends javax.swing.JFrame {
             la bitacora asi que la insercion del nuevo usuario se hace en el archivo usuario*/
                     if (archivo.escribirArchivo("usuario", contenido, error)) {
                         actualizarDescriptor("usuario");
+
+                        String[] usuariosdesordenados = archivo.leerArchivo("usuario");
+
+                        for (int i = 0; i < usuariosdesordenados.length; i++) {
+                            if (usuariosdesordenados[i] != null) {
+                                String[] datos = usuariosdesordenados[i].split("\\|");
+                                ordenar.add(new Usuario(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8], datos[9]));
+                            }
+                        }
+
+                        Collections.sort(ordenar, (Usuario obj1, Usuario obj2) -> obj1.getUsuario().compareTo(obj2.getUsuario()));
+
+                        archivo.limpiarArchivo("usuario");
+                        for (int i = 0; i < ordenar.size(); i++) {
+                            if (ordenar.get(i) != null) {
+                                archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
+                            }
+                        }
+
                         JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
 
                         Login log = new Login();
@@ -392,6 +432,7 @@ public class Registro extends javax.swing.JFrame {
                 }
 
             }
+
         } else {
             JOptionPane.showMessageDialog(rootPane, "Revisar la informacion ingresada");
         }
@@ -610,26 +651,26 @@ public class Registro extends javax.swing.JFrame {
      * @return
      */
     public static String Encriptar(String texto) {
- 
+
         String cifrar = "MEIA"; //llave para encriptar datos
         String base64EncryptedString = "";
- 
+
         try {
- 
+
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digestOfPassword = md.digest(cifrar.getBytes("utf-8"));
             byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24);
- 
+
             SecretKey key = new SecretKeySpec(keyBytes, "DESede");
             Cipher cipher = Cipher.getInstance("DESede");
             cipher.init(Cipher.ENCRYPT_MODE, key);
- 
+
             byte[] plainTextBytes = texto.getBytes("utf-8");
             byte[] buf = cipher.doFinal(plainTextBytes);
             byte[] base64Bytes = Base64.encodeBase64(buf);
 
             base64EncryptedString = new String(base64Bytes);
- 
+
         } catch (Exception ex) {
         }
         return base64EncryptedString;

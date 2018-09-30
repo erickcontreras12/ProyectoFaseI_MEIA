@@ -7,7 +7,12 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Usuario;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,7 +20,7 @@ import javax.swing.JOptionPane;
  * @author Erick Contreras
  */
 public class Usuarios extends javax.swing.JFrame {
-
+    List<Usuario> ordenar = new ArrayList<>();
     boolean encontrado = false;
     int activos = 0;
     int inactivos = 0;
@@ -269,8 +274,7 @@ public class Usuarios extends javax.swing.JFrame {
             if (splitaux[i] != null) {
                 archivo.escribirArchivo2(nombreEscribir, splitaux[i], error);
             }
-        }
-
+        }                 
     }
 
     public void actualizarDescriptor2(String descriptor) {

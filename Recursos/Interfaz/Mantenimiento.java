@@ -7,13 +7,18 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Usuario;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -25,6 +30,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class Mantenimiento extends javax.swing.JFrame {
 
+    List<Usuario> ordenar = new ArrayList<>();
     int activos = 0;
     int inactivos = 0;
     int total = 0;

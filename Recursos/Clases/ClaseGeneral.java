@@ -26,5 +26,6 @@ public class ClaseGeneral {
     //Variables de backup
     public static String rutaDestino = "";
     
+    
 
 }

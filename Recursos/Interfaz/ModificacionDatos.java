@@ -7,13 +7,18 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Usuario;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,6 +36,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
     int activos = 0;
     int inactivos = 0;
     int total = 0;
+    List<Usuario> ordenar = new ArrayList<>();
     /**
      * Creates new form ModificacionDatos
      */
@@ -394,6 +400,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
             }
         }
         actualizarDescriptor2(nombreEscribir);
+        
     }
 
     
