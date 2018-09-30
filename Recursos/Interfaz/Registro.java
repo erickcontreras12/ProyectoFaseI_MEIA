@@ -12,6 +12,8 @@ import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
 import java.security.MessageDigest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -632,9 +634,22 @@ public class Registro extends javax.swing.JFrame {
             }
 
             String encriptado = Encriptar(jPassword.getText());
+            
+            SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd");
+            String strFecha = jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText();
+            Date fecha = null;
+            try {
+
+                fecha = formatoDelTexto.parse(strFecha);                
+                 
+            } catch (ParseException ex) {
+
+                JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
+            }
+            
             nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
                     + encriptado + "|" + rol + "|"
-                    + jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText()
+                    + formatoDelTexto.format(fecha)
                     + "|" + jCorreo.getText() + "|" + jTelefono.getText()
                     + "|" + jPathFoto.getText() + "|" + "1";
 
