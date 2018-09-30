@@ -165,6 +165,7 @@ public class Registro extends javax.swing.JFrame {
             }
         });
 
+        jPathFoto.setEnabled(false);
         jPathFoto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jPathFotoKeyTyped(evt);
