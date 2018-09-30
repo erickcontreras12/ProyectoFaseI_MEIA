@@ -634,26 +634,27 @@ public class Registro extends javax.swing.JFrame {
             }
 
             String encriptado = Encriptar(jPassword.getText());
-            
+
             SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd");
             String strFecha = jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText();
             Date fecha = null;
             try {
 
-                fecha = formatoDelTexto.parse(strFecha);                
-                 
+                fecha = formatoDelTexto.parse(strFecha);
+                nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
+                        + encriptado + "|" + rol + "|"
+                        + formatoDelTexto.format(fecha)
+                        + "|" + jCorreo.getText() + "|" + jTelefono.getText()
+                        + "|" + jPathFoto.getText() + "|" + "1";
+
+                return nuevo;
+
             } catch (ParseException ex) {
 
                 JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
+                return "";
             }
-            
-            nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
-                    + encriptado + "|" + rol + "|"
-                    + formatoDelTexto.format(fecha)
-                    + "|" + jCorreo.getText() + "|" + jTelefono.getText()
-                    + "|" + jPathFoto.getText() + "|" + "1";
 
-            return nuevo;
         } else {
             return nuevo;
         }
