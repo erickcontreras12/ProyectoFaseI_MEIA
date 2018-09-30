@@ -505,7 +505,7 @@ public class Registro extends javax.swing.JFrame {
 
         nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
                 + jPassword.getText() + "|" + rol + "|" + 
-                jFechaNacimiento.getText() + "/" + jCBMes.getSelectedItem().toString() + "/" + jCBAnio.getSelectedItem().toString()
+                jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" +jFechaNacimiento.getText() 
                 + "|" + jCorreo.getText()+ "|"+jTelefono.getText()
                 + "|" + jPathFoto.getText() + "|" + "1";
         return nuevo;

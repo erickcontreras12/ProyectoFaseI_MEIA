@@ -14,7 +14,9 @@ import javax.swing.JOptionPane;
  * @author Erick Contreras
  */
 public class Usuarios extends javax.swing.JFrame {
+
     boolean encontrado = false;
+
     /**
      * Creates new form Usuarios
      */
@@ -126,32 +128,32 @@ public class Usuarios extends javax.swing.JFrame {
     private void jBtnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBuscarActionPerformed
         // TODO add your handling code here:
         String buscado = JOptionPane.showInputDialog(rootPane, "Ingrese el usuario que desea buscar");
-        if(encontrado){
+
+        buscarUsuario(buscado);
+        if (encontrado) {
             int opc = JOptionPane.showConfirmDialog(null, "El usuario se encontro, desea modificarlo?");
-        if (opc == 0) {
-            ClaseGeneral.busqueda = true;
-            ModificacionDatos md = new ModificacionDatos();
-            md.show();
-            this.hide();
-        }
-        }else{
-            JOptionPane.showMessageDialog(null,"Este usuario no existe, no fue encontrado");
+            if (opc == 0) {
+                ClaseGeneral.busqueda = true;
+                ModificacionDatos md = new ModificacionDatos();
+                md.show();
+                this.hide();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Este usuario no existe, no fue encontrado");
         }
     }//GEN-LAST:event_jBtnBuscarActionPerformed
 
     private void jBtnDarBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnDarBajaActionPerformed
         // TODO add your handling code here:
         String buscado = JOptionPane.showInputDialog(rootPane, "Ingrese el usuario que desea dar de baja");
-        if(encontrado){
+        buscarUsuario(buscado);        
+        if (encontrado) {
             int opc = JOptionPane.showConfirmDialog(null, "El usuario se encontro, desea darle de baja?");
-        if (opc == 0) {
-            ClaseGeneral.busqueda = true;
-            ModificacionDatos md = new ModificacionDatos();
-            md.show();
-            this.hide();
-        }
-        }else{
-            JOptionPane.showMessageDialog(null,"Este usuario no existe, no fue encontrado");
+            if (opc == 0) {
+                    darBaja();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Este usuario no existe, no fue encontrado");
         }
     }//GEN-LAST:event_jBtnDarBajaActionPerformed
 
@@ -192,12 +194,12 @@ public class Usuarios extends javax.swing.JFrame {
         }
     }
 
-    public void darBaja(){
+    public void darBaja() {
         Archivo archivo = new Archivo();
         boolean estaEnBitacora = false;
         String[] datosUsuario = null, split = null;
         int posicion = 0;
-        
+
         split = archivo.leerArchivo("bitacora");
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
@@ -208,54 +210,52 @@ public class Usuarios extends javax.swing.JFrame {
                 }
             }
         }
-        
-        
-        
-        if(!estaEnBitacora){
-        split = archivo.leerArchivo("usuario");
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                datosUsuario = split[i].split("\\|");
-                if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
-                    posicion = i;
-                    break;
+
+        if (!estaEnBitacora) {
+            split = archivo.leerArchivo("usuario");
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    datosUsuario = split[i].split("\\|");
+                    if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
+                        posicion = i;
+                        break;
+                    }
                 }
             }
         }
-        }
-        
+
         datosUsuario[9] = "0";
-        
+
         //Rearma la linea de los datos del usuario
         String cadena = "";
         for (int i = 0; i < datosUsuario.length; i++) {
-            if(i == datosUsuario.length - 1){
+            if (i == datosUsuario.length - 1) {
                 cadena += datosUsuario[i];
                 break;
             }
             cadena += datosUsuario[i] + "|";
         }
-        
+
         String nombreEscribir = "";
-        if(estaEnBitacora){
+        if (estaEnBitacora) {
             split = archivo.leerArchivo("bitacora");
             nombreEscribir = "bitacora";
-        }else{
+        } else {
             nombreEscribir = "usuario";
         }
         split[posicion] = cadena;
-        
+
         //Rearma todo el contenido del split para escribirlo en el archivo
         String error = "";
         cadena = "";
         for (int i = 0; i < split.length; i++) {
-            if(split[i] != null){
+            if (split[i] != null) {
                 archivo.escribirArchivo("usuario", cadena, error);
             }
         }
-        
+
     }
-    
+
     /**
      * @param args the command line arguments
      */

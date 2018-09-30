@@ -9,6 +9,9 @@ import Clases.Archivo;
 import Clases.ClaseGeneral;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,6 +27,8 @@ public class ModificacionDatos extends javax.swing.JFrame {
      */
     public ModificacionDatos() {
         initComponents();
+        jUsuario.setText(ClaseGeneral.usuarioActual);
+        buscarUsuario(ClaseGeneral.usuarioActual);
     }
 
     /**
@@ -173,7 +178,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
                 rutaArchivo = ficheroImagen.getPath();
                 ClaseGeneral.rutaFotografia = rutaArchivo;
             }
-            actualizarDatos("foto",rutaArchivo);
+            modificarDatosBuscado("foto", rutaArchivo);
         }
     }//GEN-LAST:event_jBtnFotoActionPerformed
 
@@ -182,7 +187,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Desea modificar la contraseña?");
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese la nueva contraseña");
-            actualizarDatos("pass", cambio);
+            modificarDatosBuscado("pass", cambio);
         }
     }//GEN-LAST:event_jBtnPasswordActionPerformed
 
@@ -191,7 +196,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Desea modificar el correo?");
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo correo");
-            actualizarDatos("correo", cambio);
+            modificarDatosBuscado("correo", cambio);
         }
     }//GEN-LAST:event_jBtnCorreoActionPerformed
 
@@ -201,7 +206,19 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese la nueva fecha en formato YYYY/MM/DD");
             //Validar el formato de la fecha
-            actualizarDatos("fecha", cambio);
+            SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd");
+            String strFecha = cambio;
+            Date fecha = null;
+            try {
+
+                fecha = formatoDelTexto.parse(strFecha);
+                 modificarDatosBuscado("fecha", formatoDelTexto.format(fecha));
+
+            } catch (ParseException ex) {
+
+                JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
+            }
+           
         }
     }//GEN-LAST:event_jBtnFechaActionPerformed
 
@@ -210,135 +227,131 @@ public class ModificacionDatos extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Desea modificar su número de teléfono?");
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo número");
-            actualizarDatos("tel", cambio);
+            modificarDatosBuscado("tel", cambio);
         }
     }//GEN-LAST:event_jBtnTelefonoActionPerformed
 
-    public void actualizarDatos(String tipo, String nuevo) {
-        Archivo archivo = new Archivo();
-        String[] datosUsuario = null, split = null;
-        split = archivo.leerArchivo("usuario");
-        int posicion = 0;
+    boolean encontrado = false;
 
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                datosUsuario = split[i].split("\\|");
-                if (datosUsuario[0].equals(ClaseGeneral.usuarioActual)) {
-                    posicion = i;
-                    break;
+    public void buscarUsuario(String usuario) {
+        Archivo archivo = new Archivo();
+        encontrado = false;
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+                    if (usuario.equals(datos[1])) {
+                        encontrado = true;
+                        ClaseGeneral.datosUsuarioBuscado = datos;
+                        break;
+                    }
                 }
             }
         }
 
-        if (tipo.equals("pass")) {
-            datosUsuario[3] = nuevo;
-        } else if (tipo.equals("foto")) {
-            datosUsuario[8] = nuevo;
-        } else if (tipo.equals("tel")) {
-            datosUsuario[7] = nuevo;
-        } else if (tipo.equals("correo")) {
-            datosUsuario[6] = nuevo;
-        } else if (tipo.equals("fecha")) {
-            datosUsuario[5] = nuevo;
-        }
-
-        //Rearma la linea de los datos del usuario
-        String cadena = "";
-        for (int i = 0; i < datosUsuario.length; i++) {
-            if (i == datosUsuario.length - 1) {
-                cadena += datosUsuario[i];
-                break;
-            }
-            cadena += datosUsuario[i] + "|";
-        }
-
-        split[posicion] = cadena;
-
-        //Rearma todo el contenido del split para escribirlo en el archivo
-        String error = "";
-        cadena = "";
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("usuario", cadena, error);
+        //Si no lo encontro en la bitacora lee usuarios
+        if (!encontrado) {
+            usuarios = null;
+            usuarios = archivo.leerArchivo("usuario");
+            if (usuarios != null) {
+                for (int i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i] != null) {
+                        datos = usuarios[i].split("\\|");
+                        if (usuario.equals(datos[1])) {
+                            encontrado = true;
+                            ClaseGeneral.datosUsuarioBuscado = datos;
+                            break;
+                        }
+                    }
+                }
             }
         }
-
     }
 
     public void modificarDatosBuscado(String tipo, String nuevo) {
         Archivo archivo = new Archivo();
         boolean estaEnBitacora = false;
-        String[] datosUsuario = null, split = null;
-        
+        String[] datosUsuario = null, split = null, splitaux = null, cambiar = null;
+
         int posicion = 0;
         split = archivo.leerArchivo("bitacora");
+        splitaux = split;
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
                 datosUsuario = split[i].split("\\|");
                 if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
                     posicion = i;
-                    break;
+                    estaEnBitacora = true;
+                    splitaux[posicion] = "";
+                } else {
+                    splitaux[i] = split[i];
                 }
             }
         }
-        
-        
-        
-        if(!estaEnBitacora){
-        split = archivo.leerArchivo("usuario");
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                datosUsuario = split[i].split("\\|");
-                if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
-                    posicion = i;
-                    break;
+
+        if (!estaEnBitacora) {
+            split = null;
+            splitaux = null;
+            split = archivo.leerArchivo("usuario");
+            splitaux = split;
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    datosUsuario = split[i].split("\\|");
+                    if (datosUsuario[0].equals(ClaseGeneral.datosUsuarioBuscado[0])) {
+                        posicion = i;
+                        splitaux[posicion] = "";
+                        cambiar = datosUsuario;
+                    } else {
+                        splitaux[i] = split[i];
+                    }
                 }
             }
-        }
         }
         if (tipo.equals("pass")) {
-            datosUsuario[3] = nuevo;
+            cambiar[3] = nuevo;
         } else if (tipo.equals("foto")) {
-            datosUsuario[8] = nuevo;
+            cambiar[8] = nuevo;
         } else if (tipo.equals("tel")) {
-            datosUsuario[7] = nuevo;
+            cambiar[7] = nuevo;
         } else if (tipo.equals("correo")) {
-            datosUsuario[6] = nuevo;
+            cambiar[6] = nuevo;
         } else if (tipo.equals("fecha")) {
-            datosUsuario[5] = nuevo;
+            cambiar[5] = nuevo;
         }
 
         //Rearma la linea de los datos del usuario
         String cadena = "";
-        for (int i = 0; i < datosUsuario.length; i++) {
-            if (i == datosUsuario.length - 1) {
-                cadena += datosUsuario[i];
+        for (int i = 0; i < cambiar.length; i++) {
+            if (i == cambiar.length - 1) {
+                cadena += cambiar[i];
                 break;
             }
-            cadena += datosUsuario[i] + "|";
+            cadena += cambiar[i] + "|";
         }
 
         String nombreEscribir = "";
-        if(estaEnBitacora){
-            split = archivo.leerArchivo("bitacora");
+        if (estaEnBitacora) {
             nombreEscribir = "bitacora";
-        }else{
+        } else {
             nombreEscribir = "usuario";
         }
-        split[posicion] = cadena;
-        
+        splitaux[posicion] = cadena;
 
         //Rearma todo el contenido del split para escribirlo en el archivo
+        archivo.limpiarArchivo(nombreEscribir);
         String error = "";
         cadena = "";
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo(nombreEscribir, cadena, error);
+        for (int i = 0; i < splitaux.length; i++) {
+            if (splitaux[i] != null) {
+                archivo.escribirArchivo2(nombreEscribir, splitaux[i], error);
             }
         }
 
     }
-    
+
     /**
      * @param args the command line arguments
      */

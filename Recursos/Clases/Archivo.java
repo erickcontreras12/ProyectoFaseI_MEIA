@@ -38,7 +38,7 @@ public class Archivo {
                     String Linea = ""; String temp = "";
                     try {
                         temp = LeerArchivo.readLine();
-                        while (temp != null) {
+                        while (temp != null ) {
                             cont++;
                             temp = LeerArchivo.readLine();
                         }
@@ -81,6 +81,24 @@ public class Archivo {
 
         try {
             FileWriter Escribir = new FileWriter(Archivo, true);
+            BufferedWriter bw = new BufferedWriter(Escribir);
+            bw.write(contenido + System.getProperty("line.separator"));
+            bw.close();
+            Escribir.close();
+
+            return true;
+        } catch (IOException ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+     public boolean escribirArchivo2(String nombreArchivo, String contenido, String error) {
+        
+         File Archivo = new File("C:\\MEIA\\" + nombreArchivo + ".txt");
+
+        try {
+            FileWriter Escribir = new FileWriter(Archivo,true);
             BufferedWriter bw = new BufferedWriter(Escribir);
             bw.write(contenido + System.getProperty("line.separator"));
             bw.close();

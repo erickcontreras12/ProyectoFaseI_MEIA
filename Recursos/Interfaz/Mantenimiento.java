@@ -46,11 +46,11 @@ public class Mantenimiento extends javax.swing.JFrame {
         //Falta la foto en el jFotografia
 
         if (ClaseGeneral.esAdmin) {
-            jBtnBackup.enable(true);
-            jBtnUsuario.enable(true);
+            jBtnBackup.show();
+            jBtnUsuario.show();
         } else {
-            jBtnBackup.enable(false);
-            jBtnUsuario.enable(false);
+            jBtnBackup.hide();
+            jBtnUsuario.hide();
         }
     }
 
@@ -215,6 +215,9 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     private void jBtnActualizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnActualizacionActionPerformed
         // TODO add your handling code here:
+        ModificacionDatos cambio = new ModificacionDatos();
+            cambio.show();
+            this.hide();
     }//GEN-LAST:event_jBtnActualizacionActionPerformed
 
     private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
@@ -235,8 +238,8 @@ public class Mantenimiento extends javax.swing.JFrame {
             Archivo archivo = new Archivo();
             archivo.leerArchivo("bitacora_backup");
             if (archivo.escribirArchivo("bitacora_backup", llenarContenido(), "")) {
-            actualizarDescriptor("bitacora_backup");
-            }                        
+                actualizarDescriptor("bitacora_backup");
+            }
             Copiar(new File(Origen), new File(destino));
 
         }
@@ -256,7 +259,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         split[3] = "fecha_modificacion:" + fecha.toString();
         split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
         //calcula el total de registros en el archivo original
-        split[5] = "#_registros:" + (contarRegistros("bitacora_backup")-1);
+        split[5] = "#_registros:" + (contarRegistros("bitacora_backup") - 1);
 
         String error = "";
         archivo.limpiarArchivo("desc_" + descriptor);
