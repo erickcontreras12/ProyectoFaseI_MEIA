@@ -77,7 +77,6 @@ public class Registro extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jNombre = new javax.swing.JTextField();
         jApellido = new javax.swing.JTextField();
-        jPassword = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jFechaNacimiento = new javax.swing.JTextField();
@@ -91,6 +90,7 @@ public class Registro extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jCBAnio = new javax.swing.JComboBox<>();
+        jPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(450, 500));
@@ -134,12 +134,6 @@ public class Registro extends javax.swing.JFrame {
         jApellido.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jApellidoKeyTyped(evt);
-            }
-        });
-
-        jPassword.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jPasswordKeyTyped(evt);
             }
         });
 
@@ -234,7 +228,6 @@ public class Registro extends javax.swing.JFrame {
                         .addComponent(jCorreo, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jNombre, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jApellido, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPassword, javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel10)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -246,7 +239,8 @@ public class Registro extends javax.swing.JFrame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(jLabel12)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jCBAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jCBAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPassword)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -515,13 +509,6 @@ public class Registro extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_jApellidoKeyTyped
-
-    private void jPasswordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPasswordKeyTyped
-        // TODO add your handling code here:
-        if (jPassword.getText().length() == 40) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_jPasswordKeyTyped
 
     private void jFechaNacimientoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jFechaNacimientoKeyTyped
         // TODO add your handling code here:
@@ -896,7 +883,7 @@ public class Registro extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField jNombre;
-    private javax.swing.JTextField jPassword;
+    private javax.swing.JPasswordField jPassword;
     private javax.swing.JTextField jPathFoto;
     private javax.swing.JTextField jTelefono;
     private javax.swing.JTextField jUsuario;

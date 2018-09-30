@@ -67,7 +67,6 @@
                       <Component id="jCorreo" alignment="0" max="32767" attributes="0"/>
                       <Component id="jNombre" alignment="0" max="32767" attributes="0"/>
                       <Component id="jApellido" alignment="0" max="32767" attributes="0"/>
-                      <Component id="jPassword" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -81,6 +80,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jCBAnio" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="jPassword" alignment="1" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
@@ -208,11 +208,6 @@
         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jApellidoKeyTyped"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JTextField" name="jPassword">
-      <Events>
-        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jPasswordKeyTyped"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tel&#xe9;fono"/>
@@ -334,6 +329,8 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="jPassword">
     </Component>
   </SubComponents>
 </Form>
