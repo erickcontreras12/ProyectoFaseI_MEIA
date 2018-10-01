@@ -199,7 +199,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
                 ClaseGeneral.rutaFotografia = rutaArchivo;
             }
             modificarDatosBuscado("foto", rutaArchivo);
-            
+            JOptionPane.showMessageDialog(null, "cambio exitoso");
         }
     }//GEN-LAST:event_jBtnFotoActionPerformed
 
@@ -209,7 +209,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese la nueva contraseña");
             modificarDatosBuscado("pass", Encriptar(cambio));
-            
+            JOptionPane.showMessageDialog(null, "cambio exitoso");
         }
     }//GEN-LAST:event_jBtnPasswordActionPerformed
 
@@ -219,7 +219,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo correo");
             modificarDatosBuscado("correo", cambio);
-            
+            JOptionPane.showMessageDialog(null, "cambio exitoso");
         }
     }//GEN-LAST:event_jBtnCorreoActionPerformed
 
@@ -236,7 +236,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
 
                 fecha = formatoDelTexto.parse(strFecha);
                  modificarDatosBuscado("fecha", formatoDelTexto.format(fecha));
-                 
+                 JOptionPane.showMessageDialog(null, "cambio exitoso");
 
             } catch (ParseException ex) {
 
@@ -252,7 +252,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         if (opc == 0) {
             String cambio = JOptionPane.showInputDialog(rootPane, "Ingrese el nuevo número");
             modificarDatosBuscado("tel", cambio);
-            
+            JOptionPane.showMessageDialog(null, "cambio exitoso");
         }
     }//GEN-LAST:event_jBtnTelefonoActionPerformed
 
