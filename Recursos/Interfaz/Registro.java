@@ -11,6 +11,9 @@ import Clases.Usuario;
 import java.awt.Color;
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,7 @@ public class Registro extends javax.swing.JFrame {
     File Archivo = new File("C:\\MEIA\\resultado.txt");
     File Archivo2 = new File("C:\\MEIA\\puntuacion.txt");
     File Archivo3 = new File("C:\\MEIA\\usuario.txt");
+    File ImagenCopiada;
     int puntuacion = 0;
     public String[] split;
     public boolean hayError;    //booleano para saber si hay un error al ingresar los datos
@@ -314,7 +318,8 @@ public class Registro extends javax.swing.JFrame {
         if (valor == JFileChooser.APPROVE_OPTION) {
             ficheroImagen = dialogo.getSelectedFile();
             rutaArchivo = ficheroImagen.getPath();
-            jPathFoto.setText(rutaArchivo);
+            Copiar(ficheroImagen);
+            jPathFoto.setText(ImagenCopiada.getPath());
         }
     }//GEN-LAST:event_jBtnRutaFotoActionPerformed
 
@@ -332,9 +337,8 @@ public class Registro extends javax.swing.JFrame {
         String error = ""; //variable para almacenar el error al escribir un archivo
         String maxReorganizacion = "";
 
-        
         contenido = llenarContenido();
-       
+
         if (!contenido.equals("")) {
             //Luego de que se obtuvo el contenido, valida si hubo algun error
             if (hayError) {
@@ -539,6 +543,24 @@ public class Registro extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jPathFotoKeyTyped
 
+    public void Copiar(File origen) {
+
+        String ruta_destino = "C:\\MEIA\\fotos";
+        File ruta = new File(ruta_destino);
+        if (!ruta.exists()) {
+            ruta.mkdir();
+        }
+
+        File nuevo = new File(ruta_destino + "\\" + origen.getName());
+
+        try {
+            Files.copy(Paths.get(origen.getAbsolutePath()), Paths.get(nuevo.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+            ImagenCopiada = new File(ruta_destino + "\\" + origen.getName());
+        } catch (Exception e) {
+
+        }
+    }
+
     /**
      * Metodo para validar que el usuario llene todo de forma correcta y obtener
      * los datos si se cumplen todas las restricciones
@@ -563,94 +585,94 @@ public class Registro extends javax.swing.JFrame {
 
         //Valida la seguridad del password
         //ESTO TE TOCA GG
-       if( leerArchivos()){
-        String pass = jPassword.getText();
+        if (leerArchivos()) {
+            String pass = jPassword.getText();
 
-        if (pass.length() < puntuaciones.get(0)) {
-            JOptionPane.showMessageDialog(null, "Por favor ingrese una contrasenia de minimo " + puntuaciones.get(0) + " caracteres", "Error", HEIGHT);
-            jPassword.setText("");
-        } else {
-            puntuacion = puntuaciones.get(1) * pass.length();
-
-            int mayus = 0;
-            int letras = 0;
-            int num = 0;
-            int simb = 0;
-            for (int i = 0; i < pass.length(); i++) {
-                char c = pass.charAt(i);
-
-                if (Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) {
-                    mayus++;
-                }
-
-                if ((Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) || (Integer.valueOf(c) > 96 && Integer.valueOf(c) < 123)) {
-                    letras++;
-                }
-
-                if (Integer.valueOf(c) > 47 && Integer.valueOf(c) < 58) {
-                    num++;
-                }
-
-                if ((Integer.valueOf(c) > 34 && (Integer.valueOf(c) < 38)) || (Integer.valueOf(c) == 47) || (Integer.valueOf(c) == 63)) {
-                    simb++;
-                }
-
-            }
-
-            puntuacion += puntuaciones.get(2) * mayus;
-            puntuacion += puntuaciones.get(3) + letras;
-            puntuacion += puntuaciones.get(4) + num;
-            puntuacion += simb * (pass.length() + puntuaciones.get(5));
-
-            if (simb == 0 && num == 0) {
-                puntuacion -= puntuaciones.get(6);
-            }
-
-            if (simb == 0 && letras == 0) {
-                puntuacion -= puntuaciones.get(7);
-            }
-
-        }
-
-        if (validarpass(puntuacion)) {
-            //Ya que paso todas las validaciones y no hubo ningun error obtiene los datos
-            //Valida si hay usuarios
-            int rol = 10;
-            hayAdmin();
-            if (ClaseGeneral.hayUsuarios) {
-                rol = 0;
+            if (pass.length() < puntuaciones.get(0)) {
+                JOptionPane.showMessageDialog(null, "Por favor ingrese una contrasenia de minimo " + puntuaciones.get(0) + " caracteres", "Error", HEIGHT);
+                jPassword.setText("");
             } else {
-                rol = 1;
+                puntuacion = puntuaciones.get(1) * pass.length();
+
+                int mayus = 0;
+                int letras = 0;
+                int num = 0;
+                int simb = 0;
+                for (int i = 0; i < pass.length(); i++) {
+                    char c = pass.charAt(i);
+
+                    if (Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) {
+                        mayus++;
+                    }
+
+                    if ((Integer.valueOf(c) > 64 && Integer.valueOf(c) < 91) || (Integer.valueOf(c) > 96 && Integer.valueOf(c) < 123)) {
+                        letras++;
+                    }
+
+                    if (Integer.valueOf(c) > 47 && Integer.valueOf(c) < 58) {
+                        num++;
+                    }
+
+                    if ((Integer.valueOf(c) > 34 && (Integer.valueOf(c) < 38)) || (Integer.valueOf(c) == 47) || (Integer.valueOf(c) == 63)) {
+                        simb++;
+                    }
+
+                }
+
+                puntuacion += puntuaciones.get(2) * mayus;
+                puntuacion += puntuaciones.get(3) + letras;
+                puntuacion += puntuaciones.get(4) + num;
+                puntuacion += simb * (pass.length() + puntuaciones.get(5));
+
+                if (simb == 0 && num == 0) {
+                    puntuacion -= puntuaciones.get(6);
+                }
+
+                if (simb == 0 && letras == 0) {
+                    puntuacion -= puntuaciones.get(7);
+                }
+
             }
 
-            String encriptado = Encriptar(jPassword.getText());
+            if (validarpass(puntuacion)) {
+                //Ya que paso todas las validaciones y no hubo ningun error obtiene los datos
+                //Valida si hay usuarios
+                int rol = 10;
+                hayAdmin();
+                if (ClaseGeneral.hayUsuarios) {
+                    rol = 0;
+                } else {
+                    rol = 1;
+                }
 
-            SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd");
-            String strFecha = jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText();
-            Date fecha = null;
-            try {
+                String encriptado = Encriptar(jPassword.getText());
 
-                fecha = formatoDelTexto.parse(strFecha);
-                nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
-                        + encriptado + "|" + rol + "|"
-                        + formatoDelTexto.format(fecha)
-                        + "|" + jCorreo.getText() + "|" + jTelefono.getText()
-                        + "|" + jPathFoto.getText() + "|" + "1";
+                SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd");
+                String strFecha = jCBAnio.getSelectedItem().toString() + "/" + jCBMes.getSelectedItem().toString() + "/" + jFechaNacimiento.getText();
+                Date fecha = null;
+                try {
 
+                    fecha = formatoDelTexto.parse(strFecha);
+                    nuevo = jUsuario.getText() + "|" + jNombre.getText() + "|" + jApellido.getText() + "|"
+                            + encriptado + "|" + rol + "|"
+                            + formatoDelTexto.format(fecha)
+                            + "|" + jCorreo.getText() + "|" + jTelefono.getText()
+                            + "|" + jPathFoto.getText() + "|" + "1";
+
+                    return nuevo;
+
+                } catch (ParseException ex) {
+
+                    JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
+                    return "";
+                }
+
+            } else {
                 return nuevo;
-
-            } catch (ParseException ex) {
-
-                JOptionPane.showMessageDialog(rootPane, "Ingrese nuevamente en este formato YYYY/MM/DD");
-                return "";
             }
-        
         } else {
-            return nuevo;
+            return "";
         }
-       }else{
-           return "";
-       }
     }
 
     /**
@@ -721,9 +743,8 @@ public class Registro extends javax.swing.JFrame {
             } catch (Exception e) {
 
             }
-        }else
-        {
-            JOptionPane.showMessageDialog(rootPane, "No existe el archivo "+Archivo.getName()+" en la ruta "+ Archivo.getPath());
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "No existe el archivo " + Archivo.getName() + " en la ruta " + Archivo.getPath());
             return false;
         }
 
@@ -757,11 +778,11 @@ public class Registro extends javax.swing.JFrame {
 
             }
 
-        }else{
-            JOptionPane.showMessageDialog(rootPane, "No existe el archivo "+Archivo2.getName()+" en la ruta "+ Archivo2.getPath());
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "No existe el archivo " + Archivo2.getName() + " en la ruta " + Archivo2.getPath());
             return false;
         }
-        
+
         return true;
     }
 

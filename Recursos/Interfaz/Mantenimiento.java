@@ -86,7 +86,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         jRol = new javax.swing.JLabel();
         jBtnBackup = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/LOGO_MEIA2 p.png"))); // NOI18N
 
@@ -202,6 +202,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                     }
                 }
                 archivo.limpiarArchivo("bitacora");
+                actualizarDescriptor2("usuario");
             }
 
             Login login = new Login();
@@ -367,6 +368,16 @@ public class Mantenimiento extends javax.swing.JFrame {
 
                 try {
                     Files.copy(Paths.get(viejo.getAbsolutePath()), Paths.get(nuevo.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+
+                    if (viejo.isDirectory()) {
+                        String[] Rutas1 = viejo.list();
+                        for (int x = 0; x < Rutas1.length; x++) {
+                            File viejo1 = new File(viejo + "\\" + Rutas1[x]);
+                            File nuevo1 = new File(nuevo + "\\" + Rutas1[x]);
+                            Files.copy(Paths.get(viejo1.getAbsolutePath()), Paths.get(nuevo1.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }
+
                 } catch (Exception e) {
 
                 }
