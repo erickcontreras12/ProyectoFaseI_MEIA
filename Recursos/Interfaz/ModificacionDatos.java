@@ -10,6 +10,9 @@ import Clases.ClaseGeneral;
 import Clases.Usuario;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +40,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
     int inactivos = 0;
     int total = 0;
     List<Usuario> ordenar = new ArrayList<>();
+    File ImagenCopiada;
     /**
      * Creates new form ModificacionDatos
      */
@@ -194,8 +198,9 @@ public class ModificacionDatos extends javax.swing.JFrame {
             dialogo.setFileFilter(filtro);
             int valor = dialogo.showOpenDialog(this);
             if (valor == JFileChooser.APPROVE_OPTION) {
-                ficheroImagen = dialogo.getSelectedFile();
-                rutaArchivo = ficheroImagen.getPath();
+                ficheroImagen = dialogo.getSelectedFile();               
+                Copiar(ficheroImagen);
+                rutaArchivo = ImagenCopiada.getPath();
                 ClaseGeneral.rutaFotografia = rutaArchivo;
             }
             modificarDatosBuscado("foto", rutaArchivo);
@@ -203,6 +208,24 @@ public class ModificacionDatos extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jBtnFotoActionPerformed
 
+     public void Copiar(File origen) {
+
+        String ruta_destino = "C:\\MEIA\\fotos";
+        File ruta = new File(ruta_destino);
+        if (!ruta.exists()) {
+            ruta.mkdir();
+        }
+
+        File nuevo = new File(ruta_destino + "\\" + origen.getName());
+
+        try {
+            Files.copy(Paths.get(origen.getAbsolutePath()), Paths.get(nuevo.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+            ImagenCopiada = new File(ruta_destino + "\\" + origen.getName());
+        } catch (Exception e) {
+
+        }
+    }
+    
     private void jBtnPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnPasswordActionPerformed
         // TODO add your handling code here:
         int opc = JOptionPane.showConfirmDialog(null, "Desea modificar la contraseña?");
