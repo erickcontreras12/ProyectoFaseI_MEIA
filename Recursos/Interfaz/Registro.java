@@ -381,6 +381,7 @@ public class Registro extends javax.swing.JFrame {
                                 archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
                             }
                         }
+                        ordenar.clear();
                         //Se da la reorganizacion
                     } else {
 
@@ -420,7 +421,7 @@ public class Registro extends javax.swing.JFrame {
                                 archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
                             }
                         }
-
+                            ordenar.clear();
                         JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
 
                         Login log = new Login();

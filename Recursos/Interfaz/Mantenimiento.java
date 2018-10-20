@@ -8,6 +8,8 @@ package Interfaz;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Usuario;
+import Clases.Listas;
+import static Interfaz.ModificacionDatos.Encriptar;
 import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
@@ -31,10 +33,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class Mantenimiento extends javax.swing.JFrame {
 
     List<Usuario> ordenar = new ArrayList<>();
+    List<Listas> ordenar2 = new ArrayList<>();
     int activos = 0;
     int inactivos = 0;
     int total = 0;
-
+    public String[] split;
+    boolean existe = false;
     /**
      * Creates new form Mantenimiento
      */
@@ -85,6 +89,8 @@ public class Mantenimiento extends javax.swing.JFrame {
         jFotografia = new javax.swing.JLabel();
         jRol = new javax.swing.JLabel();
         jBtnBackup = new javax.swing.JButton();
+        MisListas = new javax.swing.JButton();
+        CrearLista = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -129,18 +135,34 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         });
 
+        MisListas.setText("Mis Listas");
+        MisListas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MisListasActionPerformed(evt);
+            }
+        });
+
+        CrearLista.setText("Crear Lista");
+        CrearLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CrearListaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(260, Short.MAX_VALUE)
-                .addComponent(jBtnLogOut)
-                .addGap(34, 34, 34))
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(MisListas)
+                        .addGap(1, 1, 1)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -154,7 +176,12 @@ public class Mantenimiento extends javax.swing.JFrame {
                                 .addComponent(jBtnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jBtnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jRol))
-                        .addGap(115, 115, 115))))
+                        .addGap(115, 115, 115))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(CrearLista)
+                        .addGap(27, 27, 27)
+                        .addComponent(jBtnLogOut)
+                        .addGap(34, 34, 34))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,7 +204,10 @@ public class Mantenimiento extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addComponent(jBtnBackup)
                 .addGap(53, 53, 53)
-                .addComponent(jBtnLogOut)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnLogOut)
+                    .addComponent(MisListas)
+                    .addComponent(CrearLista))
                 .addGap(37, 37, 37))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
@@ -271,6 +301,149 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jBtnBackupActionPerformed
 
+    private void CrearListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearListaActionPerformed
+        // TODO add your handling code here:
+        
+        String contenido="";
+         Archivo archivo = new Archivo();
+
+        //
+        /*split representa los datos de la bitacora, esto para poder tener el control
+        y hacer la reorganizacion cuando sea necesario*/
+        split = archivo.leerArchivo("bitacora_lista");
+        String[] descriptor = archivo.leerArchivo("desc_bitacora_lista");       
+        String error = ""; //variable para almacenar el error al escribir un archivo
+        String maxReorganizacion = "";
+        
+        int opc = JOptionPane.showConfirmDialog(null, "Desea crear una nueva lista?");
+        if (opc == 0) {
+            do{
+            existe = false;
+            String lista = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre para su lista");
+            String Desc = JOptionPane.showInputDialog(rootPane, "Ingrese una descripcion para su lista");
+            contenido = llenarContenido(lista,Desc);
+            }while(existe!=false);
+            if (!contenido.equals("")) {
+                            
+                    maxReorganizacion = descriptor[8].substring(19);
+                    //Valida si hay que hacer reorganizacion en la bitacora
+                    if (split!=null) {                                    
+                    if (split.length == Integer.valueOf(maxReorganizacion)) {
+                        String[] listasaux = archivo.leerArchivo("bitacora_lista");
+                        if (listasaux != null) {
+                            for (int i = 0; i < listasaux.length; i++) {
+                                if (listasaux[i] != null) {
+                                    archivo.escribirArchivo("lista", listasaux[i], "");
+                                }
+                            }
+                            archivo.limpiarArchivo("bitacora_lista");
+                            actualizarDescriptor3("bitacora_lista");
+                            actualizarDescriptor3("lista");
+                        }
+                        
+                         String[] listadesordenada = archivo.leerArchivo("lista");
+
+                        for (int i = 0; i < listadesordenada.length; i++) {
+                            if (listadesordenada[i] != null) {
+                                String[] datos = listadesordenada[i].split("\\|");
+                                ordenar2.add(new Listas(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5]));
+                            }
+                        }
+
+                        Collections.sort(ordenar2,Comparator.comparing(Listas::getNombre).
+                        thenComparing(Listas::getUsuario));
+                                                
+                        archivo.limpiarArchivo("lista");
+                        for (int i = 0; i < ordenar2.size(); i++) {
+                            if (ordenar2.get(i) != null) {
+                                archivo.escribirArchivo("lista", ordenar2.get(i).toString(), "");
+                            }
+                        }
+                        ordenar2.clear();
+                    }else{
+                        
+                    }
+                    }
+                     if (archivo.escribirArchivo("bitacora_lista", contenido, error)) {
+                        actualizarDescriptor3("bitacora_lista");
+                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                     }else {
+                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                    }                                
+            }
+                        
+        }
+
+    }//GEN-LAST:event_CrearListaActionPerformed
+
+     /**
+     * Metodo para validar que el usuario llene todo de forma correcta y obtener
+     * los datos si se cumplen todas las restricciones
+     *
+     * @param nombre
+     * @param descripcion
+     * @return
+     */
+    public String llenarContenido(String nombre,String descripcion) {
+        String nuevo = "";             
+        Date fecha = new Date();
+        if (!nombre.equals("")) {
+             if (existeLista(nombre,ClaseGeneral.usuarioActual)) {
+            existe = true;
+             return "Este usuario ya existe, utilice otro";
+        }
+          nuevo = nombre + "|" + ClaseGeneral.usuarioActual + "|" + descripcion + "|"
+                            + "0" + "|"
+                            + fecha.toString()
+                            + "|" + "1" ;
+
+                    return nuevo;
+        }
+        return "";         
+    }
+    
+    public boolean existeLista(String nombre,String usuario) {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0])&& usuario.equals(datos[1])) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee lista
+        listas = archivo.leerArchivo("lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    private void MisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisListasActionPerformed
+        // TODO add your handling code here:
+
+        Lista misListas = new Lista();
+        misListas.show();
+        this.hide();
+
+    }//GEN-LAST:event_MisListasActionPerformed
+
     boolean encontrado = false;
 
     public void buscarUsuario(String usuario) {
@@ -320,7 +493,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
         Date fecha = new Date();
-
+              
         if (split[2].equals("usuario_creacion:")) {
             ClaseGeneral.usuarioActual = jUsuario.getText();
             split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
@@ -337,6 +510,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 archivo.escribirArchivo("desc_" + descriptor, split[i], error);
             }
         }
+        
     }
 
     public int contarRegistros(String nombreArchivo) {
@@ -486,6 +660,54 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
+    
+     public void actualizarDescriptor3(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            ClaseGeneral.usuarioActual = jUsuario.getText();
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarListas(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+    
+    
+     public void contarListas(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[5].equals("1")) {
+                    activos++;
+                } else if (datos[5].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
 
     /**
      * @param args the command line arguments
@@ -524,6 +746,8 @@ public class Mantenimiento extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CrearLista;
+    private javax.swing.JButton MisListas;
     private javax.swing.JButton jBtnActualizacion;
     private javax.swing.JButton jBtnBackup;
     private javax.swing.JButton jBtnBaja;
