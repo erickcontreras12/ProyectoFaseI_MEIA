@@ -437,7 +437,6 @@ public class Mantenimiento extends javax.swing.JFrame {
     
     private void MisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisListasActionPerformed
         // TODO add your handling code here:
-
         Lista misListas = new Lista();
         misListas.show();
         this.hide();

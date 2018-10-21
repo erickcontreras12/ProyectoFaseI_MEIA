@@ -5,17 +5,62 @@
  */
 package Interfaz;
 
+import Clases.Archivo;
+import Clases.ClaseGeneral;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author fabia
  */
 public class Lista extends javax.swing.JFrame {
 
+    String lista;
+
     /**
      * Creates new form Lista
      */
     public Lista() {
         initComponents();
+        MostrarListas(ClaseGeneral.usuarioActual);
+    }
+
+    public void MostrarListas(String usuario) {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        DefaultListModel modelo = new DefaultListModel();
+        for (int i = 1; i <= 10; i++) {
+
+        }
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                    if (usuario.equals(datos[1])) {
+                        modelo.addElement(datos[0]);
+
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee lista
+        listas = archivo.leerArchivo("lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (usuario.equals(datos[1])) {
+                        modelo.addElement(datos[0]);
+
+                    }
+                }
+            }
+        }
+        TodasListas.setModel(modelo);
     }
 
     /**
@@ -28,31 +73,52 @@ public class Lista extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        TodasListas = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        agregar = new javax.swing.JButton();
+        actual_lista = new javax.swing.JLabel();
         lista_actual = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        eliminar1 = new javax.swing.JButton();
+        eliminartodos = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        usuarios_lista = new javax.swing.JList<>();
+        jButton4 = new javax.swing.JButton();
+        seleccionar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jScrollPane1.setViewportView(jList1);
+        jScrollPane1.setViewportView(TodasListas);
 
         jLabel1.setText("Listas");
 
-        jButton1.setText("Añadir");
+        agregar.setText("Añadir");
+        agregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarActionPerformed(evt);
+            }
+        });
 
-        jLabel2.setText("Lista Actual");
+        actual_lista.setText("Lista Actual");
 
-        jButton2.setText("Eliminar amigo");
+        eliminar1.setText("Eliminar amigo");
 
-        jButton3.setText("Eliminar Lista");
+        eliminartodos.setText("Eliminar Lista");
 
-        jScrollPane2.setViewportView(jList2);
+        jScrollPane2.setViewportView(usuarios_lista);
+
+        jButton4.setText("Atras");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        seleccionar.setText("Seleccionar");
+        seleccionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seleccionarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -61,20 +127,28 @@ public class Lista extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
+                    .addComponent(actual_lista)
+                    .addComponent(seleccionar)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(agregar)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(99, 99, 99)
-                        .addComponent(lista_actual, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6)
+                        .addComponent(eliminar1)
+                        .addGap(30, 30, 30)
+                        .addComponent(eliminartodos)
+                        .addGap(29, 29, 29)
+                        .addComponent(jButton4))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(78, 78, 78)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lista_actual, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -82,26 +156,49 @@ public class Lista extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(26, 26, 26)
+                        .addComponent(seleccionar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lista_actual)
+                    .addComponent(actual_lista)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lista_actual)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(agregar)
+                    .addComponent(eliminar1)
+                    .addComponent(eliminartodos)
+                    .addComponent(jButton4))
                 .addGap(27, 27, 27))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+
+        Mantenimiento cambio = new Mantenimiento();
+        cambio.show();
+        this.hide();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void seleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarActionPerformed
+        // TODO add your handling code here:
+        actual_lista.setText(TodasListas.getSelectedValue());
+        lista = actual_lista.getText();
+    }//GEN-LAST:event_seleccionarActionPerformed
+
+    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_agregarActionPerformed
+
+   
+    
     /**
      * @param args the command line arguments
      */
@@ -138,15 +235,17 @@ public class Lista extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JList<String> TodasListas;
+    private javax.swing.JLabel actual_lista;
+    private javax.swing.JButton agregar;
+    private javax.swing.JButton eliminar1;
+    private javax.swing.JButton eliminartodos;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JList<String> jList2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lista_actual;
+    private javax.swing.JButton seleccionar;
+    private javax.swing.JList<String> usuarios_lista;
     // End of variables declaration//GEN-END:variables
 }
