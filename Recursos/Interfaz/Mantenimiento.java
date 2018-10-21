@@ -38,7 +38,7 @@ public class Mantenimiento extends javax.swing.JFrame {
     int inactivos = 0;
     int total = 0;
     public String[] split;
-    boolean existe = false;
+    boolean existe = false;     //validar la existencia de la lista
     /**
      * Creates new form Mantenimiento
      */
@@ -274,6 +274,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         this.hide();
     }//GEN-LAST:event_jBtnActualizacionActionPerformed
 
+    
     private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
         // TODO add your handling code here:
         JFileChooser dialogo = new JFileChooser();
@@ -301,6 +302,7 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jBtnBackupActionPerformed
 
+    //metodo para crear nueva lista
     private void CrearListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearListaActionPerformed
         // TODO add your handling code here:
         
@@ -319,8 +321,8 @@ public class Mantenimiento extends javax.swing.JFrame {
         if (opc == 0) {
             do{
             existe = false;
-            String lista = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre para su lista");
-            String Desc = JOptionPane.showInputDialog(rootPane, "Ingrese una descripcion para su lista");
+            String lista = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre para su lista");        //pide nombre
+            String Desc = JOptionPane.showInputDialog(rootPane, "Ingrese una descripcion para su lista");   //pide descripcion
             contenido = llenarContenido(lista,Desc);
             }while(existe!=false);
             if (!contenido.equals("")) {
@@ -350,6 +352,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                             }
                         }
 
+                        //Comparador de dos criterios, nombre y usuario
                         Collections.sort(ordenar2,Comparator.comparing(Listas::getNombre).
                         thenComparing(Listas::getUsuario));
                                                 
@@ -359,6 +362,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                                 archivo.escribirArchivo("lista", ordenar2.get(i).toString(), "");
                             }
                         }
+                        //limpia los datos que acaba de ordenar
                         ordenar2.clear();
                     }else{
                         
@@ -388,9 +392,9 @@ public class Mantenimiento extends javax.swing.JFrame {
         String nuevo = "";             
         Date fecha = new Date();
         if (!nombre.equals("")) {
-             if (existeLista(nombre,ClaseGeneral.usuarioActual)) {
+             if (existeLista(nombre,ClaseGeneral.usuarioActual)) {  //valida que ese usario no tenga una lista con ese nombre
             existe = true;
-             return "Este usuario ya existe, utilice otro";
+             return "Esta lista ya existe, utilice otra";
         }
           nuevo = nombre + "|" + ClaseGeneral.usuarioActual + "|" + descripcion + "|"
                             + "0" + "|"
@@ -401,7 +405,12 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         return "";         
     }
-    
+    /**
+     * Valida la existencia de esa lista
+     * @param nombre
+     * @param usuario
+     * @return 
+     */
     public boolean existeLista(String nombre,String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -434,7 +443,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         return false;
     }
-    
+    //Muestra la otra ventana de lista
     private void MisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisListasActionPerformed
         // TODO add your handling code here:
         Lista misListas = new Lista();
@@ -526,7 +535,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         nuevo = ClaseGeneral.rutaDestino + "|" + ClaseGeneral.usuarioActual + "|" + fecha.toString();
         return nuevo;
     }
-
+    //Copiar la foto de cualquier parte a la carpeta de MEIA
     public void Copiar(File origen, File destino) {
         if (origen.isDirectory()) {
             String[] Rutas = origen.list();
@@ -659,7 +668,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-    
+    //Actualiza el descriptor de lista
      public void actualizarDescriptor3(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
@@ -686,7 +695,10 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
     }
     
-    
+    /**
+     * Cuenta cuantos activos e inactivos tiene los archivos de lista
+     * @param nombreArchivo 
+     */
      public void contarListas(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);

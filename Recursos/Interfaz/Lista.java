@@ -24,7 +24,7 @@ public class Lista extends javax.swing.JFrame {
         initComponents();
         MostrarListas(ClaseGeneral.usuarioActual);
     }
-
+    //metodo para ir a leer bitacora y archivo de lista
     public void MostrarListas(String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -186,6 +186,7 @@ public class Lista extends javax.swing.JFrame {
         this.hide();
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    //metodo para seleccionar el item de la lista
     private void seleccionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seleccionarActionPerformed
         // TODO add your handling code here:
         actual_lista.setText(TodasListas.getSelectedValue());
