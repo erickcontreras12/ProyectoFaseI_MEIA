@@ -245,8 +245,8 @@ public class Mantenimiento extends javax.swing.JFrame {
                     }
                 }
                 archivo.limpiarArchivo("bitacora_lista");
-                actualizarDescriptor4("lista");
-                actualizarDescriptor4("bitacora_lista");
+                actualizarDescriptor3("lista");
+                actualizarDescriptor3("bitacora_lista");
             }
 
             Login login = new Login();
@@ -667,32 +667,6 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
     }
 
-    public void actualizarDescriptor4(String descriptor) {
-        Archivo archivo = new Archivo();
-        String[] split = archivo.leerArchivo("desc_" + descriptor);
-        Date fecha = new Date();
-
-        if (split[2].equals("usuario_creacion:")) {
-            ClaseGeneral.usuarioActual = jUsuario.getText();
-            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
-        }
-        split[3] = "fecha_modificacion:" + fecha.toString();
-        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
-        //calcula el total de usuarios en el archivo original
-        contarUsuarios2(descriptor);
-        split[5] = "#_registros:" + total;
-        split[6] = "registro_activos:" + activos;
-        split[7] = "registro_inactivos:" + inactivos;
-
-        String error = "";
-        archivo.limpiarArchivo("desc_" + descriptor);
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
-            }
-        }
-    }
-
     public void contarUsuarios(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);
@@ -715,26 +689,6 @@ public class Mantenimiento extends javax.swing.JFrame {
         total = activos + inactivos;
     }
 
-    public void contarUsuarios2(String nombreArchivo) {
-        Archivo archivo = new Archivo();
-        String[] split = archivo.leerArchivo(nombreArchivo);
-
-        activos = 0;
-        inactivos = 0;
-        if (split != null) {
-            for (int i = 0; i < split.length; i++) {
-                if (split[i] != null) {
-                    String[] datos = split[i].split("\\|");
-                    if (datos[5].equals("1")) {
-                        activos++;
-                    } else if (datos[5].equals("0")) {
-                        inactivos++;
-                    }
-                }
-            }
-        }
-        total = activos + inactivos;
-    }
 
     //Actualiza el descriptor de lista
     public void actualizarDescriptor3(String descriptor) {
