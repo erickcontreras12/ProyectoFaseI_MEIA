@@ -206,6 +206,7 @@ public class Lista extends javax.swing.JFrame {
         // TODO add your handling code here:
         actual_lista.setText(TodasListas.getSelectedValue());
         lista = actual_lista.getText();
+        buscarMiembros(lista);
     }//GEN-LAST:event_seleccionarActionPerformed
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
@@ -275,26 +276,7 @@ public class Lista extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eliminar1ActionPerformed
 
-    public String obtenerAmigos(String nombre, String usuario) {
-        Archivo archivo = new Archivo();
-        DefaultListModel modelo = new DefaultListModel();
-        String[] datos;
-        //Lee la bitacora para hacer una busqueda en esta
-        String[] listas = archivo.leerArchivo("indice_lista_usuario");
-        if (listas != null) {
-            for (int i = 0; i < listas.length; i++) {
-                if (listas[i] != null) {
-                    datos = listas[i].split("\\|");
-                    if (nombre.equals(datos[2]) && usuario.equals(datos[3])) {
-                        modelo.addElement(datos[4]);
-                        i = Integer.parseInt(datos[5]);
-                    }
-                }
-            }
-        }
-        return "";
-    }
-
+    
     public String[] obtenerLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -326,6 +308,41 @@ public class Lista extends javax.swing.JFrame {
             }
         }
         return null;
+    }
+    
+    public void buscarMiembros(String nombreLista){
+        Archivo archivo = new Archivo();
+        String[] usuarios = archivo.leerArchivo("indice_lista_usuario");
+        String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
+        String inicio = descriptor[5].substring(16);
+        DefaultListModel modelo = new DefaultListModel();
+        
+        int siguiente = Integer.valueOf(inicio);
+        while(siguiente != 0){
+            String[] actual = obtenerActual(siguiente);
+            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual)) {
+                modelo.addElement(actual[4]);
+            }
+            
+            siguiente = Integer.valueOf(actual[5]);
+        }
+        
+        usuarios_lista.setModel(modelo);
+    }
+    
+    public String[] obtenerActual(int registro){
+        Archivo archivo = new Archivo();
+        String[] listado = archivo.leerArchivo("indice_lista_usuario");
+        String[] datos = null;
+        for (int i = 0; i < listado.length; i++) {
+            if (listado[i] != null) {
+                datos = listado[i].split("\\|");
+                if (datos[0].equals(String.valueOf(registro))) {
+                    return datos;
+                }
+            }
+        }
+        return datos;
     }
 
     public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
