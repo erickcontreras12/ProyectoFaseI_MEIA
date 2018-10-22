@@ -16,8 +16,10 @@ import javax.swing.JOptionPane;
  * @author fabia
  */
 public class Lista extends javax.swing.JFrame {
+
     boolean encontrado;
     String lista;
+    String[] indice;
     int activos = 0;
     int inactivos = 0;
     int total = 0;
@@ -213,26 +215,30 @@ public class Lista extends javax.swing.JFrame {
             if (opc == 0) {
                 Archivo archivo = new Archivo();
                 Date fecha = new Date();
-                String[] datos_lista = obtenerLista(lista,ClaseGeneral.usuarioActual);
+                String[] datos_lista = obtenerLista(lista, ClaseGeneral.usuarioActual);
                 String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
                 buscarUsuario(usuario_asociado);
                 if (encontrado) {
-                    String contenido = lista+"|"+ClaseGeneral.usuarioActual+"|"+usuario_asociado+"|"+datos_lista[2]+"|"+fecha.toString()+"|"+1;
+                    String contenido = lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + datos_lista[2] + "|" + fecha.toString() + "|" + 1;
                     archivo.leerArchivo("lista_usuario");
                     //Archivo bloque
                     archivo.escribirArchivo("lista_usuario", contenido, "");
                     actualizarDescriptor("lista_usuario");
-                    
+
                     //Archivo indexado
-                    archivo.leerArchivo("indice_lista_usuario");
-                    String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
-                    String cant_registros = bitacora_indexado[6].substring(12);
-                    int numRegistro = Integer.valueOf(cant_registros);
-                    contenido = numRegistro + "|" + "posicion" + "|" +lista+ "|" + ClaseGeneral.usuarioActual+ "|" + usuario_asociado + "|" + "siguiente" + "|" + 1;
-                    archivo.escribirArchivo("indice_lista_usuario", contenido, "");
-                    actualizarDescriptor2("indice_lista_usuario");
-                    //Actualiza el valor de miembros en la lista
-                    
+                    int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
+                    if (posicion >= 0) {
+                        indice = archivo.leerArchivo("indice_lista_usuario");
+                        String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
+                        String cant_registros = bitacora_indexado[6].substring(12);
+                        int numRegistro = Integer.valueOf(cant_registros) + 1;
+                        //
+                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + "siguiente" + "|" + 1;
+                        archivo.escribirArchivo("indice_lista_usuario", contenido, "");
+                        actualizarDescriptor2("indice_lista_usuario");
+                        //Actualiza el valor de miembros en la lista
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
                 }
@@ -290,8 +296,38 @@ public class Lista extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    
+
+    public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
+        //opc 0 es para cuando se agrega un usuario y opc 1 cuando se elimina
+        if (opc == 0) {
+
+        }
+    }
+
+    /**
+     * Metodo para obtener la posicion del usuario asociado en una lista en el
+     * bloque de lista usuario
+     *
+     * @param nombre
+     * @param usuario
+     * @param usuario_asociado
+     * @return
+     */
+    public int obtenerPosicionEnBloque(String nombre, String usuario, String usuario_asociado) {
+        Archivo archivo = new Archivo();
+        int posicion = -1;
+        String[] usuarios = archivo.leerArchivo("lista_usuario");
+        for (int i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] != null) {
+                String[] datos = usuarios[i].split("\\|");
+                if (datos[0].equals(nombre) && datos[1].equals(usuario) && datos[2].equals(usuario_asociado)) {
+                    posicion = i;
+                }
+            }
+        }
+        return posicion;
+    }
+
     public void buscarUsuario(String usuario) {
         Archivo archivo = new Archivo();
         encontrado = false;
@@ -329,14 +365,14 @@ public class Lista extends javax.swing.JFrame {
             }
         }
     }
-    
+
     public void actualizarDescriptor(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
         Date fecha = new Date();
 
         if (split[2].equals("usuario_creacion:")) {
-            
+
             split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
         }
         split[3] = "fecha_modificacion:" + fecha.toString();
@@ -355,18 +391,49 @@ public class Lista extends javax.swing.JFrame {
             }
         }
     }
-    
+
     public void actualizarDescriptor2(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
+        String[] datos = archivo.leerArchivo(descriptor);
         Date fecha = new Date();
 
         if (split[2].equals("usuario_creacion:")) {
-            
+
             split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
         }
         split[3] = "fecha_modificacion:" + fecha.toString();
         split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        
+        //busca en donde esta el menor para ponerle el inicio
+        int comparador = 10;
+        String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
+        for (int i = 0; i < datos.length; i++) {
+            if (datos[i] != null) {
+                String[] aux = datos[i].split("\\|");
+                //Nombre de la lista
+                comparador = inicio[2].compareTo(aux[2]);
+                //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
+                if (comparador == 0) {
+                    //Usuario propietario de la lsita
+                    comparador = inicio[3].compareTo(aux[3]);
+                    //Si es el mismo usuario para el siguiente criterio
+                    if (comparador == 0) {
+                        //Usuario asociado a la lista
+                        comparador = inicio[4].compareTo(aux[4]);
+                        if (comparador >= 1) {
+                            inicio = aux;
+                        }
+                    }else if(comparador >= 1){
+                        inicio = aux;
+                    }
+                }else if(comparador >= 1){
+                    inicio = aux;
+                }
+            }
+        }
+        
+        split[5] = "inicio_registro:" + inicio[0];
         //calcula el total de usuarios en el archivo original
         contarUsuarios2(descriptor);
         split[6] = "#_registros:" + total;
@@ -401,8 +468,8 @@ public class Lista extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-    
-     public void contarUsuarios2(String nombreArchivo) {
+
+    public void contarUsuarios2(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);
 
@@ -421,10 +488,10 @@ public class Lista extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-    
-    
+
     public void actualizarDatos() {
-        Archivo archivo = new Archivo(); boolean estaEnBitacora = false;
+        Archivo archivo = new Archivo();
+        boolean estaEnBitacora = false;
         String[] datosLista = null, split = null, splitaux = null, cambiar = null;
 
         int posicion = 0;
@@ -438,7 +505,7 @@ public class Lista extends javax.swing.JFrame {
                     posicion = i;
                     splitaux[posicion] = "";
                     cambiar = datosLista;
-                    
+
                 } else {
                     splitaux[i] = split[i];
                 }
@@ -470,6 +537,7 @@ public class Lista extends javax.swing.JFrame {
         }
 
     }
+
     /**
      * @param args the command line arguments
      */
