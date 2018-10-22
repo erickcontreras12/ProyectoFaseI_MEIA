@@ -352,29 +352,28 @@ public class Lista extends javax.swing.JFrame {
             Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
                     thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
 
-            String[] cambios;
+            String[] cambios, cambios2;
             for (int i = 0; i < listas.length; i++) {
                 if (listas[i] != null) {
                     cambios = ordenada.get(i).toString().split("\\|");
                     Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
-                    Indice aux2;
                     int pos2 = 0;
                     for (int j = 0; j < original.size(); j++) {
-                        if (original.get(j).equals(aux)) {
+                        if (original.get(j).toString().equals(aux.toString())) {
                             pos2 = j;
                         }
                     }
                     if (i + 1 < ordenada.size()) {
-                        cambios = ordenada.get(i + 1).toString().split("\\|");
-                        aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                        cambios2 = ordenada.get(i + 1).toString().split("\\|");
+                        aux = new Indice(cambios2[0], cambios2[1], cambios2[2], cambios2[3], cambios2[4], cambios2[5], cambios2[6]);
                         Integer cambio = 0;
                         for (int z = 0; z < original.size(); z++) {
-                            if (original.get(z).equals(aux2)) {
-                                cambio = z;
+                            if (original.get(z).toString().equals(aux.toString())) {
+                                cambio = z + 1;
                             }
                         }
-                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
-                        original.set(pos2, aux);
+                        Indice aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
+                        original.set(pos2, aux2);
                     } else {
                         aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
                         original.set(pos2, aux);
