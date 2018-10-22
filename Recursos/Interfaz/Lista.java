@@ -219,8 +219,20 @@ public class Lista extends javax.swing.JFrame {
                 if (encontrado) {
                     String contenido = lista+"|"+ClaseGeneral.usuarioActual+"|"+usuario_asociado+"|"+datos_lista[2]+"|"+fecha.toString()+"|"+1;
                     archivo.leerArchivo("lista_usuario");
+                    //Archivo bloque
                     archivo.escribirArchivo("lista_usuario", contenido, "");
                     actualizarDescriptor("lista_usuario");
+                    
+                    //Archivo indexado
+                    archivo.leerArchivo("indice_lista_usuario");
+                    String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
+                    String cant_registros = bitacora_indexado[6].substring(12);
+                    int numRegistro = Integer.valueOf(cant_registros);
+                    contenido = numRegistro + "|" + "posicion" + "|" +lista+ "|" + ClaseGeneral.usuarioActual+ "|" + usuario_asociado + "|" + "siguiente" + "|" + 1;
+                    archivo.escribirArchivo("indice_lista_usuario", contenido, "");
+                    actualizarDescriptor2("indice_lista_usuario");
+                    //Actualiza el valor de miembros en la lista
+                    
                 } else {
                     JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
                 }
@@ -343,6 +355,32 @@ public class Lista extends javax.swing.JFrame {
             }
         }
     }
+    
+    public void actualizarDescriptor2(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios2(descriptor);
+        split[6] = "#_registros:" + total;
+        split[7] = "registro_activos:" + activos;
+        split[8] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
 
     public void contarUsuarios(String nombreArchivo) {
         Archivo archivo = new Archivo();
@@ -362,6 +400,75 @@ public class Lista extends javax.swing.JFrame {
             }
         }
         total = activos + inactivos;
+    }
+    
+     public void contarUsuarios2(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[6].equals("1")) {
+                    activos++;
+                } else if (datos[6].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+    
+    
+    public void actualizarDatos() {
+        Archivo archivo = new Archivo(); boolean estaEnBitacora = false;
+        String[] datosLista = null, split = null, splitaux = null, cambiar = null;
+
+        int posicion = 0;
+
+        split = archivo.leerArchivo("bitacora_lista");
+        splitaux = split;
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                datosLista = split[i].split("\\|");
+                if (datosLista[0].equals(lista)) {
+                    posicion = i;
+                    splitaux[posicion] = "";
+                    cambiar = datosLista;
+                    
+                } else {
+                    splitaux[i] = split[i];
+                }
+            }
+        }
+
+        cambiar[3] = "0";
+
+        //Rearma la linea de los datos del usuario
+        String cadena = "";
+        for (int i = 0; i < cambiar.length; i++) {
+            if (i == cambiar.length - 1) {
+                cadena += cambiar[i];
+                break;
+            }
+            cadena += cambiar[i] + "|";
+        }
+
+        splitaux[posicion] = cadena;
+
+        //Rearma todo el contenido del split para escribirlo en el archivo
+        archivo.limpiarArchivo("usuario");
+        String error = "";
+        cadena = "";
+        for (int i = 0; i < splitaux.length; i++) {
+            if (splitaux[i] != null) {
+                archivo.escribirArchivo2("usuario", splitaux[i], error);
+            }
+        }
+
     }
     /**
      * @param args the command line arguments
