@@ -7,6 +7,11 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Indice;
+import Clases.Listas;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -36,10 +41,7 @@ public class Lista extends javax.swing.JFrame {
     public void MostrarListas(String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
-        DefaultListModel modelo = new DefaultListModel();
-        for (int i = 1; i <= 10; i++) {
-
-        }
+        DefaultListModel modelo = new DefaultListModel();    
         //Lee la bitacora para hacer una busqueda en esta
         String[] listas = archivo.leerArchivo("bitacora_lista");
         if (listas != null) {
@@ -208,6 +210,7 @@ public class Lista extends javax.swing.JFrame {
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
         // TODO add your handling code here:
+         
         if (actual_lista.getText().equals("Lista Actual")) {
             JOptionPane.showMessageDialog(null, "Debe seleccionar una lista primero");
         } else {
@@ -224,7 +227,7 @@ public class Lista extends javax.swing.JFrame {
                     //Archivo bloque
                     archivo.escribirArchivo("lista_usuario", contenido, "");
                     actualizarDescriptor("lista_usuario");
-
+                    
                     //Archivo indexado
                     int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
                     if (posicion >= 0) {
@@ -232,8 +235,12 @@ public class Lista extends javax.swing.JFrame {
                         String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
                         String cant_registros = bitacora_indexado[6].substring(12);
                         int numRegistro = Integer.valueOf(cant_registros) + 1;
+                        int siguiente = 0;
+                        if (numRegistro==1) {
+                            siguiente = 0;
+                        }
                         //
-                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + "siguiente" + "|" + 1;
+                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" +siguiente+ "|" + 1;
                         archivo.escribirArchivo("indice_lista_usuario", contenido, "");
                         actualizarDescriptor2("indice_lista_usuario");
                         //Actualiza el valor de miembros en la lista
@@ -264,6 +271,26 @@ public class Lista extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eliminar1ActionPerformed
 
+     public String obtenerAmigos(String nombre, String usuario) {
+        Archivo archivo = new Archivo();
+        DefaultListModel modelo = new DefaultListModel();   
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("indice_lista_usuario");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                    if (nombre.equals(datos[2]) && usuario.equals(datos[3])) {
+                        modelo.addElement(datos[4]);
+                        i = Integer.parseInt(datos[5]);
+                    }
+                }
+            }
+        }     
+        return "";
+    }
+    
     public String[] obtenerLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -299,6 +326,42 @@ public class Lista extends javax.swing.JFrame {
 
     public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
         //opc 0 es para cuando se agrega un usuario y opc 1 cuando se elimina
+        Archivo archivo = new Archivo();
+        DefaultListModel modelo = new DefaultListModel();  
+        ArrayList<Indice> original = new ArrayList<>();
+        ArrayList<Indice> ordenada = new ArrayList<>();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("indice_lista_usuario");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                   original.add(new Indice(datos[0],datos[1],datos[2],datos[3],datos[4],datos[5],datos[6]));                      
+                }
+            }
+        }
+        for (int i = 0; i < original.size(); i++) {
+            ordenada.add(original.get(i));
+        }
+        Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
+                                thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
+
+        
+        String[] cambios;
+        for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    cambios = ordenada.get(i).toString().split("\\|");
+                    Indice aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambios[5],cambios[6]);                                     
+                    int pos2 = original.indexOf(aux);
+                    cambios = ordenada.get(i+1).toString().split("\\|");
+                    aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambios[5],cambios[6]);
+                    Integer cambio = original.indexOf(aux);
+                    aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambio.toString(),cambios[6]);
+                    original.add(pos2,aux);                                     
+                }
+            }
+        
         if (opc == 0) {
 
         }
