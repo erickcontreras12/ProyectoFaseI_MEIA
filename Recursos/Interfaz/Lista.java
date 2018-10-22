@@ -7,15 +7,20 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.util.Date;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author fabia
  */
 public class Lista extends javax.swing.JFrame {
-
+    boolean encontrado;
     String lista;
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
 
     /**
      * Creates new form Lista
@@ -24,6 +29,7 @@ public class Lista extends javax.swing.JFrame {
         initComponents();
         MostrarListas(ClaseGeneral.usuarioActual);
     }
+
     //metodo para ir a leer bitacora y archivo de lista
     public void MostrarListas(String usuario) {
         Archivo archivo = new Archivo();
@@ -101,6 +107,11 @@ public class Lista extends javax.swing.JFrame {
         actual_lista.setText("Lista Actual");
 
         eliminar1.setText("Eliminar amigo");
+        eliminar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminar1ActionPerformed(evt);
+            }
+        });
 
         eliminartodos.setText("Eliminar Lista");
 
@@ -195,11 +206,163 @@ public class Lista extends javax.swing.JFrame {
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
         // TODO add your handling code here:
-        
+        if (actual_lista.getText().equals("Lista Actual")) {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una lista primero");
+        } else {
+            int opc = JOptionPane.showConfirmDialog(null, "Desea ingresar en " + lista + "?");
+            if (opc == 0) {
+                Archivo archivo = new Archivo();
+                Date fecha = new Date();
+                String[] datos_lista = obtenerLista(lista,ClaseGeneral.usuarioActual);
+                String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
+                buscarUsuario(usuario_asociado);
+                if (encontrado) {
+                    String contenido = lista+"|"+ClaseGeneral.usuarioActual+"|"+usuario_asociado+"|"+datos_lista[2]+"|"+fecha.toString()+"|"+1;
+                    archivo.leerArchivo("lista_usuario");
+                    archivo.escribirArchivo("lista_usuario", contenido, "");
+                    actualizarDescriptor("lista_usuario");
+                } else {
+                    JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                }
+            }
+        }
     }//GEN-LAST:event_agregarActionPerformed
 
-   
+    private void eliminar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminar1ActionPerformed
+        // TODO add your handling code here:
+        if (actual_lista.getText().equals("Lista Actual")) {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una lista primero");
+        } else {
+            int opc = JOptionPane.showConfirmDialog(null, "Desea ingresar en " + lista + "?");
+            if (opc == 0) {
+                String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
+                buscarUsuario(usuario_asociado);
+                if (encontrado) {
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                }
+            }
+        }
+    }//GEN-LAST:event_eliminar1ActionPerformed
+
+    public String[] obtenerLista(String nombre, String usuario) {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        return datos;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee lista
+        listas = archivo.leerArchivo("lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        return datos;
+                    }
+                }
+            }
+        }
+        return null;
+    }
     
+    
+    public void buscarUsuario(String usuario) {
+        Archivo archivo = new Archivo();
+        encontrado = false;
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+                    if (usuario.equals(datos[0])) {
+                        encontrado = true;
+                        ClaseGeneral.datosUsuarioBuscado = datos;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee usuarios
+        if (!encontrado) {
+            usuarios = null;
+            usuarios = archivo.leerArchivo("usuario");
+            if (usuarios != null) {
+                for (int i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i] != null) {
+                        datos = usuarios[i].split("\\|");
+                        if (usuario.equals(datos[0])) {
+                            encontrado = true;
+                            ClaseGeneral.datosUsuarioBuscado = datos;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void actualizarDescriptor(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    public void contarUsuarios(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[5].equals("1")) {
+                    activos++;
+                } else if (datos[5].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
     /**
      * @param args the command line arguments
      */

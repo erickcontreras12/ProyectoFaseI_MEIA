@@ -316,7 +316,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
             for (int i = 0; i < usuarios.length; i++) {
                 if (usuarios[i] != null) {
                     datos = usuarios[i].split("\\|");
-                    if (usuario.equals(datos[1])) {
+                    if (usuario.equals(datos[0])) {
                         encontrado = true;
                         ClaseGeneral.datosUsuarioBuscado = datos;
                         break;
@@ -333,7 +333,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
                 for (int i = 0; i < usuarios.length; i++) {
                     if (usuarios[i] != null) {
                         datos = usuarios[i].split("\\|");
-                        if (usuario.equals(datos[1])) {
+                        if (usuario.equals(datos[0])) {
                             encontrado = true;
                             ClaseGeneral.datosUsuarioBuscado = datos;
                             break;

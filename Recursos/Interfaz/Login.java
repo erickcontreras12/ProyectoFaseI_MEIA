@@ -154,7 +154,7 @@ public class Login extends javax.swing.JFrame {
                         //Valida si el password es correcto
                         if (pass.equals(jPassword.getText())) {
                             //Ya que valida que todo bien, todo correcto, ingresa
-                            ClaseGeneral.usuarioActual = datosUsuario[1];
+                            ClaseGeneral.usuarioActual = datosUsuario[0];
                             ClaseGeneral.rol = datosUsuario[4];
                             ClaseGeneral.rutaFotografia = datosUsuario[8];
                             ClaseGeneral.usuario = datosUsuario[0];

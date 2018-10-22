@@ -39,6 +39,7 @@ public class Mantenimiento extends javax.swing.JFrame {
     int total = 0;
     public String[] split;
     boolean existe = false;     //validar la existencia de la lista
+
     /**
      * Creates new form Mantenimiento
      */
@@ -233,6 +234,19 @@ public class Mantenimiento extends javax.swing.JFrame {
                 }
                 archivo.limpiarArchivo("bitacora");
                 actualizarDescriptor2("usuario");
+                actualizarDescriptor2("bitacora");
+            }
+
+            String[] listas = archivo.leerArchivo("bitacora_lista");
+            if (listas != null) {
+                for (int i = 0; i < listas.length; i++) {
+                    if (listas[i] != null) {
+                        archivo.escribirArchivo("lista", listas[i], "");
+                    }
+                }
+                archivo.limpiarArchivo("bitacora_lista");
+                actualizarDescriptor4("lista");
+                actualizarDescriptor4("bitacora_lista");
             }
 
             Login login = new Login();
@@ -274,7 +288,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         this.hide();
     }//GEN-LAST:event_jBtnActualizacionActionPerformed
 
-    
+
     private void jBtnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackupActionPerformed
         // TODO add your handling code here:
         JFileChooser dialogo = new JFileChooser();
@@ -305,31 +319,31 @@ public class Mantenimiento extends javax.swing.JFrame {
     //metodo para crear nueva lista
     private void CrearListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearListaActionPerformed
         // TODO add your handling code here:
-        
-        String contenido="";
-         Archivo archivo = new Archivo();
+
+        String contenido = "";
+        Archivo archivo = new Archivo();
 
         //
         /*split representa los datos de la bitacora, esto para poder tener el control
         y hacer la reorganizacion cuando sea necesario*/
         split = archivo.leerArchivo("bitacora_lista");
-        String[] descriptor = archivo.leerArchivo("desc_bitacora_lista");       
+        String[] descriptor = archivo.leerArchivo("desc_bitacora_lista");
         String error = ""; //variable para almacenar el error al escribir un archivo
         String maxReorganizacion = "";
-        
+
         int opc = JOptionPane.showConfirmDialog(null, "Desea crear una nueva lista?");
         if (opc == 0) {
-            do{
-            existe = false;
-            String lista = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre para su lista");        //pide nombre
-            String Desc = JOptionPane.showInputDialog(rootPane, "Ingrese una descripcion para su lista");   //pide descripcion
-            contenido = llenarContenido(lista,Desc);
-            }while(existe!=false);
+            do {
+                existe = false;
+                String lista = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre para su lista");        //pide nombre
+                String Desc = JOptionPane.showInputDialog(rootPane, "Ingrese una descripcion para su lista");   //pide descripcion
+                contenido = llenarContenido(lista, Desc);
+            } while (existe != false);
             if (!contenido.equals("")) {
-                            
-                    maxReorganizacion = descriptor[8].substring(19);
-                    //Valida si hay que hacer reorganizacion en la bitacora
-                    if (split!=null) {                                    
+
+                maxReorganizacion = descriptor[8].substring(19);
+                //Valida si hay que hacer reorganizacion en la bitacora
+                if (split != null) {
                     if (split.length == Integer.valueOf(maxReorganizacion)) {
                         String[] listasaux = archivo.leerArchivo("bitacora_lista");
                         if (listasaux != null) {
@@ -342,8 +356,8 @@ public class Mantenimiento extends javax.swing.JFrame {
                             actualizarDescriptor3("bitacora_lista");
                             actualizarDescriptor3("lista");
                         }
-                        
-                         String[] listadesordenada = archivo.leerArchivo("lista");
+
+                        String[] listadesordenada = archivo.leerArchivo("lista");
 
                         for (int i = 0; i < listadesordenada.length; i++) {
                             if (listadesordenada[i] != null) {
@@ -353,9 +367,9 @@ public class Mantenimiento extends javax.swing.JFrame {
                         }
 
                         //Comparador de dos criterios, nombre y usuario
-                        Collections.sort(ordenar2,Comparator.comparing(Listas::getNombre).
-                        thenComparing(Listas::getUsuario));
-                                                
+                        Collections.sort(ordenar2, Comparator.comparing(Listas::getNombre).
+                                thenComparing(Listas::getUsuario));
+
                         archivo.limpiarArchivo("lista");
                         for (int i = 0; i < ordenar2.size(); i++) {
                             if (ordenar2.get(i) != null) {
@@ -364,23 +378,23 @@ public class Mantenimiento extends javax.swing.JFrame {
                         }
                         //limpia los datos que acaba de ordenar
                         ordenar2.clear();
-                    }else{
-                        
+                    } else {
+
                     }
-                    }
-                     if (archivo.escribirArchivo("bitacora_lista", contenido, error)) {
-                        actualizarDescriptor3("bitacora_lista");
-                        JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
-                     }else {
-                        JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
-                    }                                
+                }
+                if (archivo.escribirArchivo("bitacora_lista", contenido, error)) {
+                    actualizarDescriptor3("bitacora_lista");
+                    JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Se produjo el siguiente el error  " + error, "Error", WIDTH);
+                }
             }
-                        
+
         }
 
     }//GEN-LAST:event_CrearListaActionPerformed
 
-     /**
+    /**
      * Metodo para validar que el usuario llene todo de forma correcta y obtener
      * los datos si se cumplen todas las restricciones
      *
@@ -388,30 +402,32 @@ public class Mantenimiento extends javax.swing.JFrame {
      * @param descripcion
      * @return
      */
-    public String llenarContenido(String nombre,String descripcion) {
-        String nuevo = "";             
+    public String llenarContenido(String nombre, String descripcion) {
+        String nuevo = "";
         Date fecha = new Date();
         if (!nombre.equals("")) {
-             if (existeLista(nombre,ClaseGeneral.usuarioActual)) {  //valida que ese usario no tenga una lista con ese nombre
-            existe = true;
-             return "Esta lista ya existe, utilice otra";
-        }
-          nuevo = nombre + "|" + ClaseGeneral.usuarioActual + "|" + descripcion + "|"
-                            + "0" + "|"
-                            + fecha.toString()
-                            + "|" + "1" ;
+            if (existeLista(nombre, ClaseGeneral.usuarioActual)) {  //valida que ese usario no tenga una lista con ese nombre
+                existe = true;
+                return "Esta lista ya existe, utilice otra";
+            }
+            nuevo = nombre + "|" + ClaseGeneral.usuarioActual + "|" + descripcion + "|"
+                    + "0" + "|"
+                    + fecha.toString()
+                    + "|" + "1";
 
-                    return nuevo;
+            return nuevo;
         }
-        return "";         
+        return "";
     }
+
     /**
      * Valida la existencia de esa lista
+     *
      * @param nombre
      * @param usuario
-     * @return 
+     * @return
      */
-    public boolean existeLista(String nombre,String usuario) {
+    public boolean existeLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
         //Lee la bitacora para hacer una busqueda en esta
@@ -421,7 +437,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 if (listas[i] != null) {
                     datos = listas[i].split("\\|");
 
-                    if (nombre.equals(datos[0])&& usuario.equals(datos[1])) {
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
                         return true;
                     }
                 }
@@ -443,6 +459,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         return false;
     }
+
     //Muestra la otra ventana de lista
     private void MisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisListasActionPerformed
         // TODO add your handling code here:
@@ -501,7 +518,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
         Date fecha = new Date();
-              
+
         if (split[2].equals("usuario_creacion:")) {
             ClaseGeneral.usuarioActual = jUsuario.getText();
             split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
@@ -518,7 +535,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 archivo.escribirArchivo("desc_" + descriptor, split[i], error);
             }
         }
-        
+
     }
 
     public int contarRegistros(String nombreArchivo) {
@@ -535,6 +552,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         nuevo = ClaseGeneral.rutaDestino + "|" + ClaseGeneral.usuarioActual + "|" + fecha.toString();
         return nuevo;
     }
+
     //Copiar la foto de cualquier parte a la carpeta de MEIA
     public void Copiar(File origen, File destino) {
         if (origen.isDirectory()) {
@@ -649,6 +667,32 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
     }
 
+    public void actualizarDescriptor4(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            ClaseGeneral.usuarioActual = jUsuario.getText();
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios2(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
     public void contarUsuarios(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);
@@ -656,20 +700,44 @@ public class Mantenimiento extends javax.swing.JFrame {
         activos = 0;
         inactivos = 0;
 
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                String[] datos = split[i].split("\\|");
-                if (datos[9].equals("1")) {
-                    activos++;
-                } else if (datos[9].equals("0")) {
-                    inactivos++;
+        if (split != null) {
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    String[] datos = split[i].split("\\|");
+                    if (datos[9].equals("1")) {
+                        activos++;
+                    } else if (datos[9].equals("0")) {
+                        inactivos++;
+                    }
                 }
             }
         }
         total = activos + inactivos;
     }
+
+    public void contarUsuarios2(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+        if (split != null) {
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    String[] datos = split[i].split("\\|");
+                    if (datos[5].equals("1")) {
+                        activos++;
+                    } else if (datos[5].equals("0")) {
+                        inactivos++;
+                    }
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
     //Actualiza el descriptor de lista
-     public void actualizarDescriptor3(String descriptor) {
+    public void actualizarDescriptor3(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);
         Date fecha = new Date();
@@ -694,12 +762,13 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         }
     }
-    
+
     /**
      * Cuenta cuantos activos e inactivos tiene los archivos de lista
-     * @param nombreArchivo 
+     *
+     * @param nombreArchivo
      */
-     public void contarListas(String nombreArchivo) {
+    public void contarListas(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);
 
@@ -718,7 +787,6 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-
 
     /**
      * @param args the command line arguments
