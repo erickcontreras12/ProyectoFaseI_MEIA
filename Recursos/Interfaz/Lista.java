@@ -41,7 +41,7 @@ public class Lista extends javax.swing.JFrame {
     public void MostrarListas(String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
-        DefaultListModel modelo = new DefaultListModel();    
+        DefaultListModel modelo = new DefaultListModel();
         //Lee la bitacora para hacer una busqueda en esta
         String[] listas = archivo.leerArchivo("bitacora_lista");
         if (listas != null) {
@@ -210,7 +210,7 @@ public class Lista extends javax.swing.JFrame {
 
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
         // TODO add your handling code here:
-         
+
         if (actual_lista.getText().equals("Lista Actual")) {
             JOptionPane.showMessageDialog(null, "Debe seleccionar una lista primero");
         } else {
@@ -227,7 +227,7 @@ public class Lista extends javax.swing.JFrame {
                     //Archivo bloque
                     archivo.escribirArchivo("lista_usuario", contenido, "");
                     actualizarDescriptor("lista_usuario");
-                    
+
                     //Archivo indexado
                     int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
                     if (posicion >= 0) {
@@ -236,12 +236,16 @@ public class Lista extends javax.swing.JFrame {
                         String cant_registros = bitacora_indexado[6].substring(12);
                         int numRegistro = Integer.valueOf(cant_registros) + 1;
                         int siguiente = 0;
-                        if (numRegistro==1) {
+                        if (numRegistro == 1) {
                             siguiente = 0;
+                        } else {
+                            siguiente++;
                         }
                         //
-                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" +siguiente+ "|" + 1;
+                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + siguiente + "|" + 1;
                         archivo.escribirArchivo("indice_lista_usuario", contenido, "");
+
+                        reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 0);
                         actualizarDescriptor2("indice_lista_usuario");
                         //Actualiza el valor de miembros en la lista
                     }
@@ -271,9 +275,9 @@ public class Lista extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eliminar1ActionPerformed
 
-     public String obtenerAmigos(String nombre, String usuario) {
+    public String obtenerAmigos(String nombre, String usuario) {
         Archivo archivo = new Archivo();
-        DefaultListModel modelo = new DefaultListModel();   
+        DefaultListModel modelo = new DefaultListModel();
         String[] datos;
         //Lee la bitacora para hacer una busqueda en esta
         String[] listas = archivo.leerArchivo("indice_lista_usuario");
@@ -287,10 +291,10 @@ public class Lista extends javax.swing.JFrame {
                     }
                 }
             }
-        }     
+        }
         return "";
     }
-    
+
     public String[] obtenerLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -325,44 +329,63 @@ public class Lista extends javax.swing.JFrame {
     }
 
     public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
-        //opc 0 es para cuando se agrega un usuario y opc 1 cuando se elimina
-        Archivo archivo = new Archivo();
-        DefaultListModel modelo = new DefaultListModel();  
-        ArrayList<Indice> original = new ArrayList<>();
-        ArrayList<Indice> ordenada = new ArrayList<>();
-        String[] datos;
-        //Lee la bitacora para hacer una busqueda en esta
-        String[] listas = archivo.leerArchivo("indice_lista_usuario");
-        if (listas != null) {
+        //opc 0 es para cuando se agrega un usuario y opc 1 cuando se elimina               
+        if (opc == 0) {
+            Archivo archivo = new Archivo();
+            DefaultListModel modelo = new DefaultListModel();
+            ArrayList<Indice> original = new ArrayList<>();
+            ArrayList<Indice> ordenada = new ArrayList<>();
+            String[] datos;
+            //Lee la bitacora para hacer una busqueda en esta
+            String[] listas = archivo.leerArchivo("indice_lista_usuario");
+            if (listas != null) {
+                for (int i = 0; i < listas.length; i++) {
+                    if (listas[i] != null) {
+                        datos = listas[i].split("\\|");
+                        original.add(new Indice(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6]));
+                    }
+                }
+            }
+            for (int i = 0; i < original.size(); i++) {
+                ordenada.add(original.get(i));
+            }
+            Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
+                    thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
+
+            String[] cambios;
             for (int i = 0; i < listas.length; i++) {
                 if (listas[i] != null) {
-                    datos = listas[i].split("\\|");
-                   original.add(new Indice(datos[0],datos[1],datos[2],datos[3],datos[4],datos[5],datos[6]));                      
-                }
-            }
-        }
-        for (int i = 0; i < original.size(); i++) {
-            ordenada.add(original.get(i));
-        }
-        Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
-                                thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
-
-        
-        String[] cambios;
-        for (int i = 0; i < listas.length; i++) {
-                if (listas[i] != null) {
                     cambios = ordenada.get(i).toString().split("\\|");
-                    Indice aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambios[5],cambios[6]);                                     
-                    int pos2 = original.indexOf(aux);
-                    cambios = ordenada.get(i+1).toString().split("\\|");
-                    aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambios[5],cambios[6]);
-                    Integer cambio = original.indexOf(aux);
-                    aux = new Indice(cambios[0],cambios[1],cambios[2],cambios[3],cambios[4],cambio.toString(),cambios[6]);
-                    original.add(pos2,aux);                                     
+                    Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                    Indice aux2;
+                    int pos2 = 0;
+                    for (int j = 0; j < original.size(); j++) {
+                        if (original.get(j).equals(aux)) {
+                            pos2 = j;
+                        }
+                    }
+                    if (i + 1 < ordenada.size()) {
+                        cambios = ordenada.get(i + 1).toString().split("\\|");
+                        aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                        Integer cambio = 0;
+                        for (int z = 0; z < original.size(); z++) {
+                            if (original.get(z).equals(aux2)) {
+                                cambio = z;
+                            }
+                        }
+                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
+                        original.set(pos2, aux);
+                    } else {
+                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
+                        original.set(pos2, aux);
+                    }
                 }
             }
-        
-        if (opc == 0) {
+
+            archivo.limpiarArchivo("indice_lista_usuario");
+            for (int i = 0; i < original.size(); i++) {
+                archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
+            }
 
         }
     }
@@ -467,7 +490,7 @@ public class Lista extends javax.swing.JFrame {
         }
         split[3] = "fecha_modificacion:" + fecha.toString();
         split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
-        
+
         //busca en donde esta el menor para ponerle el inicio
         int comparador = 10;
         String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
@@ -487,15 +510,15 @@ public class Lista extends javax.swing.JFrame {
                         if (comparador >= 1) {
                             inicio = aux;
                         }
-                    }else if(comparador >= 1){
+                    } else if (comparador >= 1) {
                         inicio = aux;
                     }
-                }else if(comparador >= 1){
+                } else if (comparador >= 1) {
                     inicio = aux;
                 }
             }
         }
-        
+
         split[5] = "inicio_registro:" + inicio[0];
         //calcula el total de usuarios en el archivo original
         contarUsuarios2(descriptor);
