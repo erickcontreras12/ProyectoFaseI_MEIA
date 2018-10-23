@@ -118,6 +118,11 @@ public class Lista extends javax.swing.JFrame {
         });
 
         eliminartodos.setText("Eliminar Lista");
+        eliminartodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminartodosActionPerformed(evt);
+            }
+        });
 
         jScrollPane2.setViewportView(usuarios_lista);
 
@@ -318,6 +323,115 @@ public class Lista extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_eliminar1ActionPerformed
 
+    private void eliminartodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminartodosActionPerformed
+        // TODO add your handling code here:
+
+        String lista_eliminada = JOptionPane.showInputDialog(null, "Ingrese el nombre de la lista");
+        int opc = JOptionPane.showConfirmDialog(null, "Desea eliminar " + lista_eliminada + "?");
+        if (opc == 0) {
+
+            if (buscarLista(lista_eliminada, ClaseGeneral.usuarioActual)) {
+                borrarLista(lista_eliminada, ClaseGeneral.usuarioActual);
+                MostrarListas(ClaseGeneral.usuarioActual);
+                actualizarDescriptor3("bitacora_lista");
+                actualizarDescriptor3("lista");
+                actualizarDescriptor("lista_usuario");
+                actualizarDescriptor2("indice_lista_usuario");
+                JOptionPane.showMessageDialog(null, "Lista Eliminada");
+            } else {
+                JOptionPane.showMessageDialog(null, "Lista no existe");
+            }
+
+        }
+
+
+    }//GEN-LAST:event_eliminartodosActionPerformed
+//Actualiza el descriptor de lista
+
+    public void actualizarDescriptor3(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarListas(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    /**
+     * Cuenta cuantos activos e inactivos tiene los archivos de lista
+     *
+     * @param nombreArchivo
+     */
+    public void contarListas(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[5].equals("1")) {
+                    activos++;
+                } else if (datos[5].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
+//busca si existe la lista
+    public boolean buscarLista(String nombre, String usuario) {
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee lista
+        listas = archivo.leerArchivo("lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public String[] obtenerLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -351,6 +465,60 @@ public class Lista extends javax.swing.JFrame {
         return null;
     }
 
+    //borra una lista completa
+    public void borrarLista(String nombre, String usuario) {
+        Archivo archivo = new Archivo();
+        String[] listas = archivo.leerArchivo("lista");
+        String[] bloque = archivo.leerArchivo("lista_usuario");
+        String[] indice = archivo.leerArchivo("indice_lista_usuario");
+        String[] datos;
+        if (listas != null) {
+            archivo.limpiarArchivo("lista");
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        datos[5] = "0";
+                        listas[i] = armarCadena(datos);
+                        archivo.escribirArchivo("lista", listas[i], "");
+                    }
+                }
+            }
+
+        }
+
+        if (bloque != null) {
+            archivo.limpiarArchivo("lista_usuario");
+            for (int i = 0; i < bloque.length; i++) {
+                if (bloque[i] != null) {
+                    datos = bloque[i].split("\\|");
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        datos[5] = "0";
+                        bloque[i] = armarCadena(datos);
+                        archivo.escribirArchivo("lista_usuario", bloque[i], "");
+                    }
+                }
+            }
+        }
+
+        if (indice != null) {
+            archivo.limpiarArchivo("indice_lista_usuario");
+            for (int i = 0; i < indice.length; i++) {
+                if (indice[i] != null) {
+                    datos = indice[i].split("\\|");
+                    if (nombre.equals(datos[2]) && usuario.equals(datos[3])) {
+                        datos[6] = "0";
+                        datos[5] = "0";
+                        indice[i] = armarCadena(datos);
+                        archivo.escribirArchivo("indice_lista_usuario", indice[i], "");
+                    }
+                }
+            }
+        }
+
+    }
+
+    //buscar los miembros de una lista
     public void buscarMiembros(String nombreLista) {
         Archivo archivo = new Archivo();
         String[] usuarios = archivo.leerArchivo("indice_lista_usuario");
