@@ -224,34 +224,55 @@ public class Lista extends javax.swing.JFrame {
                 buscarUsuario(usuario_asociado);
                 if (encontrado) {
                     String contenido = lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + datos_lista[2] + "|" + fecha.toString() + "|" + 1;
-                    archivo.leerArchivo("lista_usuario");
-                    //Archivo bloque
-                    archivo.escribirArchivo("lista_usuario", contenido, "");
-                    actualizarDescriptor("lista_usuario");
+                    String[] datos = archivo.leerArchivo("lista_usuario");
+                    int validar = 0;
+                    if (datos != null) {
+                        String[] evaluar = contenido.split("\\|");
 
-                    //Archivo indexado
-                    int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
-                    if (posicion >= 0) {
-                        indice = archivo.leerArchivo("indice_lista_usuario");
-                        String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
-                        String cant_registros = bitacora_indexado[6].substring(12);
-                        int numRegistro = Integer.valueOf(cant_registros) + 1;
-                        int siguiente = 0;
-                        if (numRegistro == 1) {
-                            siguiente = 0;
-                        } else {
-                            siguiente++;
+                        for (int i = 0; i < datos.length; i++) {
+                            if (datos[i] != null) {
+
+                                String[] evaluar2 = datos[i].split("\\|");
+
+                                if (evaluar[0].equals(evaluar2[0]) && evaluar[1].equals(evaluar2[1]) && evaluar[2].equals(evaluar2[2])) {
+                                    validar++;
+                                }
+                            }
+
                         }
-                        //
-                        contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + siguiente + "|" + 1;
-                        archivo.escribirArchivo("indice_lista_usuario", contenido, "");
 
-                        reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 0);
-                        actualizarDescriptor2("indice_lista_usuario");
-                        //Actualiza el valor de miembros en la lista
-                        JOptionPane.showMessageDialog(null, "Usuario agregado");
-                        buscarMiembros(lista);
+                    }
+                    //Archivo bloque
+                    if (validar == 0) {
+                        archivo.escribirArchivo("lista_usuario", contenido, "");
+                        actualizarDescriptor("lista_usuario");
 
+                        //Archivo indexado
+                        int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
+                        if (posicion >= 0) {
+                            indice = archivo.leerArchivo("indice_lista_usuario");
+                            String[] bitacora_indexado = archivo.leerArchivo("desc_indice_lista_usuario");
+                            String cant_registros = bitacora_indexado[6].substring(12);
+                            int numRegistro = Integer.valueOf(cant_registros) + 1;
+                            int siguiente = 0;
+                            if (numRegistro == 1) {
+                                siguiente = 0;
+                            } else {
+                                siguiente++;
+                            }
+                            //
+                            contenido = numRegistro + "|" + posicion + "|" + lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + siguiente + "|" + 1;
+                            archivo.escribirArchivo("indice_lista_usuario", contenido, "");
+
+                            reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 0);
+                            actualizarDescriptor2("indice_lista_usuario");
+                            //Actualiza el valor de miembros en la lista
+                            JOptionPane.showMessageDialog(null, "Usuario agregado");
+                            buscarMiembros(lista);
+
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "El usuario ingresado ya existe en esta Lista");
                     }
 
                 } else {
@@ -340,7 +361,7 @@ public class Lista extends javax.swing.JFrame {
         int siguiente = Integer.valueOf(inicio);
         while (siguiente != 0) {
             String[] actual = obtenerActual(siguiente);
-            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual) && !actual[5].equals("0")) {
+            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual) && actual[6].equals("1")) {
                 modelo.addElement(actual[4]);
             }
 
