@@ -48,7 +48,7 @@ public class Lista extends javax.swing.JFrame {
             for (int i = 0; i < listas.length; i++) {
                 if (listas[i] != null) {
                     datos = listas[i].split("\\|");
-                    if (usuario.equals(datos[1])) {
+                    if (usuario.equals(datos[1]) && datos[5].equals("1")) {
                         modelo.addElement(datos[0]);
 
                     }
@@ -63,7 +63,7 @@ public class Lista extends javax.swing.JFrame {
                 if (listas[i] != null) {
                     datos = listas[i].split("\\|");
 
-                    if (usuario.equals(datos[1])) {
+                    if (usuario.equals(datos[1]) && datos[5].equals("1")) {
                         modelo.addElement(datos[0]);
 
                     }
@@ -333,6 +333,7 @@ public class Lista extends javax.swing.JFrame {
             if (buscarLista(lista_eliminada, ClaseGeneral.usuarioActual)) {
                 borrarLista(lista_eliminada, ClaseGeneral.usuarioActual);
                 MostrarListas(ClaseGeneral.usuarioActual);
+                buscarMiembros(lista);
                 actualizarDescriptor3("bitacora_lista");
                 actualizarDescriptor3("lista");
                 actualizarDescriptor("lista_usuario");
@@ -468,10 +469,27 @@ public class Lista extends javax.swing.JFrame {
     //borra una lista completa
     public void borrarLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
+        String[] listasaux = archivo.leerArchivo("bitacora_lista");
         String[] listas = archivo.leerArchivo("lista");
         String[] bloque = archivo.leerArchivo("lista_usuario");
         String[] indice = archivo.leerArchivo("indice_lista_usuario");
         String[] datos;
+
+        if (listasaux != null) {
+            archivo.limpiarArchivo("bitacora_lista");
+            for (int i = 0; i < listasaux.length; i++) {
+                if (listasaux[i] != null) {
+                    datos = listasaux[i].split("\\|");
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                        datos[5] = "0";
+                        listasaux[i] = armarCadena(datos);
+                        archivo.escribirArchivo("bitacora_lista", listasaux[i], "");
+                    }
+                }
+            }
+
+        }
+
         if (listas != null) {
             archivo.limpiarArchivo("lista");
             for (int i = 0; i < listas.length; i++) {
