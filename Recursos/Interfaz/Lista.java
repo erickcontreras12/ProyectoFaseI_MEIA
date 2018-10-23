@@ -489,6 +489,7 @@ public class Lista extends javax.swing.JFrame {
         for (int i = 0; i < datos.length; i++) {
             if (i == datos.length - 1) {
                 cadena += datos[i];
+                break;
             }
             cadena += datos[i] + "|";
         }
