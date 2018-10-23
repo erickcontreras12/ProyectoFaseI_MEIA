@@ -249,6 +249,9 @@ public class Lista extends javax.swing.JFrame {
                         reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 0);
                         actualizarDescriptor2("indice_lista_usuario");
                         //Actualiza el valor de miembros en la lista
+                        JOptionPane.showMessageDialog(null, "Usuario agregado");
+                        buscarMiembros(lista);
+
                     }
 
                 } else {
@@ -260,23 +263,38 @@ public class Lista extends javax.swing.JFrame {
 
     private void eliminar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminar1ActionPerformed
         // TODO add your handling code here:
-        if (actual_lista.getText().equals("Lista Actual")) {
+        Archivo archivo = new Archivo();
+        if (actual_lista.getText().equals("Lista Actual") || actual_lista.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Debe seleccionar una lista primero");
         } else {
-            int opc = JOptionPane.showConfirmDialog(null, "Desea ingresar en " + lista + "?");
-            if (opc == 0) {
-                String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
-                buscarUsuario(usuario_asociado);
-                if (encontrado) {
+            String usuario_asociado = usuarios_lista.getSelectedValue();
+            if (usuario_asociado.equals("")) {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar un usuario");
+            } else {
+                int opc = JOptionPane.showConfirmDialog(null, "Desea eliminar a " + usuario_asociado + "de " + lista+ "?");
+                if (opc == 0) {
 
-                } else {
-                    JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                    buscarUsuario(usuario_asociado);
+                    if (encontrado) {
+                        //Usar tu actualizarDatos() para eliminacion logica de lista_usuario
+
+                        //Archivo indexado
+                        int posicion = obtenerPosicionEnBloque(lista, ClaseGeneral.usuarioActual, usuario_asociado);
+                        if (posicion >= 0) {
+
+                            reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 1);
+                            actualizarDescriptor2("indice_lista_usuario");
+                        }
+                        JOptionPane.showMessageDialog(null, "Usuario eliminado");
+                        buscarMiembros(lista);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                    }
                 }
             }
         }
     }//GEN-LAST:event_eliminar1ActionPerformed
 
-    
     public String[] obtenerLista(String nombre, String usuario) {
         Archivo archivo = new Archivo();
         String[] datos;
@@ -309,28 +327,28 @@ public class Lista extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    public void buscarMiembros(String nombreLista){
+
+    public void buscarMiembros(String nombreLista) {
         Archivo archivo = new Archivo();
         String[] usuarios = archivo.leerArchivo("indice_lista_usuario");
         String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
         String inicio = descriptor[5].substring(16);
         DefaultListModel modelo = new DefaultListModel();
-        
+
         int siguiente = Integer.valueOf(inicio);
-        while(siguiente != 0){
+        while (siguiente != 0) {
             String[] actual = obtenerActual(siguiente);
             if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual)) {
                 modelo.addElement(actual[4]);
             }
-            
+
             siguiente = Integer.valueOf(actual[5]);
         }
-        
+
         usuarios_lista.setModel(modelo);
     }
-    
-    public String[] obtenerActual(int registro){
+
+    public String[] obtenerActual(int registro) {
         Archivo archivo = new Archivo();
         String[] listado = archivo.leerArchivo("indice_lista_usuario");
         String[] datos = null;
@@ -346,10 +364,9 @@ public class Lista extends javax.swing.JFrame {
     }
 
     public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
+        Archivo archivo = new Archivo();
         //opc 0 es para cuando se agrega un usuario y opc 1 cuando se elimina               
         if (opc == 0) {
-            Archivo archivo = new Archivo();
-            DefaultListModel modelo = new DefaultListModel();
             ArrayList<Indice> original = new ArrayList<>();
             ArrayList<Indice> ordenada = new ArrayList<>();
             String[] datos;
@@ -403,7 +420,79 @@ public class Lista extends javax.swing.JFrame {
                 archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
             }
 
+        } else if (opc == 1) {
+            String[] listado = archivo.leerArchivo("indice_lista_usuario");
+            String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
+            String inicio = descriptor[5].substring(16);
+            int siguiente = Integer.valueOf(inicio);
+            while (siguiente != 0) {
+                String[] actual = obtenerActual(siguiente);
+                if (actual[2].equals(nombre) && actual[3].equals(ClaseGeneral.usuarioActual)
+                        && actual[4].equals(usuario_asociado)) {
+                    //Aux va a buscar el valor en listado para ponerle 0 al eliminado
+                    String[] aux;
+                    for (int i = 0; i < listado.length; i++) {
+                        if (listado[i] != null) {
+                            aux = listado[i].split("\\|");
+                            if (aux[0].equals(String.valueOf(siguiente))) {
+                                aux[6] = "0";
+                                aux[5] = "0";
+                                listado[i] = armarCadena(aux);
+                            }
+                        }
+                    }
+
+                    //Eliminacion al final
+                    if (actual[5].equals("0")) {
+                        //Busco el que esta antes del final
+                        for (int i = 0; i < listado.length; i++) {
+                            if (listado[i] != null) {
+                                aux = listado[i].split("\\|");
+                                if (aux[0].equals(String.valueOf(siguiente - 1))) {
+                                    aux[5] = "0";
+                                    listado[i] = armarCadena(aux);
+                                }
+                            }
+                        }
+                    }//Eliminacion en medio
+                    else {
+                        //Busco el que esta antes del eliminado para que apunte al que sigue del eliminado
+                        for (int i = 0; i < listado.length; i++) {
+                            if (listado[i] != null) {
+                                aux = listado[i].split("\\|");
+                                if (aux[0].equals(String.valueOf(siguiente + 1))) {
+                                    aux[5] = String.valueOf(siguiente - 1);
+                                    listado[i] = armarCadena(aux);
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+                }
+
+                siguiente = Integer.valueOf(actual[5]);
+            }
+
+            //reescribe el archivo
+            archivo.limpiarArchivo("indice_lista_usuario");
+            for (int i = 0; i < listado.length; i++) {
+                if (listado[i] != null) {
+                    archivo.escribirArchivo("indice_lista_usuario", listado[i], "");
+                }
+            }
         }
+    }
+
+    public String armarCadena(String[] datos) {
+        String cadena = "";
+        for (int i = 0; i < datos.length; i++) {
+            if (i == datos.length - 1) {
+                cadena += datos[i];
+            }
+            cadena += datos[i] + "|";
+        }
+        return cadena;
     }
 
     /**
@@ -513,24 +602,27 @@ public class Lista extends javax.swing.JFrame {
         for (int i = 0; i < datos.length; i++) {
             if (datos[i] != null) {
                 String[] aux = datos[i].split("\\|");
-                //Nombre de la lista
-                comparador = inicio[2].compareTo(aux[2]);
-                //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
-                if (comparador == 0) {
-                    //Usuario propietario de la lsita
-                    comparador = inicio[3].compareTo(aux[3]);
-                    //Si es el mismo usuario para el siguiente criterio
+                //Valida que el estatus indique que esta activo
+                if (aux[6].equals("1")) {
+                    //Nombre de la lista
+                    comparador = inicio[2].compareTo(aux[2]);
+                    //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
                     if (comparador == 0) {
-                        //Usuario asociado a la lista
-                        comparador = inicio[4].compareTo(aux[4]);
-                        if (comparador >= 1) {
+                        //Usuario propietario de la lsita
+                        comparador = inicio[3].compareTo(aux[3]);
+                        //Si es el mismo usuario para el siguiente criterio
+                        if (comparador == 0) {
+                            //Usuario asociado a la lista
+                            comparador = inicio[4].compareTo(aux[4]);
+                            if (comparador >= 1) {
+                                inicio = aux;
+                            }
+                        } else if (comparador >= 1) {
                             inicio = aux;
                         }
                     } else if (comparador >= 1) {
                         inicio = aux;
                     }
-                } else if (comparador >= 1) {
-                    inicio = aux;
                 }
             }
         }
