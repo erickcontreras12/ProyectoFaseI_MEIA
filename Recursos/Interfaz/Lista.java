@@ -271,7 +271,7 @@ public class Lista extends javax.swing.JFrame {
             if (usuario_asociado.equals("")) {
                 JOptionPane.showMessageDialog(null, "Debe seleccionar un usuario");
             } else {
-                int opc = JOptionPane.showConfirmDialog(null, "Desea eliminar a " + usuario_asociado + "de " + lista+ "?");
+                int opc = JOptionPane.showConfirmDialog(null, "Desea eliminar a " + usuario_asociado + "de " + lista + "?");
                 if (opc == 0) {
 
                     buscarUsuario(usuario_asociado);
@@ -284,6 +284,8 @@ public class Lista extends javax.swing.JFrame {
 
                             reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 1);
                             actualizarDescriptor2("indice_lista_usuario");
+                            borrar_archivolista(lista, ClaseGeneral.usuarioActual, usuario_asociado);
+                            actualizarDescriptor("lista_usuario");
                         }
                         JOptionPane.showMessageDialog(null, "Usuario eliminado");
                         buscarMiembros(lista);
@@ -338,7 +340,7 @@ public class Lista extends javax.swing.JFrame {
         int siguiente = Integer.valueOf(inicio);
         while (siguiente != 0) {
             String[] actual = obtenerActual(siguiente);
-            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual)) {
+            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual) && !actual[5].equals("0")) {
                 modelo.addElement(actual[4]);
             }
 
@@ -361,6 +363,29 @@ public class Lista extends javax.swing.JFrame {
             }
         }
         return datos;
+    }
+
+    public void borrar_archivolista(String nombre, String usuario, String usuario_asociado) {
+        Archivo archivo = new Archivo();
+        String[] lista_usuario = archivo.leerArchivo("lista_usuario");
+        String[] datos = null;
+        for (int i = 0; i < lista_usuario.length; i++) {
+            if (lista_usuario[i] != null) {
+                datos = lista_usuario[i].split("\\|");
+                if (datos[0].equals(nombre) && datos[1].equals(usuario) && datos[2].equals(usuario_asociado)) {
+                    datos[5] = "0";
+                    lista_usuario[i] = armarCadena(datos);
+                }
+            }
+        }
+
+        archivo.limpiarArchivo("lista_usuario");
+        for (int i = 0; i < lista_usuario.length; i++) {
+            if (lista_usuario[i] != null) {
+                archivo.escribirArchivo("lista_usuario", lista_usuario[i], "");
+            }
+        }
+
     }
 
     public void reorganizarIndice(String nombre, String usuario, String usuario_asociado, int opc) {
