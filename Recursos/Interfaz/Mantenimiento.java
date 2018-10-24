@@ -470,7 +470,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 if (listas[i] != null) {
                     datos = listas[i].split("\\|");
 
-                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1]) && datos[5].equals("1")) {
                         return true;
                     }
                 }
@@ -484,7 +484,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 if (listas[i] != null) {
                     datos = listas[i].split("\\|");
 
-                    if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
+                    if (nombre.equals(datos[0]) && usuario.equals(datos[1]) && datos[5].equals("1")) {
                         return true;
                     }
                 }
