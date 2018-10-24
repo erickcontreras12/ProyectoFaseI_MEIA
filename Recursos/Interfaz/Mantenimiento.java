@@ -250,15 +250,39 @@ public class Mantenimiento extends javax.swing.JFrame {
                 actualizarDescriptor3("bitacora_lista");
             }
 
+            String[] limpieza = archivo.leerArchivo("lista_usuario");
+            archivo.limpiarArchivo("lista_usuario");
+            if (limpieza != null) {
+                for (int i = 0; i < limpieza.length; i++) {
+                    if (limpieza[i] != null) {
+                        String[] datos = limpieza[i].split("\\|");
+                        if (datos[5].equals("1")) {
+                            archivo.escribirArchivo("lista_usuario", limpieza[i], "");
+                        }
+                    }
+                }
+            }
+            limpieza = archivo.leerArchivo("lista_usuario");
+            
             int registro = 1;
             String[] asociados = archivo.leerArchivo("indice_lista_usuario");
             archivo.limpiarArchivo("indice_lista_usuario");
-            if (asociados != null) {
+            if (asociados != null && limpieza != null) {
                 for (int i = 0; i < asociados.length; i++) {
                     if (asociados[i] != null) {
                         String[] datos = asociados[i].split("\\|");
                         if (datos[6].equals("1")) {
                             datos[0] = String.valueOf(registro);
+                            int nuevaPosicion = 0;
+                            for (int j = 0; j < limpieza.length; j++) {
+                                if (limpieza[j] != null) {
+                                    String[] data = limpieza[j].split("\\|");
+                                    if (data[0].equals(datos[2]) && data[1].equals(datos[3]) && data[2].equals(datos[4])) {
+                                        nuevaPosicion = j;
+                                    }
+                                }
+                            }
+                            datos[1] = String.valueOf(nuevaPosicion);
                             String cadena = armarCadena(datos);
                             asociados[i] = cadena;
                             archivo.escribirArchivo("indice_lista_usuario", asociados[i], "");
@@ -918,6 +942,32 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         }
         total = activos + inactivos;
+    }
+    
+    public void actualizarDescriptor5(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
     }
 
     /**
