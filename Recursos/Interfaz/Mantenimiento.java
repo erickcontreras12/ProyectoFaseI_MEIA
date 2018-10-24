@@ -270,6 +270,37 @@ public class Mantenimiento extends javax.swing.JFrame {
                 actualizarDescriptor4("indice_lista_usuario");
             }
 
+            String[] listas2 = archivo.leerArchivo("bitacora_lista");
+            archivo.limpiarArchivo("bitacora_lista");
+            if (listas2 != null) {
+                for (int i = 0; i < listas2.length; i++) {
+                    if (listas2[i] != null) {
+                        String[] datos = listas2[i].split("\\|");
+                        if (datos[5].equals("1")) {
+                            archivo.escribirArchivo("bitacora_lista", listas2[i], "");
+                        }
+                    }
+
+                }
+            }
+
+            String[] listas1 = archivo.leerArchivo("lista");
+            archivo.limpiarArchivo("lista");
+            if (listas1 != null) {
+                for (int i = 0; i < listas1.length; i++) {
+                    if (listas1[i] != null) {
+                        String[] datos = listas1[i].split("\\|");
+                        if (datos[5].equals("1")) {
+                            archivo.escribirArchivo("lista", listas1[i], "");
+                        }
+                    }
+
+                }
+            }
+
+            actualizarDescriptor3("lista");
+            actualizarDescriptor3("bitacora_lista");
+
             Login login = new Login();
             login.show();
             this.hide();
