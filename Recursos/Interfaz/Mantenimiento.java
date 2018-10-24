@@ -249,6 +249,21 @@ public class Mantenimiento extends javax.swing.JFrame {
                 actualizarDescriptor3("bitacora_lista");
             }
 
+            String[] asociados = archivo.leerArchivo("indice_lista_usuario");
+            archivo.limpiarArchivo("indice_lista_usuario");
+            if (asociados != null) {
+                for (int i = 0; i < asociados.length; i++) {
+                    if (asociados[i] != null) {
+                        String[] datos = asociados[i].split("\\|");
+                        if (datos[6].equals("1")) {
+                            archivo.escribirArchivo("indice_lista_usuario", asociados[i], "");
+                        }
+
+                    }
+                }
+                actualizarDescriptor4("indice_lista_usuario");
+            }
+
             Login login = new Login();
             login.show();
             this.hide();
@@ -689,7 +704,6 @@ public class Mantenimiento extends javax.swing.JFrame {
         total = activos + inactivos;
     }
 
-
     //Actualiza el descriptor de lista
     public void actualizarDescriptor3(String descriptor) {
         Archivo archivo = new Archivo();
@@ -715,6 +729,86 @@ public class Mantenimiento extends javax.swing.JFrame {
                 archivo.escribirArchivo("desc_" + descriptor, split[i], error);
             }
         }
+    }
+    
+    public void actualizarDescriptor4(String descriptor){
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        String[] datos = archivo.leerArchivo(descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+
+        //busca en donde esta el menor para ponerle el inicio
+        int comparador = 10;
+        String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
+        for (int i = 0; i < datos.length; i++) {
+            if (datos[i] != null) {
+                String[] aux = datos[i].split("\\|");
+                //Valida que el estatus indique que esta activo
+                if (aux[6].equals("1")) {
+                    //Nombre de la lista
+                    comparador = inicio[2].compareTo(aux[2]);
+                    //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
+                    if (comparador == 0) {
+                        //Usuario propietario de la lsita
+                        comparador = inicio[3].compareTo(aux[3]);
+                        //Si es el mismo usuario para el siguiente criterio
+                        if (comparador == 0) {
+                            //Usuario asociado a la lista
+                            comparador = inicio[4].compareTo(aux[4]);
+                            if (comparador >= 1) {
+                                inicio = aux;
+                            }
+                        } else if (comparador >= 1) {
+                            inicio = aux;
+                        }
+                    } else if (comparador >= 1) {
+                        inicio = aux;
+                    }
+                }
+            }
+        }
+
+        split[5] = "inicio_registro:" + inicio[0];
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios2(descriptor);
+        split[6] = "#_registros:" + total;
+        split[7] = "registro_activos:" + activos;
+        split[8] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+    
+    public void contarUsuarios2(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[6].equals("1")) {
+                    activos++;
+                } else if (datos[6].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
     }
 
     /**

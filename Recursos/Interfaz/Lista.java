@@ -224,6 +224,7 @@ public class Lista extends javax.swing.JFrame {
             if (opc == 0) {
                 Archivo archivo = new Archivo();
                 Date fecha = new Date();
+                boolean yoMismo = false;
                 String[] datos_lista = obtenerLista(lista, ClaseGeneral.usuarioActual);
                 String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
                 buscarUsuario(usuario_asociado);
@@ -239,15 +240,22 @@ public class Lista extends javax.swing.JFrame {
 
                                 String[] evaluar2 = datos[i].split("\\|");
 
-                                if (evaluar[0].equals(evaluar2[0]) && evaluar[1].equals(evaluar2[1]) && evaluar[2].equals(evaluar2[2])) {
+                                if (evaluar[0].equals(evaluar2[0]) && evaluar[1].equals(evaluar2[1]) && evaluar[2].equals(evaluar2[2])
+                                        && evaluar2[5].equals("1")) {
                                     validar++;
+                                }else if (evaluar[0].equals(ClaseGeneral.usuarioActual)) {
+                                    yoMismo = true;
                                 }
                             }
 
                         }
 
                     }
-                    //Archivo bloque
+                    
+                    if (yoMismo) {
+                        JOptionPane.showMessageDialog(null, "No puede agregarse a si mismo");
+                    }else{
+                        //Archivo bloque
                     if (validar == 0) {
                         archivo.escribirArchivo("lista_usuario", contenido, "");
                         actualizarDescriptor("lista_usuario");
@@ -279,6 +287,8 @@ public class Lista extends javax.swing.JFrame {
                     } else {
                         JOptionPane.showMessageDialog(null, "El usuario ingresado ya existe en esta Lista");
                     }
+                    }
+                    
 
                 } else {
                     JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
@@ -536,6 +546,79 @@ public class Lista extends javax.swing.JFrame {
 
     }
 
+    public void actualizarNumeroMiembros(String lista) {
+        Archivo archivo = new Archivo();
+        //Busca la lista en la bitacora
+        int posicion = 0;
+        boolean estaEnBitacora = false;
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        for (int i = 0; i < listas.length; i++) {
+            if (listas[i] != null) {
+                String[] datos_lista = listas[i].split("\\|");
+                if (datos_lista[0].equals(lista) && datos_lista[1].equals(ClaseGeneral.usuarioActual)) {
+                    //guarda la posicion de la lista en el archivo
+                    posicion = i;
+                    estaEnBitacora = true;
+                    break;
+                }
+            }
+        }
+        //Valida si la encontro en la bitacora
+
+        String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
+        String inicio = descriptor[5].substring(16);
+        int miembros = 0;
+        int siguiente = Integer.valueOf(inicio);
+        while (siguiente != 0) {
+            String[] actual = obtenerActual(siguiente);
+            if (actual[2].equals(lista) && actual[3].equals(ClaseGeneral.usuarioActual) && actual[6].equals("1")) {
+                miembros++;
+            }
+            siguiente = Integer.valueOf(actual[5]);
+        }
+
+        String[] datos;
+        //Valida si la encontro en la bitacora al inicio
+        if (estaEnBitacora) {
+            datos = listas[posicion].split("\\|");
+            datos[3] = String.valueOf(miembros);
+            listas[posicion] = armarCadena(datos);
+
+            archivo.limpiarArchivo("bitacora_lista");
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    archivo.escribirArchivo("bitacora_lista", listas[i], "");
+                }
+            }
+            actualizarDescriptor3("bitacora_lista");
+
+        } else {
+            listas = archivo.leerArchivo("lista");
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    String[] datos_lista = listas[i].split("\\|");
+                    if (datos_lista[0].equals(lista) && datos_lista[1].equals(ClaseGeneral.usuarioActual)) {
+                        //guarda la posicion de la lista en el archivo
+                        datos_lista[3] = String.valueOf(miembros);
+                        datos = datos_lista;
+                        listas[i] = armarCadena(datos);
+                        break;
+                    }
+                }
+            }
+
+            archivo.limpiarArchivo("lista");
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    archivo.escribirArchivo("lista", listas[i], "");
+                }
+            }
+
+            actualizarDescriptor3("lista");
+        }
+
+    }
+
     //buscar los miembros de una lista
     public void buscarMiembros(String nombreLista) {
         Archivo archivo = new Archivo();
@@ -657,11 +740,13 @@ public class Lista extends javax.swing.JFrame {
             String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
             String inicio = descriptor[5].substring(16);
             int siguiente = Integer.valueOf(inicio);
+            int prev = 0;
             while (siguiente != 0) {
                 String[] actual = obtenerActual(siguiente);
                 if (actual[2].equals(nombre) && actual[3].equals(ClaseGeneral.usuarioActual)
                         && actual[4].equals(usuario_asociado)) {
                     //Aux va a buscar el valor en listado para ponerle 0 al eliminado
+                    String apuntador = actual[5];
                     String[] aux;
                     for (int i = 0; i < listado.length; i++) {
                         if (listado[i] != null) {
@@ -670,31 +755,36 @@ public class Lista extends javax.swing.JFrame {
                                 aux[6] = "0";
                                 aux[5] = "0";
                                 listado[i] = armarCadena(aux);
+                                break;
                             }
                         }
                     }
 
-                    //Eliminacion al final
-                    if (actual[5].equals("0")) {
-                        //Busco el que esta antes del final
-                        for (int i = 0; i < listado.length; i++) {
-                            if (listado[i] != null) {
-                                aux = listado[i].split("\\|");
-                                if (aux[0].equals(String.valueOf(siguiente - 1))) {
-                                    aux[5] = "0";
-                                    listado[i] = armarCadena(aux);
+                    if (prev != 0) {
+                        //Eliminacion al final
+                        if (actual[5].equals("0")) {
+                            //Busco el que esta antes del final
+                            for (int i = 0; i < listado.length; i++) {
+                                if (listado[i] != null) {
+                                    aux = listado[i].split("\\|");
+                                    if (aux[0].equals(String.valueOf(prev))) {
+                                        aux[5] = "0";
+                                        listado[i] = armarCadena(aux);
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                    }//Eliminacion en medio
-                    else {
-                        //Busco el que esta antes del eliminado para que apunte al que sigue del eliminado
-                        for (int i = 0; i < listado.length; i++) {
-                            if (listado[i] != null) {
-                                aux = listado[i].split("\\|");
-                                if (aux[0].equals(String.valueOf(siguiente + 1))) {
-                                    aux[5] = String.valueOf(siguiente - 1);
-                                    listado[i] = armarCadena(aux);
+                        }//Eliminacion en medio
+                        else {
+                            //Busco el que esta antes del eliminado para que apunte al que sigue del eliminado
+                            for (int i = 0; i < listado.length; i++) {
+                                if (listado[i] != null) {
+                                    aux = listado[i].split("\\|");
+                                    if (aux[0].equals(String.valueOf(prev))) {
+                                        aux[5] = apuntador;
+                                        listado[i] = armarCadena(aux);
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -702,7 +792,7 @@ public class Lista extends javax.swing.JFrame {
 
                     break;
                 }
-
+                prev = siguiente;
                 siguiente = Integer.valueOf(actual[5]);
             }
 
@@ -714,6 +804,8 @@ public class Lista extends javax.swing.JFrame {
                 }
             }
         }
+
+        actualizarNumeroMiembros(nombre);
     }
 
     public String armarCadena(String[] datos) {
