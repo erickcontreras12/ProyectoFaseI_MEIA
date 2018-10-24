@@ -452,8 +452,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         return cadena;
     }
-    
-    
+
     /**
      * Valida la existencia de esa lista
      *
@@ -749,69 +748,67 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         }
     }
-    
-    public void actualizarDescriptor4(String descriptor){
+
+    public void actualizarDescriptor4(String descriptor) {
         Archivo archivo = new Archivo();
-        
+
         //Hace de nuevo la ordenacion de la lista por si se eliminaron registros
         ArrayList<Indice> original = new ArrayList<>();
-            ArrayList<Indice> ordenada = new ArrayList<>();
-            String[] datos;
-            //Lee la bitacora para hacer una busqueda en esta
-            String[] listas = archivo.leerArchivo("indice_lista_usuario");
-            if (listas != null) {
-                for (int i = 0; i < listas.length; i++) {
-                    if (listas[i] != null) {
-                        datos = listas[i].split("\\|");
-                        if (datos[6].equals("1")) {
-                            original.add(new Indice(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6]));
-                        }
-
-                    }
-                }
-            }
-            for (int i = 0; i < original.size(); i++) {
-                ordenada.add(original.get(i));
-            }
-            Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
-                    thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
-
-            String[] cambios, cambios2;
+        ArrayList<Indice> ordenada = new ArrayList<>();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("indice_lista_usuario");
+        if (listas != null) {
             for (int i = 0; i < listas.length; i++) {
                 if (listas[i] != null) {
-                    cambios = ordenada.get(i).toString().split("\\|");
-                    Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
-                    int pos2 = 0;
-                    for (int j = 0; j < original.size(); j++) {
-                        if (original.get(j).toString().equals(aux.toString())) {
-                            pos2 = j;
-                        }
+                    datos = listas[i].split("\\|");
+                    if (datos[6].equals("1")) {
+                        original.add(new Indice(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6]));
                     }
-                    if (i + 1 < ordenada.size()) {
-                        cambios2 = ordenada.get(i + 1).toString().split("\\|");
-                        aux = new Indice(cambios2[0], cambios2[1], cambios2[2], cambios2[3], cambios2[4], cambios2[5], cambios2[6]);
-                        Integer cambio = 0;
-                        for (int z = 0; z < original.size(); z++) {
-                            if (original.get(z).toString().equals(aux.toString())) {
-                                cambio = z + 1;
-                            }
-                        }
-                        Indice aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
-                        original.set(pos2, aux2);
-                    } else {
-                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
-                        original.set(pos2, aux);
-                    }
+
                 }
             }
+        }
+        for (int i = 0; i < original.size(); i++) {
+            ordenada.add(original.get(i));
+        }
+        Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
+                thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
 
-            archivo.limpiarArchivo("indice_lista_usuario");
-            for (int i = 0; i < original.size(); i++) {
-                archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
+        String[] cambios, cambios2;
+        for (int i = 0; i < listas.length; i++) {
+            if (listas[i] != null) {
+                cambios = ordenada.get(i).toString().split("\\|");
+                Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                int pos2 = 0;
+                for (int j = 0; j < original.size(); j++) {
+                    if (original.get(j).toString().equals(aux.toString())) {
+                        pos2 = j;
+                    }
+                }
+                if (i + 1 < ordenada.size()) {
+                    cambios2 = ordenada.get(i + 1).toString().split("\\|");
+                    aux = new Indice(cambios2[0], cambios2[1], cambios2[2], cambios2[3], cambios2[4], cambios2[5], cambios2[6]);
+                    Integer cambio = 0;
+                    for (int z = 0; z < original.size(); z++) {
+                        if (original.get(z).toString().equals(aux.toString())) {
+                            cambio = z + 1;
+                        }
+                    }
+                    Indice aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
+                    original.set(pos2, aux2);
+                } else {
+                    aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
+                    original.set(pos2, aux);
+                }
             }
-        
-        
-        
+        }
+
+        archivo.limpiarArchivo("indice_lista_usuario");
+        for (int i = 0; i < original.size(); i++) {
+            archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
+        }
+
         String[] split = archivo.leerArchivo("desc_" + descriptor);
         datos = archivo.leerArchivo(descriptor);
         Date fecha = new Date();
@@ -825,51 +822,53 @@ public class Mantenimiento extends javax.swing.JFrame {
 
         //busca en donde esta el menor para ponerle el inicio
         int comparador = 10;
-        String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
-        for (int i = 0; i < datos.length; i++) {
-            if (datos[i] != null) {
-                String[] aux = datos[i].split("\\|");
-                //Valida que el estatus indique que esta activo
-                if (aux[6].equals("1")) {
-                    //Nombre de la lista
-                    comparador = inicio[2].compareTo(aux[2]);
-                    //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
-                    if (comparador == 0) {
-                        //Usuario propietario de la lsita
-                        comparador = inicio[3].compareTo(aux[3]);
-                        //Si es el mismo usuario para el siguiente criterio
+        if (datos[0] != null) {
+            String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
+            for (int i = 0; i < datos.length; i++) {
+                if (datos[i] != null) {
+                    String[] aux = datos[i].split("\\|");
+                    //Valida que el estatus indique que esta activo
+                    if (aux[6].equals("1")) {
+                        //Nombre de la lista
+                        comparador = inicio[2].compareTo(aux[2]);
+                        //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
                         if (comparador == 0) {
-                            //Usuario asociado a la lista
-                            comparador = inicio[4].compareTo(aux[4]);
-                            if (comparador >= 1) {
+                            //Usuario propietario de la lsita
+                            comparador = inicio[3].compareTo(aux[3]);
+                            //Si es el mismo usuario para el siguiente criterio
+                            if (comparador == 0) {
+                                //Usuario asociado a la lista
+                                comparador = inicio[4].compareTo(aux[4]);
+                                if (comparador >= 1) {
+                                    inicio = aux;
+                                }
+                            } else if (comparador >= 1) {
                                 inicio = aux;
                             }
                         } else if (comparador >= 1) {
                             inicio = aux;
                         }
-                    } else if (comparador >= 1) {
-                        inicio = aux;
                     }
                 }
             }
-        }
 
-        split[5] = "inicio_registro:" + inicio[0];
-        //calcula el total de usuarios en el archivo original
-        contarUsuarios2(descriptor);
-        split[6] = "#_registros:" + total;
-        split[7] = "registro_activos:" + activos;
-        split[8] = "registro_inactivos:" + inactivos;
+            split[5] = "inicio_registro:" + inicio[0];
+            //calcula el total de usuarios en el archivo original
+            contarUsuarios2(descriptor);
+            split[6] = "#_registros:" + total;
+            split[7] = "registro_activos:" + activos;
+            split[8] = "registro_inactivos:" + inactivos;
 
-        String error = "";
-        archivo.limpiarArchivo("desc_" + descriptor);
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            String error = "";
+            archivo.limpiarArchivo("desc_" + descriptor);
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+                }
             }
         }
     }
-    
+
     public void contarUsuarios2(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);

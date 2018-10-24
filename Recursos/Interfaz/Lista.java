@@ -65,7 +65,6 @@ public class Lista extends javax.swing.JFrame {
 
                     if (usuario.equals(datos[1]) && datos[5].equals("1")) {
                         modelo.addElement(datos[0]);
-
                     }
                 }
             }
@@ -492,9 +491,12 @@ public class Lista extends javax.swing.JFrame {
                     if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
                         datos[5] = "0";
                         listasaux[i] = armarCadena(datos);
-                        archivo.escribirArchivo("bitacora_lista", listasaux[i], "");
                     }
+
                 }
+            }
+            for (int i = 0; i < listasaux.length - 1; i++) {
+                archivo.escribirArchivo("bitacora_lista", listasaux[i], "");
             }
 
         }
@@ -507,9 +509,12 @@ public class Lista extends javax.swing.JFrame {
                     if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
                         datos[5] = "0";
                         listas[i] = armarCadena(datos);
-                        archivo.escribirArchivo("lista", listas[i], "");
                     }
                 }
+
+            }
+            for (int i = 0; i < listas.length - 1; i++) {
+                archivo.escribirArchivo("lista", listas[i], "");
             }
 
         }
@@ -522,10 +527,14 @@ public class Lista extends javax.swing.JFrame {
                     if (nombre.equals(datos[0]) && usuario.equals(datos[1])) {
                         datos[5] = "0";
                         bloque[i] = armarCadena(datos);
-                        archivo.escribirArchivo("lista_usuario", bloque[i], "");
                     }
+                    archivo.escribirArchivo("lista_usuario", bloque[i], "");
                 }
             }
+            for (int i = 0; i < bloque.length - 1; i++) {
+                archivo.escribirArchivo("lista_usuario", bloque[i], "");
+            }
+
         }
 
         if (indice != null) {
@@ -537,10 +546,15 @@ public class Lista extends javax.swing.JFrame {
                         datos[6] = "0";
                         datos[5] = "0";
                         indice[i] = armarCadena(datos);
-                        archivo.escribirArchivo("indice_lista_usuario", indice[i], "");
+
                     }
+
                 }
             }
+            for (int i = 0; i < indice.length - 1; i++) {
+                archivo.escribirArchivo("indice_lista_usuario", indice[i], "");
+            }
+
         }
 
     }
@@ -625,19 +639,23 @@ public class Lista extends javax.swing.JFrame {
         String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
         String inicio = descriptor[5].substring(16);
         DefaultListModel modelo = new DefaultListModel();
+        if (usuarios != null) {
+            if (!inicio.equals("")) {
+                int siguiente = Integer.valueOf(inicio);
+                while (siguiente != 0) {
+                    String[] actual = obtenerActual(siguiente);
+                    if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual) && actual[6].equals("1")) {
+                        modelo.addElement(actual[4]);
+                    }
 
-        
-        int siguiente = Integer.valueOf(inicio);
-        while (siguiente != 0) {
-            String[] actual = obtenerActual(siguiente);
-            if (actual[2].equals(nombreLista) && actual[3].equals(ClaseGeneral.usuarioActual) && actual[6].equals("1")) {
-                modelo.addElement(actual[4]);
+                    siguiente = Integer.valueOf(actual[5]);
+                }
+
+                usuarios_lista.setModel(modelo);
             }
 
-            siguiente = Integer.valueOf(actual[5]);
         }
 
-        usuarios_lista.setModel(modelo);
     }
 
     public String[] obtenerActual(int registro) {
@@ -926,49 +944,52 @@ public class Lista extends javax.swing.JFrame {
 
         //busca en donde esta el menor para ponerle el inicio
         int comparador = 10;
-        String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
-        for (int i = 0; i < datos.length; i++) {
-            if (datos[i] != null) {
-                String[] aux = datos[i].split("\\|");
-                //Valida que el estatus indique que esta activo
-                if (aux[6].equals("1")) {
-                    //Nombre de la lista
-                    comparador = inicio[2].compareTo(aux[2]);
-                    //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
-                    if (comparador == 0) {
-                        //Usuario propietario de la lsita
-                        comparador = inicio[3].compareTo(aux[3]);
-                        //Si es el mismo usuario para el siguiente criterio
+        if (datos[0] != null) {
+            String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
+            for (int i = 0; i < datos.length; i++) {
+                if (datos[i] != null) {
+                    String[] aux = datos[i].split("\\|");
+                    //Valida que el estatus indique que esta activo
+                    if (aux[6].equals("1")) {
+                        //Nombre de la lista
+                        comparador = inicio[2].compareTo(aux[2]);
+                        //Si es el mismo nombre de lista pasa a evaluar la siguiente llave
                         if (comparador == 0) {
-                            //Usuario asociado a la lista
-                            comparador = inicio[4].compareTo(aux[4]);
-                            if (comparador >= 1) {
+                            //Usuario propietario de la lsita
+                            comparador = inicio[3].compareTo(aux[3]);
+                            //Si es el mismo usuario para el siguiente criterio
+                            if (comparador == 0) {
+                                //Usuario asociado a la lista
+                                comparador = inicio[4].compareTo(aux[4]);
+                                if (comparador >= 1) {
+                                    inicio = aux;
+                                }
+                            } else if (comparador >= 1) {
                                 inicio = aux;
                             }
                         } else if (comparador >= 1) {
                             inicio = aux;
                         }
-                    } else if (comparador >= 1) {
-                        inicio = aux;
                     }
+                }
+            }
+
+            split[5] = "inicio_registro:" + inicio[0];
+            //calcula el total de usuarios en el archivo original
+            contarUsuarios2(descriptor);
+            split[6] = "#_registros:" + total;
+            split[7] = "registro_activos:" + activos;
+            split[8] = "registro_inactivos:" + inactivos;
+
+            String error = "";
+            archivo.limpiarArchivo("desc_" + descriptor);
+            for (int i = 0; i < split.length; i++) {
+                if (split[i] != null) {
+                    archivo.escribirArchivo("desc_" + descriptor, split[i], error);
                 }
             }
         }
 
-        split[5] = "inicio_registro:" + inicio[0];
-        //calcula el total de usuarios en el archivo original
-        contarUsuarios2(descriptor);
-        split[6] = "#_registros:" + total;
-        split[7] = "registro_activos:" + activos;
-        split[8] = "registro_inactivos:" + inactivos;
-
-        String error = "";
-        archivo.limpiarArchivo("desc_" + descriptor);
-        for (int i = 0; i < split.length; i++) {
-            if (split[i] != null) {
-                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
-            }
-        }
     }
 
     public void contarUsuarios(String nombreArchivo) {
