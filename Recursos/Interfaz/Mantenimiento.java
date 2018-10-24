@@ -7,6 +7,7 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import Clases.Indice;
 import Clases.Usuario;
 import Clases.Listas;
 import static Interfaz.ModificacionDatos.Encriptar;
@@ -249,6 +250,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 actualizarDescriptor3("bitacora_lista");
             }
 
+            int registro = 1;
             String[] asociados = archivo.leerArchivo("indice_lista_usuario");
             archivo.limpiarArchivo("indice_lista_usuario");
             if (asociados != null) {
@@ -256,7 +258,11 @@ public class Mantenimiento extends javax.swing.JFrame {
                     if (asociados[i] != null) {
                         String[] datos = asociados[i].split("\\|");
                         if (datos[6].equals("1")) {
+                            datos[0] = String.valueOf(registro);
+                            String cadena = armarCadena(datos);
+                            asociados[i] = cadena;
                             archivo.escribirArchivo("indice_lista_usuario", asociados[i], "");
+                            registro++;
                         }
 
                     }
@@ -435,6 +441,19 @@ public class Mantenimiento extends javax.swing.JFrame {
         return "";
     }
 
+    public String armarCadena(String[] datos) {
+        String cadena = "";
+        for (int i = 0; i < datos.length; i++) {
+            if (i == datos.length - 1) {
+                cadena += datos[i];
+                break;
+            }
+            cadena += datos[i] + "|";
+        }
+        return cadena;
+    }
+    
+    
     /**
      * Valida la existencia de esa lista
      *
@@ -733,8 +752,68 @@ public class Mantenimiento extends javax.swing.JFrame {
     
     public void actualizarDescriptor4(String descriptor){
         Archivo archivo = new Archivo();
+        
+        //Hace de nuevo la ordenacion de la lista por si se eliminaron registros
+        ArrayList<Indice> original = new ArrayList<>();
+            ArrayList<Indice> ordenada = new ArrayList<>();
+            String[] datos;
+            //Lee la bitacora para hacer una busqueda en esta
+            String[] listas = archivo.leerArchivo("indice_lista_usuario");
+            if (listas != null) {
+                for (int i = 0; i < listas.length; i++) {
+                    if (listas[i] != null) {
+                        datos = listas[i].split("\\|");
+                        if (datos[6].equals("1")) {
+                            original.add(new Indice(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6]));
+                        }
+
+                    }
+                }
+            }
+            for (int i = 0; i < original.size(); i++) {
+                ordenada.add(original.get(i));
+            }
+            Collections.sort(ordenada, Comparator.comparing(Indice::getNombre).
+                    thenComparing(Indice::getUsuario).thenComparing(Indice::getAsociado));
+
+            String[] cambios, cambios2;
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    cambios = ordenada.get(i).toString().split("\\|");
+                    Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                    int pos2 = 0;
+                    for (int j = 0; j < original.size(); j++) {
+                        if (original.get(j).toString().equals(aux.toString())) {
+                            pos2 = j;
+                        }
+                    }
+                    if (i + 1 < ordenada.size()) {
+                        cambios2 = ordenada.get(i + 1).toString().split("\\|");
+                        aux = new Indice(cambios2[0], cambios2[1], cambios2[2], cambios2[3], cambios2[4], cambios2[5], cambios2[6]);
+                        Integer cambio = 0;
+                        for (int z = 0; z < original.size(); z++) {
+                            if (original.get(z).toString().equals(aux.toString())) {
+                                cambio = z + 1;
+                            }
+                        }
+                        Indice aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
+                        original.set(pos2, aux2);
+                    } else {
+                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
+                        original.set(pos2, aux);
+                    }
+                }
+            }
+
+            archivo.limpiarArchivo("indice_lista_usuario");
+            for (int i = 0; i < original.size(); i++) {
+                archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
+            }
+        
+        
+        
         String[] split = archivo.leerArchivo("desc_" + descriptor);
-        String[] datos = archivo.leerArchivo(descriptor);
+        datos = archivo.leerArchivo(descriptor);
         Date fecha = new Date();
 
         if (split[2].equals("usuario_creacion:")) {

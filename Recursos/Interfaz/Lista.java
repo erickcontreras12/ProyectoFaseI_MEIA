@@ -626,6 +626,7 @@ public class Lista extends javax.swing.JFrame {
         String inicio = descriptor[5].substring(16);
         DefaultListModel modelo = new DefaultListModel();
 
+        
         int siguiente = Integer.valueOf(inicio);
         while (siguiente != 0) {
             String[] actual = obtenerActual(siguiente);
