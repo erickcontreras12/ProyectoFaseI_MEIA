@@ -278,7 +278,7 @@ public class Lista extends javax.swing.JFrame {
                                 archivo.escribirArchivo("indice_lista_usuario", contenido, "");
 
                                 reorganizarIndice(lista, ClaseGeneral.usuarioActual, usuario_asociado, 0);
-                                actualizarDescriptor2("indice_lista_usuario");
+
                                 //Actualiza el valor de miembros en la lista
                                 JOptionPane.showMessageDialog(null, "Usuario agregado");
                                 buscarMiembros(lista);
@@ -736,7 +736,7 @@ public class Lista extends javax.swing.JFrame {
             for (int i = 0; i < original.size(); i++) {
                 archivo.escribirArchivo("indice_lista_usuario", original.get(i).toString(), "");
             }
-
+            actualizarDescriptor2("indice_lista_usuario");
         } else if (opc == 1) {
             String[] listado = archivo.leerArchivo("indice_lista_usuario");
             String[] descriptor = archivo.leerArchivo("desc_indice_lista_usuario");
