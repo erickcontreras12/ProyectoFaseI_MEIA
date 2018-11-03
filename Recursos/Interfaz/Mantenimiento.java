@@ -233,6 +233,26 @@ public class Mantenimiento extends javax.swing.JFrame {
                         archivo.escribirArchivo("usuario", usuarios[i], "");
                     }
                 }
+                
+                String[] usuariosdesordenados = archivo.leerArchivo("usuario");
+
+                        for (int i = 0; i < usuariosdesordenados.length; i++) {
+                            if (usuariosdesordenados[i] != null) {
+                                String[] datos = usuariosdesordenados[i].split("\\|");
+                                ordenar.add(new Usuario(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8], datos[9]));
+                            }
+                        }
+
+                        Collections.sort(ordenar, (Usuario obj1, Usuario obj2) -> obj1.getUsuario().compareTo(obj2.getUsuario()));
+
+                        archivo.limpiarArchivo("usuario");
+                        for (int i = 0; i < ordenar.size(); i++) {
+                            if (ordenar.get(i) != null) {
+                                archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
+                            }
+                        }
+                        ordenar.clear();
+                
                 archivo.limpiarArchivo("bitacora");
                 actualizarDescriptor2("usuario");
                 actualizarDescriptor2("bitacora");
@@ -263,7 +283,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                 }
             }
             limpieza = archivo.leerArchivo("lista_usuario");
-            
+
             int registro = 1;
             String[] asociados = archivo.leerArchivo("indice_lista_usuario");
             archivo.limpiarArchivo("indice_lista_usuario");
@@ -418,9 +438,17 @@ public class Mantenimiento extends javax.swing.JFrame {
             if (!contenido.equals("")) {
 
                 maxReorganizacion = descriptor[8].substring(19);
+                int organizacion = 0;
+                if (split != null) {
+                    for (int i = 0; i < split.length; i++) {
+                        if (split[i] != null) {
+                            organizacion++;
+                        }
+                    }
+                }
                 //Valida si hay que hacer reorganizacion en la bitacora
                 if (split != null) {
-                    if (split.length == Integer.valueOf(maxReorganizacion)) {
+                    if (organizacion == Integer.valueOf(maxReorganizacion)) {
                         String[] listasaux = archivo.leerArchivo("bitacora_lista");
                         if (listasaux != null) {
                             for (int i = 0; i < listasaux.length; i++) {
@@ -943,7 +971,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-    
+
     public void actualizarDescriptor5(String descriptor) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo("desc_" + descriptor);

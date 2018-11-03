@@ -220,6 +220,7 @@ public class Usuarios extends javax.swing.JFrame {
                     posicion = i;
                     estaEnBitacora = true;
                     splitaux[posicion] = "";
+                    cambiar = datosUsuario;
                 } else {
                     splitaux[i] = split[i];
                 }

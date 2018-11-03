@@ -349,8 +349,17 @@ public class Registro extends javax.swing.JFrame {
                 //Valida si hay un usuario logeado
                 if (ClaseGeneral.yaLogeado) {
                     maxReorganizacion = descriptor[8].substring(19);
+                    int organizacion = 0;
+                    if (split != null) {
+                        for (int i = 0; i < split.length; i++) {
+                            if (split[i] != null) {
+                                organizacion++;
+                            }
+                        }
+                    }
+
                     //Valida si hay que hacer reorganizacion en la bitacora
-                    if (split.length == Integer.valueOf(maxReorganizacion)) {
+                    if (organizacion == Integer.valueOf(maxReorganizacion)) {
                         String[] usuariosaux = archivo.leerArchivo("bitacora");
                         if (usuariosaux != null) {
                             for (int i = 0; i < usuariosaux.length; i++) {
@@ -361,7 +370,6 @@ public class Registro extends javax.swing.JFrame {
 
                             archivo.limpiarArchivo("bitacora");
                             actualizarDescriptor("bitacora");
-                            actualizarDescriptor("usuario");
                         }
 
                         String[] usuariosdesordenados = archivo.leerArchivo("usuario");
@@ -382,6 +390,8 @@ public class Registro extends javax.swing.JFrame {
                             }
                         }
                         ordenar.clear();
+
+                        actualizarDescriptor("usuario");
                         //Se da la reorganizacion
                     } else {
 
@@ -421,7 +431,7 @@ public class Registro extends javax.swing.JFrame {
                                 archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
                             }
                         }
-                            ordenar.clear();
+                        ordenar.clear();
                         JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
 
                         Login log = new Login();
@@ -581,6 +591,7 @@ public class Registro extends javax.swing.JFrame {
 
         //Valida que el usuario no exista
         if (existeUsuario()) {
+            hayError = true;
             return "Este usuario ya existe, utilice otro";
         }
 

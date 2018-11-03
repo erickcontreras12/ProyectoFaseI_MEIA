@@ -557,7 +557,7 @@ public class Lista extends javax.swing.JFrame {
             }
 
         }
-
+        actualizarNumeroMiembros(nombre);
     }
 
     public void actualizarNumeroMiembros(String lista) {
