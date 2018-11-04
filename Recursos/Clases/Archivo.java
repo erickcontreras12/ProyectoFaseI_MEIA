@@ -190,6 +190,14 @@ public class Archivo {
             escribirArchivo("desc_"+nombreArchivo,"#_registros:" + 0 ,error);
             escribirArchivo("desc_"+nombreArchivo,"registros_activos:" + 0 ,error);
             escribirArchivo("desc_"+nombreArchivo,"registros_inactivos:" + 0 ,error);
+        }else if (nombreArchivo.equals("correo")) {
+            escribirArchivo("desc_"+nombreArchivo,"nombre_simbolico:" + nombreArchivo ,error);
+            escribirArchivo("desc_"+nombreArchivo,"fecha_creacion:" + fecha.toString() ,error);
+            escribirArchivo("desc_"+nombreArchivo,"usuario_creacion:" + ClaseGeneral.usuarioActual ,error);
+            escribirArchivo("desc_"+nombreArchivo,"fecha_modificacion" + fecha.toString() ,error);
+            escribirArchivo("desc_"+nombreArchivo,"usuario_modificacion:" + ClaseGeneral.usuarioActual ,error);
+            escribirArchivo("desc_"+nombreArchivo,"inicio_registro:0",error);
+            escribirArchivo("desc_"+nombreArchivo,"#_registros:" + 0 ,error);
         }
         
         

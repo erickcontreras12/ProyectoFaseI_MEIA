@@ -93,6 +93,8 @@ public class Mantenimiento extends javax.swing.JFrame {
         jBtnBackup = new javax.swing.JButton();
         MisListas = new javax.swing.JButton();
         CrearLista = new javax.swing.JButton();
+        jBtnEntrada = new javax.swing.JButton();
+        jBtnEnviados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -151,11 +153,25 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
         });
 
+        jBtnEntrada.setText("Bandeja de entrada");
+        jBtnEntrada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEntradaActionPerformed(evt);
+            }
+        });
+
+        jBtnEnviados.setText("Correos enviados");
+        jBtnEnviados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEnviadosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
@@ -173,11 +189,13 @@ public class Mantenimiento extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jUsuario)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jBtnBaja, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jBtnActualizacion)
+                                .addComponent(jBtnBaja, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jBtnActualizacion, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jBtnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jBtnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jRol))
+                                .addComponent(jBtnBackup, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jBtnEnviados, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jRol)
+                            .addComponent(jBtnEntrada, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(115, 115, 115))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(CrearLista)
@@ -190,31 +208,36 @@ public class Mantenimiento extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(19, 19, 19)
+                                .addComponent(jRol)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jUsuario)))
+                        .addGap(38, 38, 38)
+                        .addComponent(jBtnActualizacion)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnBaja)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnEntrada))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jRol)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jUsuario)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
-                .addComponent(jBtnActualizacion)
-                .addGap(26, 26, 26)
-                .addComponent(jBtnBaja)
-                .addGap(35, 35, 35)
+                        .addGap(20, 20, 20)
+                        .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addComponent(jBtnEnviados)
+                .addGap(18, 18, 18)
                 .addComponent(jBtnUsuario)
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
                 .addComponent(jBtnBackup)
-                .addGap(53, 53, 53)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBtnLogOut)
                     .addComponent(MisListas)
                     .addComponent(CrearLista))
                 .addGap(37, 37, 37))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jFotografia, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -586,6 +609,24 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     }//GEN-LAST:event_MisListasActionPerformed
 
+    private void jBtnEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEntradaActionPerformed
+        // TODO add your handling code here:
+        ClaseGeneral.bandejaEntrada = true;
+        abrirBandejaMensajes();
+    }//GEN-LAST:event_jBtnEntradaActionPerformed
+
+    private void jBtnEnviadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEnviadosActionPerformed
+        // TODO add your handling code here:
+        ClaseGeneral.bandejaEntrada = false;
+        abrirBandejaMensajes();
+    }//GEN-LAST:event_jBtnEnviadosActionPerformed
+
+    private void abrirBandejaMensajes(){
+        Bandeja bandeja = new Bandeja();
+        bandeja.show();
+        this.hide();
+    }
+    
     boolean encontrado = false;
 
     public void buscarUsuario(String usuario) {
@@ -1112,6 +1153,8 @@ public class Mantenimiento extends javax.swing.JFrame {
     private javax.swing.JButton jBtnActualizacion;
     private javax.swing.JButton jBtnBackup;
     private javax.swing.JButton jBtnBaja;
+    private javax.swing.JButton jBtnEntrada;
+    private javax.swing.JButton jBtnEnviados;
     private javax.swing.JButton jBtnLogOut;
     private javax.swing.JButton jBtnUsuario;
     private javax.swing.JLabel jFotografia;

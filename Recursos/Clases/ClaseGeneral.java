@@ -25,6 +25,8 @@ public class ClaseGeneral {
     public static boolean busqueda = false; //Booleano para validar que se esta modificando un usario diferente al logeado
     //Variables de backup
     public static String rutaDestino = "";
+    //Variables para la fase de envio de mensajes
+    public static boolean bandejaEntrada = true;
     
     
 
