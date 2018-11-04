@@ -233,26 +233,26 @@ public class Mantenimiento extends javax.swing.JFrame {
                         archivo.escribirArchivo("usuario", usuarios[i], "");
                     }
                 }
-                
+
                 String[] usuariosdesordenados = archivo.leerArchivo("usuario");
 
-                        for (int i = 0; i < usuariosdesordenados.length; i++) {
-                            if (usuariosdesordenados[i] != null) {
-                                String[] datos = usuariosdesordenados[i].split("\\|");
-                                ordenar.add(new Usuario(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8], datos[9]));
-                            }
-                        }
+                for (int i = 0; i < usuariosdesordenados.length; i++) {
+                    if (usuariosdesordenados[i] != null) {
+                        String[] datos = usuariosdesordenados[i].split("\\|");
+                        ordenar.add(new Usuario(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5], datos[6], datos[7], datos[8], datos[9]));
+                    }
+                }
 
-                        Collections.sort(ordenar, (Usuario obj1, Usuario obj2) -> obj1.getUsuario().compareTo(obj2.getUsuario()));
+                Collections.sort(ordenar, (Usuario obj1, Usuario obj2) -> obj1.getUsuario().compareTo(obj2.getUsuario()));
 
-                        archivo.limpiarArchivo("usuario");
-                        for (int i = 0; i < ordenar.size(); i++) {
-                            if (ordenar.get(i) != null) {
-                                archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
-                            }
-                        }
-                        ordenar.clear();
-                
+                archivo.limpiarArchivo("usuario");
+                for (int i = 0; i < ordenar.size(); i++) {
+                    if (ordenar.get(i) != null) {
+                        archivo.escribirArchivo("usuario", ordenar.get(i).toString(), "");
+                    }
+                }
+                ordenar.clear();
+
                 archivo.limpiarArchivo("bitacora");
                 actualizarDescriptor2("usuario");
                 actualizarDescriptor2("bitacora");
@@ -282,6 +282,7 @@ public class Mantenimiento extends javax.swing.JFrame {
                     }
                 }
             }
+            actualizarDescriptorlista("lista_usuario");
             limpieza = archivo.leerArchivo("lista_usuario");
 
             int registro = 1;
@@ -625,6 +626,32 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
     }
 
+    public void actualizarDescriptorlista(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarUsuarios3(descriptor);
+        split[5] = "#_registros:" + total;
+        split[6] = "registro_activos:" + activos;
+        split[7] = "registro_inactivos:" + inactivos;
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
     /**
      * Actualiza el descriptor del backup
      *
@@ -799,6 +826,26 @@ public class Mantenimiento extends javax.swing.JFrame {
                     } else if (datos[9].equals("0")) {
                         inactivos++;
                     }
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+    
+    public void contarUsuarios3(String nombreArchivo) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo(nombreArchivo);
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[5].equals("1")) {
+                    activos++;
+                } else if (datos[5].equals("0")) {
+                    inactivos++;
                 }
             }
         }
