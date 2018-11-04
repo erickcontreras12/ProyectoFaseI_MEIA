@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
  */
 public class Lista extends javax.swing.JFrame {
 
-    boolean encontrado;
+    boolean encontrado, activo;
     String lista;
     String[] indice;
     int activos = 0;
@@ -223,37 +223,36 @@ public class Lista extends javax.swing.JFrame {
             if (opc == 0) {
                 Archivo archivo = new Archivo();
                 Date fecha = new Date();
-                boolean yoMismo = false;
                 String[] datos_lista = obtenerLista(lista, ClaseGeneral.usuarioActual);
                 String usuario_asociado = JOptionPane.showInputDialog(null, "Ingrese el nombre del usuario");
                 buscarUsuario(usuario_asociado);
-                if (encontrado) {
+                if (encontrado && activo) {
+
                     String contenido = lista + "|" + ClaseGeneral.usuarioActual + "|" + usuario_asociado + "|" + datos_lista[2] + "|" + fecha.toString() + "|" + 1;
                     String[] datos = archivo.leerArchivo("lista_usuario");
-                    int validar = 0;
-                    if (datos != null) {
-                        String[] evaluar = contenido.split("\\|");
+                    //Valida que el usuario no quiera agregarse a si mismo
+                    if (usuario_asociado.equals(ClaseGeneral.usuarioActual)) {
+                        JOptionPane.showMessageDialog(null, "No puede agregarse a si mismo");
+                    } else {
+                        int validar = 0;
+                        if (datos != null) {
+                            String[] evaluar = contenido.split("\\|");
 
-                        for (int i = 0; i < datos.length; i++) {
-                            if (datos[i] != null) {
+                            for (int i = 0; i < datos.length; i++) {
+                                if (datos[i] != null) {
 
-                                String[] evaluar2 = datos[i].split("\\|");
+                                    String[] evaluar2 = datos[i].split("\\|");
 
-                                if (evaluar[0].equals(evaluar2[0]) && evaluar[1].equals(evaluar2[1]) && evaluar[2].equals(evaluar2[2])
-                                        && evaluar2[5].equals("1")) {
-                                    validar++;
-                                } else if (evaluar[0].equals(ClaseGeneral.usuarioActual)) {
-                                    yoMismo = true;
+                                    if (evaluar[0].equals(evaluar2[0]) && evaluar[1].equals(evaluar2[1]) && evaluar[2].equals(evaluar2[2])
+                                            && evaluar2[5].equals("1")) {
+                                        validar++;
+                                    }
                                 }
+
                             }
 
                         }
 
-                    }
-
-                    if (yoMismo) {
-                        JOptionPane.showMessageDialog(null, "No puede agregarse a si mismo");
-                    } else {
                         //Archivo bloque
                         if (validar == 0) {
                             archivo.escribirArchivo("lista_usuario", contenido, "");
@@ -288,8 +287,10 @@ public class Lista extends javax.swing.JFrame {
                         }
                     }
 
-                } else {
+                } else if (!encontrado) {
                     JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                } else if (!activo) {
+                    JOptionPane.showMessageDialog(null, "El usuario ingresado esta inactivo, no puede agregarlo");
                 }
             }
         }
@@ -869,6 +870,7 @@ public class Lista extends javax.swing.JFrame {
     public void buscarUsuario(String usuario) {
         Archivo archivo = new Archivo();
         encontrado = false;
+        activo = false;
         String[] datos;
         //Lee la bitacora para hacer una busqueda en esta
         String[] usuarios = archivo.leerArchivo("bitacora");
@@ -900,6 +902,13 @@ public class Lista extends javax.swing.JFrame {
                         }
                     }
                 }
+            }
+        }
+
+        //Si lo encontro valida si el usuario esta activo
+        if (encontrado) {
+            if (ClaseGeneral.datosUsuarioBuscado[9].equals("1")) {
+                activo = true;
             }
         }
     }
@@ -958,32 +967,30 @@ public class Lista extends javax.swing.JFrame {
 
         String[] cambios, cambios2;
         for (int i = 0; i < original.size(); i++) {
-            if (listas[i] != null) {
-                cambios = ordenada.get(i).toString().split("\\|");
-                Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
-                int pos2 = 0;
-                for (int j = 0; j < original.size(); j++) {
-                    if (original.get(j).toString().equals(aux.toString())) {
-                        pos2 = j;
-                    }
-                }
-                if (i + 1 < ordenada.size()) {
-                    cambios2 = ordenada.get(i + 1).toString().split("\\|");
-                    aux = new Indice(cambios2[0], cambios2[1], cambios2[2], cambios2[3], cambios2[4], cambios2[5], cambios2[6]);
-                    Integer cambio = 0;
-                    for (int z = 0; z < original.size(); z++) {
-                        if (original.get(z).toString().equals(aux.toString())) {
-                            cambio = z + 1;
+                if (listas[i] != null) {
+                    cambios = ordenada.get(i).toString().split("\\|");
+                    Indice aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambios[5], cambios[6]);
+                    int pos = 0;
+                    for (int j = 0; j < original.size(); j++){
+                        if (original.get(j).getNombre().equals(aux.getNombre()) 
+                                && original.get(j).getUsuario().equals(aux.getUsuario())
+                                && original.get(j).getAsociado().equals(aux.getAsociado())) {
+                            pos = j;
                         }
                     }
-                    Indice aux2 = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], cambio.toString(), cambios[6]);
-                    original.set(pos2, aux2);
-                } else {
-                    aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
-                    original.set(pos2, aux);
+                    
+                    
+                    if (i + 1 < ordenada.size()) {
+                        cambios = ordenada.get(i + 1).toString().split("\\|");
+                        String cambio = cambios[0];
+                        aux.setSiguiente(cambio);
+                        original.set(pos, aux);
+                    } else {
+                        aux = new Indice(cambios[0], cambios[1], cambios[2], cambios[3], cambios[4], "0", cambios[6]);
+                        original.set(pos, aux);
+                    }
                 }
             }
-        }
 
         for (int i = 0; i < original.size(); i++) {
             for (int j = 0; j < listas.length; j++) {
@@ -1018,8 +1025,17 @@ public class Lista extends javax.swing.JFrame {
 
         //busca en donde esta el menor para ponerle el inicio
         int comparador = 10;
+        int primerExistente = 0;
+        boolean existe = false;
         if (datos[0] != null) {
-            String[] inicio = datos[0].split("\\|"); //supone que el primero siempre es el menor
+            String[] inicio = null;
+            while (!existe) {
+                inicio = datos[primerExistente].split("\\|");
+                if (inicio[6].equals("1")) {
+                    existe = true;
+                }
+                primerExistente++;
+            }
             for (int i = 0; i < datos.length; i++) {
                 if (datos[i] != null) {
                     String[] aux = datos[i].split("\\|");
