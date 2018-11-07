@@ -7,13 +7,21 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.util.Date;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Erick Contreras
  */
 public class Bandeja extends javax.swing.JFrame {
+
+    Archivo archivo = new Archivo();
+    boolean mismaRaiz = true;
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
 
     /**
      * Creates new form Bandeja
@@ -112,10 +120,210 @@ public class Bandeja extends javax.swing.JFrame {
 
     private void jBtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEliminarActionPerformed
         // TODO add your handling code here:
+        String correo = jListCorreos.getSelectedValue();
+        if (correo == null || correo.equals("")) {
+            JOptionPane.showMessageDialog(null, "No ha seleccionado nada");
+        } else {
+            String[] split = correo.split(" - ");
+            String[] datos = split[1].split(": ");
+            int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea eliminar el correo de " + datos[0] + "?");
+            if (opc == 0) {
+                eliminarCorreo(split[0], datos[0]);
+                actualizarDescriptor("correo");
+                JOptionPane.showMessageDialog(null, "Correo eliminado con éxito");
+                buscarCorreos(ClaseGeneral.bandejaEntrada);
+            }
+        }
     }//GEN-LAST:event_jBtnEliminarActionPerformed
 
+    private void eliminarCorreo(String fecha, String usuario_asociado) {
+        String emisor, receptor;
+        if (ClaseGeneral.bandejaEntrada) {
+            emisor = usuario_asociado;
+            receptor = ClaseGeneral.usuarioActual;
+        } else {
+            emisor = ClaseGeneral.usuarioActual;
+            receptor = usuario_asociado;
+        }
+
+        String[] correos = archivo.leerArchivo("correo");
+        String[] descriptor = archivo.leerArchivo("desc_correo");
+        String inicio = descriptor[5].substring(16);
+
+        String[] correo;
+        //valido si es nodo hoja
+        if (correos != null) {
+            if (!inicio.equals("0")) {
+                int comparador = 10;
+                String siguiente = inicio;
+                String prev = "";
+                boolean eliminado = false;
+                boolean esIzquierdo = false;
+                while (!eliminado) {
+                    String[] actual = obtenerActual(siguiente);
+
+                    comparador = emisor.compareTo(actual[3]);
+                    if (comparador == 0) {
+                        //Emisor es el mismo valido ahora el receptor
+                        comparador = receptor.compareTo(actual[4]);
+                        if (comparador == 0) {
+                            //Emisor y receptor iguales, valido la fecha
+                            comparador = fecha.compareTo(actual[5]);
+                            if (comparador == 0) {
+                                //Encontre el dato ahora tengo que validar
+                                String[] aux = null;
+                                //Es distinto de la raiz para que aux tome el valor del padre
+                                if (!actual[0].equals(inicio)) {
+                                    for (int i = 0; i < correos.length; i++) {
+                                        if (correos[i] != null) {
+                                            String[] datos = correos[i].split("\\|");
+                                            if (datos[0].equals(prev)) {
+                                                aux = datos;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    //Si es igual aux obtiene los datos del registro de inicio
+                                    for (int i = 0; i < correos.length; i++) {
+                                        if (correos[i] != null) {
+                                            String[] datos = correos[i].split("\\|");
+                                            if (datos[0].equals(inicio)) {
+                                                aux = datos;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (actual[1].equals("0") && actual[2].equals("0")) {
+                                    //es hoja
+                                    actual[8] = "0";
+                                    correos = modificarDatoEnCorreos(correos, actual);
+                                    if (esIzquierdo) {
+                                        aux[1] = "0";
+                                    } else {
+                                        aux[2] = "0";
+                                    }
+                                    correos = modificarDatoEnCorreos(correos, aux);
+                                    eliminado = true;
+                                } else if (actual[1].equals("0") && !actual[2].equals("0")) {
+                                    //tiene solo hijo derecho
+                                    if (esIzquierdo) {
+                                        aux[1] = actual[2];
+                                    } else {
+                                        aux[2] = actual[2];
+                                    }
+                                    correos = modificarDatoEnCorreos(correos, aux);
+                                    actual[8] = "0";
+                                    actual[2] = "0";
+                                    correos = modificarDatoEnCorreos(correos, actual);
+                                    eliminado = true;
+                                } else if (!actual[1].equals("0") && actual[2].equals("0")) {
+                                    //tiene solo hijo izquierdo
+                                    if (esIzquierdo) {
+                                        aux[1] = actual[1];
+                                    } else {
+                                        aux[2] = actual[1];
+                                    }
+                                    correos = modificarDatoEnCorreos(correos, aux);
+                                    actual[8] = "0";
+                                    actual[1] = "0";
+                                    correos = modificarDatoEnCorreos(correos, actual);
+                                    eliminado = true;
+                                } else {
+                                    //tiene 2 hijos
+                                }
+                            } else if (comparador <= -1) {
+                                //busco a la izquierda
+                                prev = siguiente;
+                                siguiente = actual[1];
+                                esIzquierdo = true;
+                            } else {
+                                //busco a la derecha
+                                prev = siguiente;
+                                siguiente = actual[2];
+                                esIzquierdo = false;
+                            }
+                        } else if (comparador <= -1) {
+                            //busco a la izquierda
+                            prev = siguiente;
+                            siguiente = actual[1];
+                            esIzquierdo = true;
+                        } else {
+                            //busco a la derecha
+                            prev = siguiente;
+                            siguiente = actual[2];
+                            esIzquierdo = false;
+                        }
+                    } else if (comparador <= -1) {
+                        //busco a la izquierda
+                        prev = siguiente;
+                        siguiente = actual[1];
+                        esIzquierdo = true;
+                    } else {
+                        //busco a la derecha
+                        prev = siguiente;
+                        siguiente = actual[2];
+                        esIzquierdo = false;
+                    }
+                }
+            }
+
+            archivo.limpiarArchivo("correo");
+            for (int i = 0; i < correos.length; i++) {
+                if (correos[i] != null) {
+                    archivo.escribirArchivo("correo", correos[i], "");
+                }
+            }
+
+        }
+    }
+
+    private String[] modificarDatoEnCorreos(String[] cadena, String[] dato) {
+        if (cadena != null) {
+            for (int i = 0; i < cadena.length; i++) {
+                if (cadena[i] != null) {
+                    String[] aux = cadena[i].split("\\|");
+                    if (aux[3].equals(dato[3]) && aux[4].equals(dato[4]) && aux[5].equals(dato[5])) {
+                        cadena[i] = armarCadena(dato);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return cadena;
+    }
+
+    private String armarCadena(String[] datos) {
+        String cadena = "";
+        for (int i = 0; i < datos.length; i++) {
+            if (i == datos.length - 1) {
+                cadena += datos[i];
+                break;
+            }
+            cadena += datos[i] + "|";
+        }
+        return cadena;
+    }
+
+    private String[] obtenerActual(String registro) {
+        String[] correos = archivo.leerArchivo("correo");
+        String[] datos = null;
+        for (int i = 0; i < correos.length; i++) {
+            if (correos[i] != null) {
+                datos = correos[i].split("\\|");
+                if (datos[0].equals(registro)) {
+                    return datos;
+                }
+            }
+        }
+        return datos;
+    }
+
     private void buscarCorreos(boolean entrada) {
-        Archivo archivo = new Archivo();
+
         String[] correos = archivo.leerArchivo("correo");
         DefaultListModel modelo = new DefaultListModel();
 
@@ -142,14 +350,62 @@ public class Bandeja extends javax.swing.JFrame {
     }
 
     private String construirMensaje(String[] data, boolean entrada) {
-        String mensaje = data[6] + " - " + data[7];
+        String mensaje = "";
         if (entrada) {
-            mensaje = data[3] + ":  " + mensaje;
+            mensaje = data[5] + " - " + data[3] + ": " + data[6];
         } else {
-            mensaje = data[4] + ":  " + mensaje;
-
+            mensaje = data[5] + " - " + data[4] + ": " + data[6];
         }
         return mensaje;
+    }
+
+    private void actualizarDescriptor(String descriptor) {
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarCorreos();
+        split[6] = "#_registros:" + total;
+        split[7] = "registro_activos:" + activos;
+        split[8] = "registro_inactivos:" + inactivos;
+
+        //Valido la raiz
+        if (mismaRaiz) {
+            split[5] = "inicio_registro:" + 1;
+        }
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    private void contarCorreos() {
+        String[] split = archivo.leerArchivo("correo");
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[8].equals("1")) {
+                    activos++;
+                } else if (datos[8].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
     }
 
     /**

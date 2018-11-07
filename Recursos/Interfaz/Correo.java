@@ -195,8 +195,8 @@ public class Correo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Envio exitoso");
                 actualizarDescriptor("correo");
                 this.hide();
-            Bandeja bandeja = new Bandeja();
-            bandeja.show();
+                Bandeja bandeja = new Bandeja();
+                bandeja.show();
             } else {
                 buscarUsuario(jDestinatario.getText());
                 if (encontrado && activo) {
@@ -205,8 +205,8 @@ public class Correo extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Envio exitoso");
                     actualizarDescriptor("correo");
                     this.hide();
-            Bandeja bandeja = new Bandeja();
-            bandeja.show();
+                    Bandeja bandeja = new Bandeja();
+                    bandeja.show();
 
                 } else if (!encontrado) {
                     JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
