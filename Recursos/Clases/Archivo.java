@@ -198,6 +198,8 @@ public class Archivo {
             escribirArchivo("desc_"+nombreArchivo,"usuario_modificacion:" + ClaseGeneral.usuarioActual ,error);
             escribirArchivo("desc_"+nombreArchivo,"inicio_registro:0",error);
             escribirArchivo("desc_"+nombreArchivo,"#_registros:" + 0 ,error);
+            escribirArchivo("desc_"+nombreArchivo,"registros_activos:" + 0 ,error);
+            escribirArchivo("desc_"+nombreArchivo,"registros_inactivos:" + 0 ,error);
         }
         
         

@@ -7,6 +7,8 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,12 +16,25 @@ import Clases.ClaseGeneral;
  */
 public class Correo extends javax.swing.JFrame {
 
+    Archivo archivo = new Archivo();
+    boolean error = false, encontrado = false, activo = false;
+    boolean mismaRaiz = true;
+    int activos = 0;
+    int inactivos = 0;
+    int total = 0;
+
     /**
      * Creates new form Correo
      */
     public Correo() {
         initComponents();
         actualizarListas();
+        this.jAdjunto.enable(false);
+        this.listasUsuario.enable(false);
+        this.jAdjunto.setText("");
+        this.jAsunto.setText("");
+        this.jDestinatario.setText("");
+        this.jMensaje.setText("");
     }
 
     /**
@@ -43,6 +58,8 @@ public class Correo extends javax.swing.JFrame {
         jAdjunto = new javax.swing.JTextField();
         jBtnExaminar = new javax.swing.JButton();
         jBtnEnviar = new javax.swing.JButton();
+        jBtnCancelar = new javax.swing.JButton();
+        jBoxLista = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -73,6 +90,20 @@ public class Correo extends javax.swing.JFrame {
             }
         });
 
+        jBtnCancelar.setText("Cancelar");
+        jBtnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCancelarActionPerformed(evt);
+            }
+        });
+
+        jBoxLista.setText("Lista de difusion");
+        jBoxLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBoxListaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -80,11 +111,6 @@ public class Correo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(31, 31, 31)
-                        .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,16 +120,26 @@ public class Correo extends javax.swing.JFrame {
                                 .addGap(10, 10, 10)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAsunto, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                            .addComponent(jDestinatario))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addGap(43, 43, 43))
+                            .addComponent(jDestinatario))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addGap(43, 43, 43))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(31, 31, 31)
+                        .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(jBoxLista)
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jBtnEnviar)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jBtnCancelar)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jBtnEnviar))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jAdjunto, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -127,15 +163,18 @@ public class Correo extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                    .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jBoxLista))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jAdjunto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBtnExaminar))
                 .addGap(18, 18, 18)
-                .addComponent(jBtnEnviar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnEnviar)
+                    .addComponent(jBtnCancelar))
                 .addGap(20, 20, 20))
         );
 
@@ -148,11 +187,255 @@ public class Correo extends javax.swing.JFrame {
 
     private void jBtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEnviarActionPerformed
         // TODO add your handling code here:
+        String error = validarError();
+        if (error.equals("")) {
+            if (jBoxLista.isSelected()) {
+                //Insercion de lista
+                insertarCorreoALista(listasUsuario.getSelectedItem().toString());
+                JOptionPane.showMessageDialog(null, "Envio exitoso");
+                actualizarDescriptor("correo");
+                this.hide();
+            Bandeja bandeja = new Bandeja();
+            bandeja.show();
+            } else {
+                buscarUsuario(jDestinatario.getText());
+                if (encontrado && activo) {
+                    //Insercion individual
+                    insertarCorreo(ClaseGeneral.usuarioActual, jDestinatario.getText());
+                    JOptionPane.showMessageDialog(null, "Envio exitoso");
+                    actualizarDescriptor("correo");
+                    this.hide();
+            Bandeja bandeja = new Bandeja();
+            bandeja.show();
+
+                } else if (!encontrado) {
+                    JOptionPane.showMessageDialog(null, "El usuario ingresado no existe");
+                } else if (!activo) {
+                    JOptionPane.showMessageDialog(null, "El usuario ingresado esta inactivo, no puede agregarlo");
+                }
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, error);
+        }
     }//GEN-LAST:event_jBtnEnviarActionPerformed
 
-    private void actualizarListas(){
+    private void jBtnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCancelarActionPerformed
+        // TODO add your handling code here:
+        int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea cancelar?");
+        if (opc == 0) {
+            this.hide();
+            Bandeja bandeja = new Bandeja();
+            bandeja.show();
+        }
+    }//GEN-LAST:event_jBtnCancelarActionPerformed
+
+    private void jBoxListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBoxListaActionPerformed
+        // TODO add your handling code here:
+        if (jBoxLista.isSelected()) {
+            listasUsuario.enable(true);
+            jDestinatario.enable(false);
+        } else {
+            listasUsuario.enable(false);
+            jDestinatario.enable(true);
+        }
+    }//GEN-LAST:event_jBoxListaActionPerformed
+
+    private void insertarCorreoALista(String nombreLista) {
+        String[] lista_usuarios = archivo.leerArchivo("lista_usuario");
+
+        if (lista_usuarios != null) {
+            for (int i = 0; i < lista_usuarios.length; i++) {
+                if (lista_usuarios[i] != null) {
+                    String[] data = lista_usuarios[i].split("\\|");
+                    if (nombreLista.equals(data[0]) && ClaseGeneral.usuarioActual.equals(data[1])
+                            && data[5].equals("1")) {
+                        insertarCorreo(ClaseGeneral.usuarioActual, data[2]);
+                        actualizarDescriptor("correo");
+                    }
+                }
+            }
+        }
+    }
+
+    private void insertarCorreo(String emisor, String receptor) {
+        String[] correos = archivo.leerArchivo("correo");
+        Date fecha = new Date();
+        String[] descriptor = archivo.leerArchivo("desc_correo");
+        String registros = descriptor[6].substring(12);
+        int numRegistro = Integer.valueOf(registros) + 1;
+
+        String contenido = numRegistro + "|" + "0" + "|" + "0" + "|" + emisor + "|" + receptor + "|"
+                + fecha.toString() + "|" + jAsunto.getText() + "|" + jMensaje.getText() + "|" + "1";
+
+        archivo.escribirArchivo("correo", contenido, emisor);
+
+        reorganizarArbol(emisor, receptor, fecha.toString(), String.valueOf(numRegistro));
+    }
+
+    private void reorganizarArbol(String emisor, String receptor, String fecha, String numRegistro) {
+        String[] correos = archivo.leerArchivo("correo");
+        String[] descriptor = archivo.leerArchivo("desc_correo");
+        String inicio = descriptor[5].substring(16);
+
+        if (correos != null) {
+            if (!inicio.equals("0")) {
+                //Insercion interna
+                int comparador = 10;
+                String siguiente = inicio;
+                boolean modificado = false;
+                while (!modificado) {
+                    String[] actual = obtenerActual(siguiente);
+                    boolean esIzquierdo = false;
+
+                    comparador = emisor.compareTo(actual[3]);
+                    if (comparador == 0) {
+                        //Emisor es el mismo valido ahora el receptor
+                        comparador = receptor.compareTo(actual[4]);
+                        if (comparador == 0) {
+                            //Emisor y receptor iguales, valido la fecha
+                            comparador = fecha.compareTo(actual[5]);
+                            if (comparador <= -1) {
+                                esIzquierdo = true;
+                            }
+                        } else if (comparador <= -1) {
+                            esIzquierdo = true;
+                        }
+                    } else if (comparador <= -1) {
+                        esIzquierdo = true;
+                    }
+
+                    /*Ahora que conozco la direccion valido si puede insertarse directo en la
+                    posicion que sea, de lo contrario tomo el valor del siguiente nodo
+                     */
+                    if (esIzquierdo) {
+                        //Puede ingresarse en el izquierdo
+                        if (actual[1].equals("0")) {
+                            actual[1] = numRegistro;
+                            correos = modificarDatoEnCorreos(correos, actual);
+                            modificado = true;
+                        } else {
+                            siguiente = actual[1];
+                        }
+                    } else {
+                        //Puede ingresarse en el derecho
+                        if (actual[2].equals("0")) {
+                            actual[2] = numRegistro;
+                            correos = modificarDatoEnCorreos(correos, actual);
+                            modificado = true;
+                        } else {
+                            siguiente = actual[2];
+                        }
+                    }
+
+                }
+
+                archivo.limpiarArchivo("correo");
+                for (int i = 0; i < correos.length; i++) {
+                    if (correos[i] != null) {
+                        archivo.escribirArchivo("correo", correos[i], "");
+                    }
+                }
+            }
+        }
+    }
+
+    private void actualizarDescriptor(String descriptor) {
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarCorreos();
+        split[6] = "#_registros:" + total;
+        split[7] = "registro_activos:" + activos;
+        split[8] = "registro_inactivos:" + inactivos;
+
+        //Valido la raiz
+        if (mismaRaiz) {
+            split[5] = "inicio_registro:" + 1;
+        }
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    private String[] modificarDatoEnCorreos(String[] cadena, String[] dato) {
+        if (cadena != null) {
+            for (int i = 0; i < cadena.length; i++) {
+                if (cadena[i] != null) {
+                    String[] aux = cadena[i].split("\\|");
+                    if (aux[3].equals(dato[3]) && aux[4].equals(dato[4]) && aux[5].equals(dato[5])) {
+                        cadena[i] = armarCadena(dato);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return cadena;
+    }
+
+    private String armarCadena(String[] datos) {
+        String cadena = "";
+        for (int i = 0; i < datos.length; i++) {
+            if (i == datos.length - 1) {
+                cadena += datos[i];
+                break;
+            }
+            cadena += datos[i] + "|";
+        }
+        return cadena;
+    }
+
+    private String[] obtenerActual(String registro) {
+        String[] correos = archivo.leerArchivo("correo");
+        String[] datos = null;
+        for (int i = 0; i < correos.length; i++) {
+            if (correos[i] != null) {
+                datos = correos[i].split("\\|");
+                if (datos[0].equals(registro)) {
+                    return datos;
+                }
+            }
+        }
+        return datos;
+    }
+
+    private String validarError() {
+        error = false;
+
+        //Asunto vacio
+        if (jAsunto.getText().equals("")) {
+            error = true;
+            return "Debe agregar un asunto al correo";
+        }
+        //Si el mensaje es individual
+        if (!jBoxLista.isSelected() && jDestinatario.getText().equals("")) {
+            error = true;
+            return "Debe seleccionar un usuario";
+        }
+        //Si es una lista de difusion
+        if (jBoxLista.isSelected() && listasUsuario.getSelectedItem().equals("")) {
+            error = true;
+            return "Debe seleccionar una lista de difusion ";
+        }
+
+        return "";
+    }
+
+    private void actualizarListas() {
         listasUsuario.addItem("");
-        Archivo archivo = new Archivo();
         String[] datos;
         //Lee la bitacora para hacer una busqueda en esta
         String[] listas = archivo.leerArchivo("bitacora_lista");
@@ -179,9 +462,72 @@ public class Correo extends javax.swing.JFrame {
                 }
             }
         }
-        
     }
-    
+
+    private void contarCorreos() {
+        String[] split = archivo.leerArchivo("correo");
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[8].equals("1")) {
+                    activos++;
+                } else if (datos[8].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
+    public void buscarUsuario(String usuario) {
+        encontrado = false;
+        activo = false;
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] usuarios = archivo.leerArchivo("bitacora");
+        if (usuarios != null) {
+            for (int i = 0; i < usuarios.length; i++) {
+                if (usuarios[i] != null) {
+                    datos = usuarios[i].split("\\|");
+                    if (usuario.equals(datos[0])) {
+                        encontrado = true;
+                        ClaseGeneral.datosUsuarioBuscado = datos;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee usuarios
+        if (!encontrado) {
+            usuarios = null;
+            usuarios = archivo.leerArchivo("usuario");
+            if (usuarios != null) {
+                for (int i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i] != null) {
+                        datos = usuarios[i].split("\\|");
+                        if (usuario.equals(datos[0])) {
+                            encontrado = true;
+                            ClaseGeneral.datosUsuarioBuscado = datos;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        //Si lo encontro valida si el usuario esta activo
+        if (encontrado) {
+            if (ClaseGeneral.datosUsuarioBuscado[9].equals("1")) {
+                activo = true;
+            }
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -220,6 +566,8 @@ public class Correo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jAdjunto;
     private javax.swing.JTextField jAsunto;
+    private javax.swing.JCheckBox jBoxLista;
+    private javax.swing.JButton jBtnCancelar;
     private javax.swing.JButton jBtnEnviar;
     private javax.swing.JButton jBtnExaminar;
     private javax.swing.JTextField jDestinatario;

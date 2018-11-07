@@ -5,6 +5,10 @@
  */
 package Interfaz;
 
+import Clases.Archivo;
+import Clases.ClaseGeneral;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author Erick Contreras
@@ -16,6 +20,7 @@ public class Bandeja extends javax.swing.JFrame {
      */
     public Bandeja() {
         initComponents();
+        buscarCorreos(ClaseGeneral.bandejaEntrada);
     }
 
     /**
@@ -52,6 +57,11 @@ public class Bandeja extends javax.swing.JFrame {
         });
 
         jBtnEliminar.setText("Eliminar");
+        jBtnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,7 +107,50 @@ public class Bandeja extends javax.swing.JFrame {
         // TODO add your handling code here:
         Correo nuevo_correo = new Correo();
         nuevo_correo.show();
+        this.hide();
     }//GEN-LAST:event_jBtnNuevoCorreoActionPerformed
+
+    private void jBtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEliminarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jBtnEliminarActionPerformed
+
+    private void buscarCorreos(boolean entrada) {
+        Archivo archivo = new Archivo();
+        String[] correos = archivo.leerArchivo("correo");
+        DefaultListModel modelo = new DefaultListModel();
+
+        if (correos != null) {
+            for (int i = 0; i < correos.length; i++) {
+                if (correos[i] != null) {
+                    String[] correo = correos[i].split("\\|");
+                    /*Si el boolean de entrada es verdadero busca los correos donde el receptor sea el 
+                    usuario actual, sino busca donde el emisor sea el usuario actual*/
+                    if (entrada) {
+                        if (correo[4].equals(ClaseGeneral.usuarioActual) && correo[8].equals("1")) {
+                            modelo.addElement(construirMensaje(correo, entrada));
+                        }
+                    } else {
+                        if (correo[3].equals(ClaseGeneral.usuarioActual) && correo[8].equals("1")) {
+                            modelo.addElement(construirMensaje(correo, entrada));
+                        }
+                    }
+                }
+            }
+
+            jListCorreos.setModel(modelo);
+        }
+    }
+
+    private String construirMensaje(String[] data, boolean entrada) {
+        String mensaje = data[6] + " - " + data[7];
+        if (entrada) {
+            mensaje = data[3] + ":  " + mensaje;
+        } else {
+            mensaje = data[4] + ":  " + mensaje;
+
+        }
+        return mensaje;
+    }
 
     /**
      * @param args the command line arguments
