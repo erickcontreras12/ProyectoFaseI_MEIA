@@ -5,6 +5,9 @@
  */
 package Interfaz;
 
+import Clases.Archivo;
+import Clases.ClaseGeneral;
+
 /**
  *
  * @author Erick Contreras
@@ -16,6 +19,7 @@ public class Correo extends javax.swing.JFrame {
      */
     public Correo() {
         initComponents();
+        actualizarListas();
     }
 
     /**
@@ -35,13 +39,12 @@ public class Correo extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jMensaje = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        listasUsuario = new javax.swing.JComboBox<>();
         jAdjunto = new javax.swing.JTextField();
         jBtnExaminar = new javax.swing.JButton();
         jBtnEnviar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(433, 418));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel1.setText("Asunto");
 
@@ -64,6 +67,11 @@ public class Correo extends javax.swing.JFrame {
         jBtnExaminar.setText("Examinar");
 
         jBtnEnviar.setText("Enviar");
+        jBtnEnviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEnviarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -75,7 +83,7 @@ public class Correo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(31, 31, 31)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -84,7 +92,6 @@ public class Correo extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(10, 10, 10)))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jAsunto, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
                             .addComponent(jDestinatario))))
@@ -107,7 +114,7 @@ public class Correo extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jAsunto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -116,11 +123,11 @@ public class Correo extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)))
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(listasUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -139,6 +146,42 @@ public class Correo extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jDestinatarioActionPerformed
 
+    private void jBtnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEnviarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jBtnEnviarActionPerformed
+
+    private void actualizarListas(){
+        listasUsuario.addItem("");
+        Archivo archivo = new Archivo();
+        String[] datos;
+        //Lee la bitacora para hacer una busqueda en esta
+        String[] listas = archivo.leerArchivo("bitacora_lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                    if (ClaseGeneral.usuarioActual.equals(datos[1]) && datos[5].equals("1")) {
+                        listasUsuario.addItem(datos[0]);
+                    }
+                }
+            }
+        }
+
+        //Si no lo encontro en la bitacora lee lista
+        listas = archivo.leerArchivo("lista");
+        if (listas != null) {
+            for (int i = 0; i < listas.length; i++) {
+                if (listas[i] != null) {
+                    datos = listas[i].split("\\|");
+                    if (ClaseGeneral.usuarioActual.equals(datos[1]) && datos[5].equals("1")) {
+                        listasUsuario.addItem(datos[0]);
+                    }
+                }
+            }
+        }
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -179,7 +222,6 @@ public class Correo extends javax.swing.JFrame {
     private javax.swing.JTextField jAsunto;
     private javax.swing.JButton jBtnEnviar;
     private javax.swing.JButton jBtnExaminar;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JTextField jDestinatario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -187,5 +229,6 @@ public class Correo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextArea jMensaje;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox<String> listasUsuario;
     // End of variables declaration//GEN-END:variables
 }

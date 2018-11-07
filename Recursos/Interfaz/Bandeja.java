@@ -31,13 +31,18 @@ public class Bandeja extends javax.swing.JFrame {
         jListCorreos = new javax.swing.JList<>();
         jBtnNuevoCorreo = new javax.swing.JButton();
         jBtnVolver = new javax.swing.JButton();
+        jBtnEliminar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(433, 418));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jScrollPane1.setViewportView(jListCorreos);
 
         jBtnNuevoCorreo.setText("Redactar");
+        jBtnNuevoCorreo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnNuevoCorreoActionPerformed(evt);
+            }
+        });
 
         jBtnVolver.setText("Volver");
         jBtnVolver.addActionListener(new java.awt.event.ActionListener() {
@@ -46,23 +51,23 @@ public class Bandeja extends javax.swing.JFrame {
             }
         });
 
+        jBtnEliminar.setText("Eliminar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jBtnEliminar)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnNuevoCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jBtnVolver)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(24, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jBtnNuevoCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -70,8 +75,10 @@ public class Bandeja extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jBtnNuevoCorreo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnNuevoCorreo)
+                    .addComponent(jBtnEliminar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jBtnVolver)
                 .addContainerGap())
         );
@@ -85,6 +92,12 @@ public class Bandeja extends javax.swing.JFrame {
         principio.show();
         this.hide();
     }//GEN-LAST:event_jBtnVolverActionPerformed
+
+    private void jBtnNuevoCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnNuevoCorreoActionPerformed
+        // TODO add your handling code here:
+        Correo nuevo_correo = new Correo();
+        nuevo_correo.show();
+    }//GEN-LAST:event_jBtnNuevoCorreoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -122,6 +135,7 @@ public class Bandeja extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnEliminar;
     private javax.swing.JButton jBtnNuevoCorreo;
     private javax.swing.JButton jBtnVolver;
     private javax.swing.JList<String> jListCorreos;
