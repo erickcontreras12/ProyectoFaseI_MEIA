@@ -7,7 +7,12 @@ package Interfaz;
 
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,6 +28,7 @@ public class Correo extends javax.swing.JFrame {
     int activos = 0;
     int inactivos = 0;
     int total = 0;
+    File Adjunto;
 
     /**
      * Creates new form Correo
@@ -94,7 +100,14 @@ public class Correo extends javax.swing.JFrame {
 
         jLabel4.setText("Lista de destinatarios");
 
+        jAdjunto.setEditable(false);
+
         jBtnExaminar.setText("Examinar");
+        jBtnExaminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnExaminarActionPerformed(evt);
+            }
+        });
 
         jBtnEnviar.setText("Enviar");
         jBtnEnviar.addActionListener(new java.awt.event.ActionListener() {
@@ -253,6 +266,41 @@ public class Correo extends javax.swing.JFrame {
             jDestinatario.enable(true);
         }
     }//GEN-LAST:event_jBoxListaActionPerformed
+
+    private void jBtnExaminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnExaminarActionPerformed
+        // TODO add your handling code here:
+        JFileChooser dialogo = new JFileChooser();
+        // FileNameExtensionFilter filtro = new FileNameExtensionFilter("Foto de perfil", "jpg");
+        File ficheroadjunto;
+        String rutaArchivo;
+        //dialogo.setFileFilter(filtro);
+        int valor = dialogo.showOpenDialog(this);
+        if (valor == JFileChooser.APPROVE_OPTION) {
+            ficheroadjunto = dialogo.getSelectedFile();
+            rutaArchivo = ficheroadjunto.getPath();
+            Copiar(ficheroadjunto);
+            jAdjunto.setText(Adjunto.getPath());
+        }
+
+    }//GEN-LAST:event_jBtnExaminarActionPerformed
+
+    public void Copiar(File origen) {
+
+        String ruta_destino = "C:\\MEIA\\adjuntos";
+        File ruta = new File(ruta_destino);
+        if (!ruta.exists()) {
+            ruta.mkdir();
+        }
+
+        File nuevo = new File(ruta_destino + "\\" + origen.getName());
+
+        try {
+            Files.copy(Paths.get(origen.getAbsolutePath()), Paths.get(nuevo.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+            Adjunto = new File(ruta_destino + "\\" + origen.getName());
+        } catch (Exception e) {
+
+        }
+    }
 
     private void insertarCorreoALista(String nombreLista) {
         String[] lista_usuarios = archivo.leerArchivo("lista_usuario");

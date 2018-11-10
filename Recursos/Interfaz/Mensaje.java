@@ -6,6 +6,8 @@
 package Interfaz;
 
 import Clases.ClaseGeneral;
+import java.awt.Desktop;
+import java.io.File;
 
 /**
  *
@@ -63,7 +65,14 @@ public class Mensaje extends javax.swing.JFrame {
 
         jFechaCorreo.setText("jLabel3");
 
+        jAdjunto.setEditable(false);
+
         jBtnAbrir.setText("Abrir");
+        jBtnAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnAbrirActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Asunto:");
 
@@ -154,6 +163,8 @@ public class Mensaje extends javax.swing.JFrame {
     private void jBtnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCerrarActionPerformed
         // TODO add your handling code here:
         this.hide();
+//        Bandeja nuevo = new Bandeja();
+//        nuevo.show();
     }//GEN-LAST:event_jBtnCerrarActionPerformed
 
     private void jResponderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResponderActionPerformed
@@ -163,7 +174,21 @@ public class Mensaje extends javax.swing.JFrame {
         nuevo.show();
     }//GEN-LAST:event_jResponderActionPerformed
 
-    private void mostrarMensaje(){
+    private void jBtnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAbrirActionPerformed
+        // TODO add your handling code here:
+        try {
+            if (!jAdjunto.getText().equals("")) {
+                File x = new File(jAdjunto.getText());
+                Desktop.getDesktop().open(x);
+            }
+
+        } catch (Exception e) {
+
+        }
+
+    }//GEN-LAST:event_jBtnAbrirActionPerformed
+
+    private void mostrarMensaje() {
         jEmisor.setEditable(false);
         jEmisor.setText(ClaseGeneral.correo[3]);
         jReceptor.setEditable(false);
@@ -174,8 +199,9 @@ public class Mensaje extends javax.swing.JFrame {
         jMensaje.setEditable(false);
         jMensaje.setText(ClaseGeneral.correo[7]);
         jAdjunto.setEditable(false);
+        jAdjunto.setText(ClaseGeneral.correo[8]);
     }
-    
+
     /**
      * @param args the command line arguments
      */

@@ -167,7 +167,7 @@ public class Bandeja extends javax.swing.JFrame {
             ClaseGeneral.correo = buscarCorreoActual(emisor, receptor, split[0]);
             Mensaje ventana = new Mensaje();
             ventana.show();
-            this.hide();
+            //this.hide();
         }
     }//GEN-LAST:event_jBtnVerMensajeActionPerformed
 
