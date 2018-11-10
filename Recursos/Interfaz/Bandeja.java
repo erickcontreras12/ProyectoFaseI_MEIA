@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 public class Bandeja extends javax.swing.JFrame {
 
     Archivo archivo = new Archivo();
-    boolean mismaRaiz = true;
+    String raiz = "1";
     int activos = 0;
     int inactivos = 0;
     int total = 0;
@@ -45,6 +45,7 @@ public class Bandeja extends javax.swing.JFrame {
         jBtnNuevoCorreo = new javax.swing.JButton();
         jBtnVolver = new javax.swing.JButton();
         jBtnEliminar = new javax.swing.JButton();
+        jBtnVerMensaje = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -71,6 +72,13 @@ public class Bandeja extends javax.swing.JFrame {
             }
         });
 
+        jBtnVerMensaje.setText("Ver");
+        jBtnVerMensaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnVerMensajeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -79,6 +87,8 @@ public class Bandeja extends javax.swing.JFrame {
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jBtnVerMensaje)
+                        .addGap(18, 18, 18)
                         .addComponent(jBtnEliminar)
                         .addGap(18, 18, 18)
                         .addComponent(jBtnNuevoCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -95,7 +105,8 @@ public class Bandeja extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBtnNuevoCorreo)
-                    .addComponent(jBtnEliminar))
+                    .addComponent(jBtnEliminar)
+                    .addComponent(jBtnVerMensaje))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jBtnVolver)
                 .addContainerGap())
@@ -135,6 +146,30 @@ public class Bandeja extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jBtnEliminarActionPerformed
+
+    private void jBtnVerMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnVerMensajeActionPerformed
+        // TODO add your handling code here:
+        String correo = jListCorreos.getSelectedValue();
+        if (correo == null || correo.equals("")) {
+            JOptionPane.showMessageDialog(null, "No ha seleccionado nada");
+        } else {
+            String[] split = correo.split(" - ");
+            String[] datos = split[1].split(": ");
+
+            String emisor, receptor;
+            if (ClaseGeneral.bandejaEntrada) {
+                emisor = datos[0];
+                receptor = ClaseGeneral.usuarioActual;
+            } else {
+                emisor = ClaseGeneral.usuarioActual;
+                receptor = datos[0];
+            }
+            ClaseGeneral.correo = buscarCorreoActual(emisor, receptor, split[0]);
+            Mensaje ventana = new Mensaje();
+            ventana.show();
+            this.hide();
+        }
+    }//GEN-LAST:event_jBtnVerMensajeActionPerformed
 
     private void eliminarCorreo(String fecha, String usuario_asociado) {
         String emisor, receptor;
@@ -183,22 +218,11 @@ public class Bandeja extends javax.swing.JFrame {
                                             }
                                         }
                                     }
-                                } else {
-                                    //Si es igual aux obtiene los datos del registro de inicio
-                                    for (int i = 0; i < correos.length; i++) {
-                                        if (correos[i] != null) {
-                                            String[] datos = correos[i].split("\\|");
-                                            if (datos[0].equals(inicio)) {
-                                                aux = datos;
-                                                break;
-                                            }
-                                        }
-                                    }
                                 }
 
                                 if (actual[1].equals("0") && actual[2].equals("0")) {
                                     //es hoja
-                                    actual[8] = "0";
+                                    actual[9] = "0";
                                     correos = modificarDatoEnCorreos(correos, actual);
                                     if (esIzquierdo) {
                                         aux[1] = "0";
@@ -215,7 +239,7 @@ public class Bandeja extends javax.swing.JFrame {
                                         aux[2] = actual[2];
                                     }
                                     correos = modificarDatoEnCorreos(correos, aux);
-                                    actual[8] = "0";
+                                    actual[9] = "0";
                                     actual[2] = "0";
                                     correos = modificarDatoEnCorreos(correos, actual);
                                     eliminado = true;
@@ -227,12 +251,84 @@ public class Bandeja extends javax.swing.JFrame {
                                         aux[2] = actual[1];
                                     }
                                     correos = modificarDatoEnCorreos(correos, aux);
-                                    actual[8] = "0";
+                                    actual[9] = "0";
                                     actual[1] = "0";
                                     correos = modificarDatoEnCorreos(correos, actual);
                                     eliminado = true;
                                 } else {
                                     //tiene 2 hijos
+                                    String[] nuevo = null; // mas izquierdo
+                                    String padre = "";
+                                    boolean masIzquierdo = false;
+                                    String izquierdo = actual[2];
+                                    int cont = 0;
+                                    while (!masIzquierdo) {
+                                        nuevo = obtenerActual(izquierdo);
+                                        if (!nuevo[1].equals("0")) {
+                                            padre = actual[0];
+                                            izquierdo = actual[1];
+                                            cont++;
+                                        } else {
+                                            masIzquierdo = true;
+                                        }
+                                    }
+
+                                    if (aux[0].equals(inicio)) {    //Es la raiz
+                                        //La nueva raiz es el mas izquierdo
+                                        raiz = nuevo[0];
+                                        //Si el contador avanzo quiere decir que es izquierdo
+                                        if (cont > 0) {
+                                            //aux toma el valor del padre del mas izquierdo
+                                            aux = obtenerActual(padre);
+                                            //El padre del mas izquierdo, tiene como hijos izquierdos a los hijos derechos del mas izquierdo
+                                            aux[1] = nuevo[2];
+
+                                            correos = modificarDatoEnCorreos(correos, aux);
+                                        }
+
+                                        //El mas izquierdo toma los valores de los hijos del eliminado
+                                        nuevo[1] = actual[1];
+                                        nuevo[2] = actual[2];
+
+                                        correos = modificarDatoEnCorreos(correos, nuevo);
+
+                                        //actual es eliminado
+                                        actual[9] = "0";
+                                        actual[1] = "0";
+                                        actual[2] = "0";
+                                        correos = modificarDatoEnCorreos(correos, actual);
+
+                                    } else {
+                                        //El padre del eliminado apunta al mas izquierdo
+                                        if (esIzquierdo) {
+                                            aux[1] = nuevo[0];
+                                        } else {
+                                            aux[2] = nuevo[0];
+                                        }
+                                        correos = modificarDatoEnCorreos(correos, aux);
+
+                                        //Si el contador avanzo quiere decir que es izquierdo
+                                        if (cont > 0) {
+                                            //aux toma el valor del padre del mas izquierdo
+                                            aux = obtenerActual(padre);
+                                            //El padre del mas izquierdo, tiene como hijos izquierdos a los hijos derechos del mas izquierdo
+                                            aux[1] = nuevo[2];
+
+                                            correos = modificarDatoEnCorreos(correos, aux);
+                                        }
+
+                                        //El mas izquierdo toma los valores de los hijos del eliminado
+                                        nuevo[1] = actual[1];
+                                        nuevo[2] = actual[2];
+
+                                        correos = modificarDatoEnCorreos(correos, nuevo);
+
+                                        //actual es eliminado
+                                        actual[9] = "0";
+                                        actual[1] = "0";
+                                        actual[2] = "0";
+                                        correos = modificarDatoEnCorreos(correos, actual);
+                                    }
                                 }
                             } else if (comparador <= -1) {
                                 //busco a la izquierda
@@ -322,6 +418,51 @@ public class Bandeja extends javax.swing.JFrame {
         return datos;
     }
 
+    private String[] buscarCorreoActual(String emisor, String receptor, String fecha) {
+        String[] correos = archivo.leerArchivo("correo");
+        String[] descriptor = archivo.leerArchivo("desc_correo");
+        String inicio = descriptor[5].substring(16);
+
+        if (correos != null) {
+            if (!inicio.equals("0")) {
+                //Insercion interna
+                int comparador = 10;
+                String siguiente = inicio;
+                boolean modificado = false;
+                while (!modificado) {
+                    String[] actual = obtenerActual(siguiente);
+                    boolean esIzquierdo = false;
+
+                    comparador = emisor.compareTo(actual[3]);
+                    if (comparador == 0) {
+                        //Emisor es el mismo valido ahora el receptor
+                        comparador = receptor.compareTo(actual[4]);
+                        if (comparador == 0) {
+                            //Emisor y receptor iguales, valido la fecha
+                            comparador = fecha.compareTo(actual[5]);
+                            if (comparador == 0) {
+                                return actual;
+                            } else if (comparador <= -1) {
+                                esIzquierdo = true;
+                            }
+                        } else if (comparador <= -1) {
+                            esIzquierdo = true;
+                        }
+                    } else if (comparador <= -1) {
+                        esIzquierdo = true;
+                    }
+
+                    if (esIzquierdo) {
+                        siguiente = actual[1];
+                    } else {
+                        siguiente = actual[2];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     private void buscarCorreos(boolean entrada) {
 
         String[] correos = archivo.leerArchivo("correo");
@@ -334,11 +475,11 @@ public class Bandeja extends javax.swing.JFrame {
                     /*Si el boolean de entrada es verdadero busca los correos donde el receptor sea el 
                     usuario actual, sino busca donde el emisor sea el usuario actual*/
                     if (entrada) {
-                        if (correo[4].equals(ClaseGeneral.usuarioActual) && correo[8].equals("1")) {
+                        if (correo[4].equals(ClaseGeneral.usuarioActual) && correo[9].equals("1")) {
                             modelo.addElement(construirMensaje(correo, entrada));
                         }
                     } else {
-                        if (correo[3].equals(ClaseGeneral.usuarioActual) && correo[8].equals("1")) {
+                        if (correo[3].equals(ClaseGeneral.usuarioActual) && correo[9].equals("1")) {
                             modelo.addElement(construirMensaje(correo, entrada));
                         }
                     }
@@ -376,8 +517,10 @@ public class Bandeja extends javax.swing.JFrame {
         split[8] = "registro_inactivos:" + inactivos;
 
         //Valido la raiz
-        if (mismaRaiz) {
-            split[5] = "inicio_registro:" + 1;
+        if (activos == 0) {
+            split[5] = "inicio_registro:" + 0;
+        } else {
+            split[5] = "inicio_registro:" + raiz;
         }
 
         String error = "";
@@ -398,9 +541,9 @@ public class Bandeja extends javax.swing.JFrame {
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
                 String[] datos = split[i].split("\\|");
-                if (datos[8].equals("1")) {
+                if (datos[9].equals("1")) {
                     activos++;
-                } else if (datos[8].equals("0")) {
+                } else if (datos[9].equals("0")) {
                     inactivos++;
                 }
             }
@@ -446,6 +589,7 @@ public class Bandeja extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnEliminar;
     private javax.swing.JButton jBtnNuevoCorreo;
+    private javax.swing.JButton jBtnVerMensaje;
     private javax.swing.JButton jBtnVolver;
     private javax.swing.JList<String> jListCorreos;
     private javax.swing.JScrollPane jScrollPane1;

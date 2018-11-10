@@ -27,6 +27,9 @@ public class ClaseGeneral {
     public static String rutaDestino = "";
     //Variables para la fase de envio de mensajes
     public static boolean bandejaEntrada = true;
+    public static boolean responder = false;
+    //Variable para almacenar la info del correo que se va mostrar
+    public static String[] correo = null;
     
     
 

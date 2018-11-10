@@ -18,7 +18,8 @@ public class Correo extends javax.swing.JFrame {
 
     Archivo archivo = new Archivo();
     boolean error = false, encontrado = false, activo = false;
-    boolean mismaRaiz = true;
+    String raiz = "";
+    boolean vacio = true;
     int activos = 0;
     int inactivos = 0;
     int total = 0;
@@ -29,11 +30,23 @@ public class Correo extends javax.swing.JFrame {
     public Correo() {
         initComponents();
         actualizarListas();
+        if (ClaseGeneral.responder) {
+            this.jDestinatario.setEditable(false);
+            this.jBoxLista.enable(false);
+            if (ClaseGeneral.bandejaEntrada) {
+                this.jDestinatario.setText(ClaseGeneral.correo[3]);
+            } else {
+                this.jDestinatario.setText(ClaseGeneral.correo[4]);
+            }
+
+        } else {
+            this.jDestinatario.setText("");
+        }
+
         this.jAdjunto.enable(false);
         this.listasUsuario.enable(false);
         this.jAdjunto.setText("");
         this.jAsunto.setText("");
-        this.jDestinatario.setText("");
         this.jMensaje.setText("");
     }
 
@@ -266,7 +279,9 @@ public class Correo extends javax.swing.JFrame {
         int numRegistro = Integer.valueOf(registros) + 1;
 
         String contenido = numRegistro + "|" + "0" + "|" + "0" + "|" + emisor + "|" + receptor + "|"
-                + fecha.toString() + "|" + jAsunto.getText() + "|" + jMensaje.getText() + "|" + "1";
+                + fecha.toString() + "|" + jAsunto.getText() + "|" + jMensaje.getText() + "|"
+                + jAdjunto.getText()
+                + "|1";
 
         archivo.escribirArchivo("correo", contenido, emisor);
 
@@ -279,6 +294,11 @@ public class Correo extends javax.swing.JFrame {
         String inicio = descriptor[5].substring(16);
 
         if (correos != null) {
+
+            if (vacio) {
+                raiz = "1";
+            }
+
             if (!inicio.equals("0")) {
                 //Insercion interna
                 int comparador = 10;
@@ -357,8 +377,10 @@ public class Correo extends javax.swing.JFrame {
         split[8] = "registro_inactivos:" + inactivos;
 
         //Valido la raiz
-        if (mismaRaiz) {
-            split[5] = "inicio_registro:" + 1;
+        if (activos == 0) {
+            split[5] = "inicio_registro:" + 0;
+        } else {
+            split[5] = "inicio_registro:" + raiz;
         }
 
         String error = "";
@@ -473,9 +495,9 @@ public class Correo extends javax.swing.JFrame {
         for (int i = 0; i < split.length; i++) {
             if (split[i] != null) {
                 String[] datos = split[i].split("\\|");
-                if (datos[8].equals("1")) {
+                if (datos[9].equals("1")) {
                     activos++;
-                } else if (datos[8].equals("0")) {
+                } else if (datos[9].equals("0")) {
                     inactivos++;
                 }
             }
