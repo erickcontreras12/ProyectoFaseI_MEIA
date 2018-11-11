@@ -163,8 +163,8 @@ public class Mensaje extends javax.swing.JFrame {
     private void jBtnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCerrarActionPerformed
         // TODO add your handling code here:
         this.hide();
-//        Bandeja nuevo = new Bandeja();
-//        nuevo.show();
+        Bandeja nuevo = new Bandeja();
+        nuevo.show();
     }//GEN-LAST:event_jBtnCerrarActionPerformed
 
     private void jResponderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResponderActionPerformed
@@ -172,6 +172,7 @@ public class Mensaje extends javax.swing.JFrame {
         ClaseGeneral.responder = true;
         Correo nuevo = new Correo();
         nuevo.show();
+        this.hide();
     }//GEN-LAST:event_jResponderActionPerformed
 
     private void jBtnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAbrirActionPerformed
@@ -200,6 +201,11 @@ public class Mensaje extends javax.swing.JFrame {
         jMensaje.setText(ClaseGeneral.correo[7]);
         jAdjunto.setEditable(false);
         jAdjunto.setText(ClaseGeneral.correo[8]);
+        if (ClaseGeneral.correo[8].equals("")) {
+            jBtnAbrir.setEnabled(false);
+        }else{
+            jBtnAbrir.setEnabled(true);
+        }
     }
 
     /**

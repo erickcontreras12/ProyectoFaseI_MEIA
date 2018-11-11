@@ -28,9 +28,8 @@ public class ClaseGeneral {
     //Variables para la fase de envio de mensajes
     public static boolean bandejaEntrada = true;
     public static boolean responder = false;
+    public static String raiz = "0";
     //Variable para almacenar la info del correo que se va mostrar
     public static String[] correo = null;
-    
-    
 
 }

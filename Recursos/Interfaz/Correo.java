@@ -23,7 +23,6 @@ public class Correo extends javax.swing.JFrame {
 
     Archivo archivo = new Archivo();
     boolean error = false, encontrado = false, activo = false;
-    String raiz = "";
     boolean vacio = true;
     int activos = 0;
     int inactivos = 0;
@@ -38,6 +37,8 @@ public class Correo extends javax.swing.JFrame {
         actualizarListas();
         if (ClaseGeneral.responder) {
             this.jDestinatario.setEditable(false);
+            this.jAsunto.setEditable(false);
+            this.jAsunto.setText(ClaseGeneral.correo[6]);
             this.jBoxLista.enable(false);
             if (ClaseGeneral.bandejaEntrada) {
                 this.jDestinatario.setText(ClaseGeneral.correo[3]);
@@ -47,12 +48,12 @@ public class Correo extends javax.swing.JFrame {
 
         } else {
             this.jDestinatario.setText("");
+            this.jAsunto.setText("");
         }
 
         this.jAdjunto.enable(false);
         this.listasUsuario.enable(false);
         this.jAdjunto.setText("");
-        this.jAsunto.setText("");
         this.jMensaje.setText("");
     }
 
@@ -343,8 +344,10 @@ public class Correo extends javax.swing.JFrame {
 
         if (correos != null) {
 
-            if (vacio) {
-                raiz = "1";
+            if (inicio.equals("0")) {
+                ClaseGeneral.raiz = "1";
+            } else {
+                ClaseGeneral.raiz = inicio;
             }
 
             if (!inicio.equals("0")) {
@@ -428,7 +431,7 @@ public class Correo extends javax.swing.JFrame {
         if (activos == 0) {
             split[5] = "inicio_registro:" + 0;
         } else {
-            split[5] = "inicio_registro:" + raiz;
+            split[5] = "inicio_registro:" + ClaseGeneral.raiz;
         }
 
         String error = "";

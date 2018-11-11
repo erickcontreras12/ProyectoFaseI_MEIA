@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 public class Bandeja extends javax.swing.JFrame {
 
     Archivo archivo = new Archivo();
-    String raiz = "1";
     int activos = 0;
     int inactivos = 0;
     int total = 0;
@@ -167,7 +166,7 @@ public class Bandeja extends javax.swing.JFrame {
             ClaseGeneral.correo = buscarCorreoActual(emisor, receptor, split[0]);
             Mensaje ventana = new Mensaje();
             ventana.show();
-            //this.hide();
+            this.hide();
         }
     }//GEN-LAST:event_jBtnVerMensajeActionPerformed
 
@@ -265,17 +264,17 @@ public class Bandeja extends javax.swing.JFrame {
                                     while (!masIzquierdo) {
                                         nuevo = obtenerActual(izquierdo);
                                         if (!nuevo[1].equals("0")) {
-                                            padre = actual[0];
-                                            izquierdo = actual[1];
+                                            padre = nuevo[0];
+                                            izquierdo = nuevo[1];
                                             cont++;
                                         } else {
                                             masIzquierdo = true;
                                         }
                                     }
 
-                                    if (aux[0].equals(inicio)) {    //Es la raiz
+                                    if (actual[0].equals(inicio)) {    //Es la raiz
                                         //La nueva raiz es el mas izquierdo
-                                        raiz = nuevo[0];
+                                        ClaseGeneral.raiz = nuevo[0];
                                         //Si el contador avanzo quiere decir que es izquierdo
                                         if (cont > 0) {
                                             //aux toma el valor del padre del mas izquierdo
@@ -284,11 +283,11 @@ public class Bandeja extends javax.swing.JFrame {
                                             aux[1] = nuevo[2];
 
                                             correos = modificarDatoEnCorreos(correos, aux);
+                                            nuevo[2] = actual[2];
                                         }
 
                                         //El mas izquierdo toma los valores de los hijos del eliminado
                                         nuevo[1] = actual[1];
-                                        nuevo[2] = actual[2];
 
                                         correos = modificarDatoEnCorreos(correos, nuevo);
 
@@ -315,11 +314,11 @@ public class Bandeja extends javax.swing.JFrame {
                                             aux[1] = nuevo[2];
 
                                             correos = modificarDatoEnCorreos(correos, aux);
+                                            nuevo[2] = actual[2];
                                         }
 
                                         //El mas izquierdo toma los valores de los hijos del eliminado
                                         nuevo[1] = actual[1];
-                                        nuevo[2] = actual[2];
 
                                         correos = modificarDatoEnCorreos(correos, nuevo);
 
@@ -329,6 +328,8 @@ public class Bandeja extends javax.swing.JFrame {
                                         actual[2] = "0";
                                         correos = modificarDatoEnCorreos(correos, actual);
                                     }
+
+                                    eliminado = true;
                                 }
                             } else if (comparador <= -1) {
                                 //busco a la izquierda
@@ -520,7 +521,7 @@ public class Bandeja extends javax.swing.JFrame {
         if (activos == 0) {
             split[5] = "inicio_registro:" + 0;
         } else {
-            split[5] = "inicio_registro:" + raiz;
+            split[5] = "inicio_registro:" + ClaseGeneral.raiz;
         }
 
         String error = "";
