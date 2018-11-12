@@ -10,6 +10,7 @@ import Clases.ClaseGeneral;
 import Clases.Indice;
 import Clases.Usuario;
 import Clases.Listas;
+import Clases.Mail;
 import static Interfaz.ModificacionDatos.Encriptar;
 import java.awt.Color;
 import java.awt.Image;
@@ -35,6 +36,7 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     List<Usuario> ordenar = new ArrayList<>();
     List<Listas> ordenar2 = new ArrayList<>();
+    List<Mail> mensajeria = new ArrayList<>();
     int activos = 0;
     int inactivos = 0;
     int total = 0;
@@ -369,6 +371,59 @@ public class Mantenimiento extends javax.swing.JFrame {
             actualizarDescriptor3("lista");
             actualizarDescriptor3("bitacora_lista");
 
+            String[] correos = archivo.leerArchivo("correo");
+            archivo.limpiarArchivo("correo");
+            if (correos != null) {
+                String[] descriptor = archivo.leerArchivo("desc_correo");
+                String inicio = descriptor[5].substring(16);
+
+                for (int i = 0; i < correos.length; i++) {
+                    if (correos[i] != null) {
+                        String[] datos = correos[i].split("\\|");
+                        if (datos[9].equals("1")) {
+                            mensajeria.add(new Mail(String.valueOf(mensajeria.size() + 1),
+                                    datos[1], datos[2], datos[3], datos[4], datos[5], datos[6],
+                                    datos[7], datos[8], datos[9]));
+                        }
+
+                        if (datos[0].equals(inicio)) {
+                            ClaseGeneral.raiz = mensajeria.get(mensajeria.size() - 1).getRegistro();
+                        }
+                    }
+                }
+
+                for (Mail actual : mensajeria) {
+                    String izq = "", der = "";
+                    String llaveIzq = "", llaveDer = "";
+                    izq = actual.getIzquierdo();
+                    der = actual.getDerecho();
+
+                    for (int k = 0; k < correos.length; k++) {
+                        if (correos[k] != null) {
+                            String[] datos = correos[k].split("\\|");
+                            if (datos[0].equals(izq)) {
+                                llaveIzq = datos[3] + "|" + datos[4] + "|" + datos[5];
+                            } else if (datos[0].equals(der)) {
+                                llaveDer = datos[3] + "|" + datos[4] + "|" + datos[5];
+                            }
+                        }
+                    }
+
+                    for (Mail nuevo : mensajeria) {
+                        if (nuevo.obtenerLlave().equals(llaveIzq)) {
+                            actual.setIzquierdo(nuevo.getRegistro());
+                        } else if (nuevo.obtenerLlave().equals(llaveDer)) {
+                            actual.setDerecho(nuevo.getRegistro());
+                        }
+                    }
+                }
+
+                for (int i = 0; i < mensajeria.size(); i++) {
+                    archivo.escribirArchivo("correo", mensajeria.get(i).toString(), "");
+                }
+            }
+            actualizarDescriptor7("correo");
+
             Login login = new Login();
             login.show();
             this.hide();
@@ -621,12 +676,12 @@ public class Mantenimiento extends javax.swing.JFrame {
         abrirBandejaMensajes();
     }//GEN-LAST:event_jBtnEnviadosActionPerformed
 
-    private void abrirBandejaMensajes(){
+    private void abrirBandejaMensajes() {
         Bandeja bandeja = new Bandeja();
         bandeja.show();
         this.hide();
     }
-    
+
     boolean encontrado = false;
 
     public void buscarUsuario(String usuario) {
@@ -872,7 +927,7 @@ public class Mantenimiento extends javax.swing.JFrame {
         }
         total = activos + inactivos;
     }
-    
+
     public void contarUsuarios3(String nombreArchivo) {
         Archivo archivo = new Archivo();
         String[] split = archivo.leerArchivo(nombreArchivo);
@@ -1104,6 +1159,59 @@ public class Mantenimiento extends javax.swing.JFrame {
                 if (datos[5].equals("1")) {
                     activos++;
                 } else if (datos[5].equals("0")) {
+                    inactivos++;
+                }
+            }
+        }
+        total = activos + inactivos;
+    }
+
+    private void actualizarDescriptor7(String descriptor) {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("desc_" + descriptor);
+        Date fecha = new Date();
+
+        if (split[2].equals("usuario_creacion:")) {
+
+            split[2] = "usuario_creacion:" + ClaseGeneral.usuarioActual;
+        }
+        split[3] = "fecha_modificacion:" + fecha.toString();
+        split[4] = "usuario_modificacion:" + ClaseGeneral.usuarioActual;
+        //calcula el total de usuarios en el archivo original
+        contarCorreos();
+        split[6] = "#_registros:" + total;
+        split[7] = "registro_activos:" + activos;
+        split[8] = "registro_inactivos:" + inactivos;
+
+        //Valido la raiz
+        if (activos == 0) {
+            split[5] = "inicio_registro:" + 0;
+        } else {
+            split[5] = "inicio_registro:" + ClaseGeneral.raiz;
+        }
+
+        String error = "";
+        archivo.limpiarArchivo("desc_" + descriptor);
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                archivo.escribirArchivo("desc_" + descriptor, split[i], error);
+            }
+        }
+    }
+
+    private void contarCorreos() {
+        Archivo archivo = new Archivo();
+        String[] split = archivo.leerArchivo("correo");
+
+        activos = 0;
+        inactivos = 0;
+
+        for (int i = 0; i < split.length; i++) {
+            if (split[i] != null) {
+                String[] datos = split[i].split("\\|");
+                if (datos[9].equals("1")) {
+                    activos++;
+                } else if (datos[9].equals("0")) {
                     inactivos++;
                 }
             }

@@ -188,6 +188,7 @@ public class Bandeja extends javax.swing.JFrame {
         //valido si es nodo hoja
         if (correos != null) {
             if (!inicio.equals("0")) {
+                ClaseGeneral.raiz = inicio;
                 int comparador = 10;
                 String siguiente = inicio;
                 String prev = "";

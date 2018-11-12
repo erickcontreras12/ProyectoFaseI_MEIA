@@ -57,6 +57,10 @@ public class Correo extends javax.swing.JFrame {
         this.jMensaje.setText("");
     }
 
+    Correo(String valueOf, String dato, String dato0, String dato1, String dato2, String dato3, String dato4, String dato5, String dato6, String dato7) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
