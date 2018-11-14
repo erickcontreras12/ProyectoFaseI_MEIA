@@ -28,7 +28,7 @@ public class Listener extends Thread {
     int activos = 0;
     int inactivos = 0;
     int total = 0;
-    
+
     private Connection Conexion;
     private final org.postgresql.PGConnection pgconn;
     private String id;
@@ -71,10 +71,22 @@ public class Listener extends Thread {
                             GrupoEmisor = parameter.split("\\{")[2].replace("}", "").split(",")[1].split(":")[1];
                             GrupoReceptor = parameter.split("\\{")[2].replace("}", "").split(",")[2].split(":")[1];
                             Emisor = parameter.split("\\{")[2].replace("}", "").split(",")[3].split(":")[1];
-                            Receptor = parameter.split("\\{")[2].replace("}", "").split(",")[4].split(":")[1];
+                            Receptor = parameter.split("\\{")[2].replace("\\", "").split(",")[4].split(":")[1];
                             Asunto = parameter.split("\\{")[2].replace("}", "").split(",")[6].split(":")[1];
                             Mensaje = parameter.split("\\{")[2].replace("}", "").split(",")[7].split(":")[1];
                             boolean existe = false;
+
+                            Emisor = Emisor.substring(1);
+                            Emisor = Emisor.substring(0, Emisor.length() - 1);
+                            
+                            Receptor = Receptor.substring(1);
+                            Receptor = Receptor.substring(0, Receptor.length() - 1);
+                            
+                            Asunto = Asunto.substring(1);
+                            Asunto = Asunto.substring(0, Asunto.length() - 1);
+                            
+                            Mensaje = Mensaje.substring(1);
+                            Mensaje = Mensaje.substring(0, Mensaje.length() - 1);
 
                             if (GrupoReceptor.equals("10")) {
                                 //si es para mi se envia el update con la respuesta
@@ -85,13 +97,13 @@ public class Listener extends Thread {
                                 //ACA USTEDES DEBEN GESTIONAR A DONDE ENVIAR LOS DATOS OBTENIDOS DE LA NOTIFICACION PARA MOSTRARLOS EN LA BANDEJA DE ENTRADA
                                 //si es para mi enviar el update con la respuesta de que el usuario existe
                                 //Deben de validar cada uno si el usuario existe o no en su ordenador y enviar la respuesta de esta forma al servidor
-                                
                                 //Agregar buscarUsuario();
-                              
+                                existe = buscarUsuario(Receptor);
                                 if (existe) {
                                     BDD.getInstancia().Update(id, true);
                                     //Aca inserto en la bandeja
                                     insertarCorreo(Emisor, Receptor, Asunto, Mensaje);
+                                    actualizarDescriptor("correo");
                                 } else {
                                     BDD.getInstancia().Update(id, false);
                                 }
@@ -109,6 +121,18 @@ public class Listener extends Thread {
                             Asunto = parameter.split("\\{")[2].replace("}", "").split(",")[6].split(":")[1];
                             Mensaje = parameter.split("\\{")[2].replace("}", "").split(",")[7].split(":")[1];
 
+                            
+                            Emisor = Emisor.substring(1);
+                            Emisor = Emisor.substring(0, Emisor.length() - 1);
+                            
+                            Receptor = Receptor.substring(1);
+                            Receptor = Receptor.substring(0, Receptor.length() - 1);
+                            
+                            Asunto = Asunto.substring(1);
+                            Asunto = Asunto.substring(0, Asunto.length() - 1);
+                            
+                            Mensaje = Mensaje.substring(1);
+                            Mensaje = Mensaje.substring(0, Mensaje.length() - 1);
                             //Aca deben de colocar su numero de Grupo 
                             if (GrupoEmisor.equals("10")) {
 
@@ -124,7 +148,8 @@ public class Listener extends Thread {
                                     Not.setVisible(true);
 
                                     //Inserto en mi archivo gg
-                                   insertarCorreo(Emisor, Receptor, Asunto, Mensaje);
+                                    insertarCorreo(Emisor, Receptor, Asunto, Mensaje);
+                                    actualizarDescriptor("correo");
                                 }
 
                                 //Para Eliminar la solicitud (NO ES NECESARIO, OPCIONAL)
@@ -175,10 +200,9 @@ public class Listener extends Thread {
 
         return false;
     }
-    
-    
+
     private void insertarCorreo(String emisor, String receptor, String asunto, String mensaje) {
-        
+
         String[] correos = archivo.leerArchivo("correo");
         Date fecha = new Date();
         String[] descriptor = archivo.leerArchivo("desc_correo");
@@ -267,7 +291,7 @@ public class Listener extends Thread {
             }
         }
     }
-    
+
     private String[] obtenerActual(String registro) {
         String[] correos = archivo.leerArchivo("correo");
         String[] datos = null;
@@ -281,7 +305,6 @@ public class Listener extends Thread {
         }
         return datos;
     }
-    
 
     public void actualizarDescriptor(String descriptor) {
         String[] split = archivo.leerArchivo("desc_" + descriptor);
@@ -330,7 +353,7 @@ public class Listener extends Thread {
 
         return cadena;
     }
-    
+
     private String armarCadena(String[] datos) {
         String cadena = "";
         for (int i = 0; i < datos.length; i++) {
@@ -342,7 +365,7 @@ public class Listener extends Thread {
         }
         return cadena;
     }
-    
+
     private void contarCorreos() {
         String[] split = archivo.leerArchivo("correo");
 

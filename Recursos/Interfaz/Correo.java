@@ -249,6 +249,17 @@ public class Correo extends javax.swing.JFrame {
                 } catch (SQLException ex) {
                     Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                JOptionPane.showMessageDialog(null, "Solicitud enviada");
+                this.hide();
+                Bandeja bandeja = null;
+                try {
+                    bandeja = new Bandeja();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                bandeja.show();
             }else{
                 if (jBoxLista.isSelected()) {
                 //Insercion de lista
@@ -558,6 +569,11 @@ public class Correo extends javax.swing.JFrame {
         }
         //Si es una lista de difusion
         if (jBoxLista.isSelected() && listasUsuario.getSelectedItem().equals("")) {
+            error = true;
+            return "Debe seleccionar una lista de difusion ";
+        }
+        
+        if (ClaseGeneral.esExterno && listasUsuario.getSelectedItem().equals("")) {
             error = true;
             return "Debe seleccionar una lista de difusion ";
         }
