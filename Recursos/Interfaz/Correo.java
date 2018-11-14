@@ -5,13 +5,17 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -32,8 +36,9 @@ public class Correo extends javax.swing.JFrame {
     /**
      * Creates new form Correo
      */
-    public Correo() {
+    public Correo() throws ClassNotFoundException, SQLException {
         initComponents();
+        BDD.getInstancia().conexion();
         actualizarListas();
         if (ClaseGeneral.responder) {
             this.jDestinatario.setEditable(false);
@@ -226,7 +231,14 @@ public class Correo extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Envio exitoso");
                 actualizarDescriptor("correo");
                 this.hide();
-                Bandeja bandeja = new Bandeja();
+                Bandeja bandeja = null;
+                try {
+                    bandeja = new Bandeja();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 bandeja.show();
             } else {
                 buscarUsuario(jDestinatario.getText());
@@ -236,7 +248,14 @@ public class Correo extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Envio exitoso");
                     actualizarDescriptor("correo");
                     this.hide();
-                    Bandeja bandeja = new Bandeja();
+                    Bandeja bandeja = null;
+                    try {
+                        bandeja = new Bandeja();
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     bandeja.show();
 
                 } else if (!encontrado) {
@@ -256,7 +275,14 @@ public class Correo extends javax.swing.JFrame {
         int opc = JOptionPane.showConfirmDialog(null, "Seguro que desea cancelar?");
         if (opc == 0) {
             this.hide();
-            Bandeja bandeja = new Bandeja();
+            Bandeja bandeja = null;
+            try {
+                bandeja = new Bandeja();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+            }
             bandeja.show();
         }
     }//GEN-LAST:event_jBtnCancelarActionPerformed
@@ -635,7 +661,13 @@ public class Correo extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Correo().setVisible(true);
+                try {
+                    new Correo().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Correo.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

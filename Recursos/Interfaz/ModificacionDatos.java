@@ -5,6 +5,7 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Usuario;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,7 +48,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
     /**
      * Creates new form ModificacionDatos
      */
-    public ModificacionDatos() {
+    public ModificacionDatos() throws ClassNotFoundException, SQLException {
         initComponents();
         if (!ClaseGeneral.busqueda) {
         jUsuario.setText(ClaseGeneral.usuarioActual);
@@ -52,7 +56,7 @@ public class ModificacionDatos extends javax.swing.JFrame {
         }else{
             jUsuario.setText(ClaseGeneral.usuariobuscado);
         }
-   
+        BDD.getInstancia().conexion();
     }
 
     /**
@@ -182,7 +186,14 @@ public class ModificacionDatos extends javax.swing.JFrame {
     private void jBtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnVolverActionPerformed
         // TODO add your handling code here:
         ClaseGeneral.busqueda = false;
-        Mantenimiento mante = new Mantenimiento();
+        Mantenimiento mante = null;
+        try {
+            mante = new Mantenimiento();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ModificacionDatos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ModificacionDatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
         mante.show();
         this.hide();
     }//GEN-LAST:event_jBtnVolverActionPerformed
@@ -503,7 +514,13 @@ public class ModificacionDatos extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ModificacionDatos().setVisible(true);
+                try {
+                    new ModificacionDatos().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(ModificacionDatos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(ModificacionDatos.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

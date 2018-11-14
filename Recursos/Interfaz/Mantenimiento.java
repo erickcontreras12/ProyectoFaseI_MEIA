@@ -5,6 +5,7 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Indice;
@@ -18,11 +19,14 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -46,8 +50,8 @@ public class Mantenimiento extends javax.swing.JFrame {
     /**
      * Creates new form Mantenimiento
      */
-    public Mantenimiento() {
-
+    public Mantenimiento() throws ClassNotFoundException, SQLException {
+        BDD.getInstancia().conexion();
         buscarUsuario(ClaseGeneral.usuarioActual);
 
         initComponents();
@@ -424,7 +428,14 @@ public class Mantenimiento extends javax.swing.JFrame {
             }
             actualizarDescriptor7("correo");
 
-            Login login = new Login();
+            Login login = null;
+            try {
+                login = new Login();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+            }
             login.show();
             this.hide();
         }
@@ -448,7 +459,14 @@ public class Mantenimiento extends javax.swing.JFrame {
                 actualizarDatos();
                 actualizarDescriptor2("usuario");
                 ClaseGeneral.yaLogeado = false;
-                Login login = new Login();
+                Login login = null;
+                try {
+                    login = new Login();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 login.show();
                 this.hide();
             }
@@ -658,7 +676,14 @@ public class Mantenimiento extends javax.swing.JFrame {
     //Muestra la otra ventana de lista
     private void MisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisListasActionPerformed
         // TODO add your handling code here:
-        Lista misListas = new Lista();
+        Lista misListas = null;
+        try {
+            misListas = new Lista();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        }
         misListas.show();
         this.hide();
 
@@ -677,7 +702,14 @@ public class Mantenimiento extends javax.swing.JFrame {
     }//GEN-LAST:event_jBtnEnviadosActionPerformed
 
     private void abrirBandejaMensajes() {
-        Bandeja bandeja = new Bandeja();
+        Bandeja bandeja = null;
+        try {
+            bandeja = new Bandeja();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        }
         bandeja.show();
         this.hide();
     }
@@ -1249,7 +1281,13 @@ public class Mantenimiento extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Mantenimiento().setVisible(true);
+                try {
+                    new Mantenimiento().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
             }
         });

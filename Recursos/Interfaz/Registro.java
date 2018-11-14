@@ -5,6 +5,7 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Usuario;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -55,11 +59,14 @@ public class Registro extends javax.swing.JFrame {
     /**
      * Creates new form Registro
      */
-    public Registro() {
+    public Registro() throws ClassNotFoundException, SQLException {
         split = null;
         hayError = false;
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
+        if (ClaseGeneral.yaLogeado) {
+            BDD.getInstancia().conexion();
+        }
     }
 
     /**
@@ -434,7 +441,14 @@ public class Registro extends javax.swing.JFrame {
                         ordenar.clear();
                         JOptionPane.showMessageDialog(null, "Se ingreso bien el registro, se redireccionara al login ", "Guardar", WIDTH);
 
-                        Login log = new Login();
+                        Login log = null;
+                        try {
+                            log = new Login();
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         log.show();
                         this.hide();
 
@@ -903,7 +917,13 @@ public class Registro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Registro().setVisible(true);
+                try {
+                    new Registro().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

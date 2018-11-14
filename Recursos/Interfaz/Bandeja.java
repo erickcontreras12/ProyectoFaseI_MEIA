@@ -5,9 +5,13 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -25,9 +29,10 @@ public class Bandeja extends javax.swing.JFrame {
     /**
      * Creates new form Bandeja
      */
-    public Bandeja() {
+    public Bandeja() throws ClassNotFoundException, SQLException {
         initComponents();
         buscarCorreos(ClaseGeneral.bandejaEntrada);
+        BDD.getInstancia().conexion();
     }
 
     /**
@@ -583,7 +588,13 @@ public class Bandeja extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Bandeja().setVisible(true);
+                try {
+                    new Bandeja().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

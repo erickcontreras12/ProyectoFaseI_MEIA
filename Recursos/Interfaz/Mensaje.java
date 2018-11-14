@@ -5,9 +5,13 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.ClaseGeneral;
 import java.awt.Desktop;
 import java.io.File;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,9 +22,10 @@ public class Mensaje extends javax.swing.JFrame {
     /**
      * Creates new form Mensaje
      */
-    public Mensaje() {
+    public Mensaje() throws ClassNotFoundException, SQLException {
         initComponents();
         mostrarMensaje();
+        BDD.getInstancia().conexion();
     }
 
     /**
@@ -163,14 +168,28 @@ public class Mensaje extends javax.swing.JFrame {
     private void jBtnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCerrarActionPerformed
         // TODO add your handling code here:
         this.hide();
-        Bandeja nuevo = new Bandeja();
+        Bandeja nuevo = null;
+        try {
+            nuevo = new Bandeja();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+        }
         nuevo.show();
     }//GEN-LAST:event_jBtnCerrarActionPerformed
 
     private void jResponderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jResponderActionPerformed
         // TODO add your handling code here:
         ClaseGeneral.responder = true;
-        Correo nuevo = new Correo();
+        Correo nuevo = null;
+        try {
+            nuevo = new Correo();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+        }
         nuevo.show();
         this.hide();
     }//GEN-LAST:event_jResponderActionPerformed
@@ -238,7 +257,13 @@ public class Mensaje extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Mensaje().setVisible(true);
+                try {
+                    new Mensaje().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Mensaje.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

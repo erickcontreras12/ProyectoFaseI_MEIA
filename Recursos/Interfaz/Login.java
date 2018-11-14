@@ -5,12 +5,16 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.ClaseGeneral;
 import Clases.Archivo;
 import Interfaz.*;
 import java.awt.Color;
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
@@ -29,10 +33,11 @@ public class Login extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
-    public Login() {
+    public Login() throws ClassNotFoundException, SQLException {
         split = null;
         initComponents();
         this.getContentPane().setBackground(Color.lightGray);
+        
     }
 
     /**
@@ -159,7 +164,14 @@ public class Login extends javax.swing.JFrame {
                             ClaseGeneral.rutaFotografia = datosUsuario[8];
                             ClaseGeneral.usuario = datosUsuario[0];
                             ClaseGeneral.yaLogeado = true;
-                            Mantenimiento ingresando = new Mantenimiento();
+                            Mantenimiento ingresando = null;
+                            try {
+                                ingresando = new Mantenimiento();
+                            } catch (ClassNotFoundException ex) {
+                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             ingresando.show();
                             this.hide();
                         } else {
@@ -255,7 +267,13 @@ public class Login extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
+                try {
+                    new Login().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

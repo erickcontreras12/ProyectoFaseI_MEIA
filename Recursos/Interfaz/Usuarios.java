@@ -5,14 +5,18 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Usuario;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,8 +33,9 @@ public class Usuarios extends javax.swing.JFrame {
     /**
      * Creates new form Usuarios
      */
-    public Usuarios() {
+    public Usuarios() throws ClassNotFoundException, SQLException {
         initComponents();
+        BDD.getInstancia().conexion();
     }
 
     /**
@@ -122,14 +127,28 @@ public class Usuarios extends javax.swing.JFrame {
 
     private void jBtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnVolverActionPerformed
         // TODO add your handling code here:
-        Mantenimiento mante = new Mantenimiento();
+        Mantenimiento mante = null;
+        try {
+            mante = new Mantenimiento();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         mante.show();
         this.hide();
     }//GEN-LAST:event_jBtnVolverActionPerformed
 
     private void jBtnCrearUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCrearUsuarioActionPerformed
         // TODO add your handling code here:
-        Registro cambio = new Registro();
+        Registro cambio = null;
+        try {
+            cambio = new Registro();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
         cambio.show();
         this.hide();
     }//GEN-LAST:event_jBtnCrearUsuarioActionPerformed
@@ -144,7 +163,14 @@ public class Usuarios extends javax.swing.JFrame {
             if (opc == 0) {
                 ClaseGeneral.busqueda = true;
                 ClaseGeneral.usuariobuscado=buscado;
-                ModificacionDatos md = new ModificacionDatos();
+                ModificacionDatos md = null;
+                try {
+                    md = new ModificacionDatos();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 md.show();
                 this.hide();
             }
@@ -354,7 +380,13 @@ public class Usuarios extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Usuarios().setVisible(true);
+                try {
+                    new Usuarios().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Usuarios.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

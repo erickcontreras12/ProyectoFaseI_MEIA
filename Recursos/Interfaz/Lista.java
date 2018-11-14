@@ -5,14 +5,18 @@
  */
 package Interfaz;
 
+import BaseDeDatos.BDD;
 import Clases.Archivo;
 import Clases.ClaseGeneral;
 import Clases.Indice;
 import Clases.Listas;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -32,9 +36,10 @@ public class Lista extends javax.swing.JFrame {
     /**
      * Creates new form Lista
      */
-    public Lista() {
+    public Lista() throws ClassNotFoundException, SQLException {
         initComponents();
         MostrarListas(ClaseGeneral.usuarioActual);
+        BDD.getInstancia().conexion();
     }
 
     //metodo para ir a leer bitacora y archivo de lista
@@ -1273,7 +1278,13 @@ public class Lista extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Lista().setVisible(true);
+                try {
+                    new Lista().setVisible(true);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Lista.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Lista.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
