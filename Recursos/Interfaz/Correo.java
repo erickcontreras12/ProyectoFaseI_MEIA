@@ -50,6 +50,7 @@ public class Correo extends javax.swing.JFrame {
             for (int i = 1; i <= 16; i++) {  //Agregar el nuevo de listas xd
                 listasUsuario.addItem(String.valueOf(i));
             }
+            this.listasUsuario.enable(true);
         } else {
             this.jLabel4.setText("Lista de destinatarios");
             actualizarListas();
@@ -68,10 +69,10 @@ public class Correo extends javax.swing.JFrame {
                 this.jDestinatario.setText("");
                 this.jAsunto.setText("");
             }
+            this.listasUsuario.enable(false);
         }
         
         this.jAdjunto.enable(false);
-        this.listasUsuario.enable(false);
         this.jAdjunto.setText("");
         this.jMensaje.setText("");
     }
