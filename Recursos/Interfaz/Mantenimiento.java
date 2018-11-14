@@ -380,7 +380,7 @@ public class Mantenimiento extends javax.swing.JFrame {
             if (correos != null) {
                 String[] descriptor = archivo.leerArchivo("desc_correo");
                 String inicio = descriptor[5].substring(16);
-
+                mensajeria = new ArrayList<>();
                 for (int i = 0; i < correos.length; i++) {
                     if (correos[i] != null) {
                         String[] datos = correos[i].split("\\|");
@@ -443,7 +443,14 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     private void jBtnUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnUsuarioActionPerformed
         // TODO add your handling code here:
-        Usuarios usuarios = new Usuarios();
+        Usuarios usuarios = null;
+        try {
+            usuarios = new Usuarios();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        }
         usuarios.show();
         this.hide();
     }//GEN-LAST:event_jBtnUsuarioActionPerformed
@@ -476,7 +483,14 @@ public class Mantenimiento extends javax.swing.JFrame {
 
     private void jBtnActualizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnActualizacionActionPerformed
         // TODO add your handling code here:
-        ModificacionDatos cambio = new ModificacionDatos();
+        ModificacionDatos cambio = null;
+        try {
+            cambio = new ModificacionDatos();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Mantenimiento.class.getName()).log(Level.SEVERE, null, ex);
+        }
         cambio.show();
         this.hide();
     }//GEN-LAST:event_jBtnActualizacionActionPerformed

@@ -407,7 +407,14 @@ public class Registro extends javax.swing.JFrame {
                     if (archivo.escribirArchivo("bitacora", contenido, error)) {
                         actualizarDescriptor("bitacora");
                         JOptionPane.showMessageDialog(null, "Se ingreso bien el registro", "Guardar", WIDTH);
-                        Usuarios usuarios = new Usuarios();
+                        Usuarios usuarios = null;
+                        try {
+                            usuarios = new Usuarios();
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Registro.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         usuarios.show();
                         this.hide();
                     } else {

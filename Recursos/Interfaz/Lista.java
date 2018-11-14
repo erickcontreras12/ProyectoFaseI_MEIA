@@ -205,7 +205,14 @@ public class Lista extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
 
-        Mantenimiento cambio = new Mantenimiento();
+        Mantenimiento cambio = null;
+        try {
+            cambio = new Mantenimiento();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Lista.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Lista.class.getName()).log(Level.SEVERE, null, ex);
+        }
         cambio.show();
         this.hide();
     }//GEN-LAST:event_jButton4ActionPerformed

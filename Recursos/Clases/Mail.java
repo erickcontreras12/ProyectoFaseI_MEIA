@@ -184,4 +184,5 @@ public class Mail {
     public void setEstatus(String estatus) {
         this.estatus = estatus;
     }
+
 }

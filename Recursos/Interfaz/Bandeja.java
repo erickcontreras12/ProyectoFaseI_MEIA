@@ -50,6 +50,7 @@ public class Bandeja extends javax.swing.JFrame {
         jBtnVolver = new javax.swing.JButton();
         jBtnEliminar = new javax.swing.JButton();
         jBtnVerMensaje = new javax.swing.JButton();
+        jBtnCorreoExterno = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -83,6 +84,13 @@ public class Bandeja extends javax.swing.JFrame {
             }
         });
 
+        jBtnCorreoExterno.setText("Enviar a grupo externo");
+        jBtnCorreoExterno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCorreoExternoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -90,15 +98,20 @@ public class Bandeja extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jBtnVerMensaje)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnEliminar)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnNuevoCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jBtnVolver)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jBtnVerMensaje)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnEliminar)
+                                .addGap(18, 18, 18))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jBtnVolver)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jBtnNuevoCorreo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jBtnCorreoExterno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -111,9 +124,15 @@ public class Bandeja extends javax.swing.JFrame {
                     .addComponent(jBtnNuevoCorreo)
                     .addComponent(jBtnEliminar)
                     .addComponent(jBtnVerMensaje))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(jBtnVolver)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                        .addComponent(jBtnVolver)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jBtnCorreoExterno)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
@@ -121,14 +140,29 @@ public class Bandeja extends javax.swing.JFrame {
 
     private void jBtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnVolverActionPerformed
         // TODO add your handling code here:
-        Mantenimiento principio = new Mantenimiento();
+        Mantenimiento principio = null;
+        try {
+            principio = new Mantenimiento();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        }
         principio.show();
         this.hide();
     }//GEN-LAST:event_jBtnVolverActionPerformed
 
     private void jBtnNuevoCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnNuevoCorreoActionPerformed
         // TODO add your handling code here:
-        Correo nuevo_correo = new Correo();
+        ClaseGeneral.esExterno = false;
+        Correo nuevo_correo = null;
+        try {
+            nuevo_correo = new Correo();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        }
         nuevo_correo.show();
         this.hide();
     }//GEN-LAST:event_jBtnNuevoCorreoActionPerformed
@@ -169,11 +203,33 @@ public class Bandeja extends javax.swing.JFrame {
                 receptor = datos[0];
             }
             ClaseGeneral.correo = buscarCorreoActual(emisor, receptor, split[0]);
-            Mensaje ventana = new Mensaje();
+            Mensaje ventana = null;
+            try {
+                ventana = new Mensaje();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+            }
             ventana.show();
             this.hide();
         }
     }//GEN-LAST:event_jBtnVerMensajeActionPerformed
+
+    private void jBtnCorreoExternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCorreoExternoActionPerformed
+        // TODO add your handling code here:
+        ClaseGeneral.esExterno = true;
+        Correo nuevo_correo = null;
+        try {
+            nuevo_correo = new Correo();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bandeja.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        nuevo_correo.show();
+        this.hide();
+    }//GEN-LAST:event_jBtnCorreoExternoActionPerformed
 
     private void eliminarCorreo(String fecha, String usuario_asociado) {
         String emisor, receptor;
@@ -600,6 +656,7 @@ public class Bandeja extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtnCorreoExterno;
     private javax.swing.JButton jBtnEliminar;
     private javax.swing.JButton jBtnNuevoCorreo;
     private javax.swing.JButton jBtnVerMensaje;

@@ -129,7 +129,11 @@ public class Login extends javax.swing.JFrame {
 
         //Si split obtiene un valor nulo es porque no existe el archivo, por ende tampoco ningun usuario
         if (split == null) {
-            mostrarMensaje();
+            try {
+                mostrarMensaje();
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             //Busca en el archivo si el usuario que se ingreso existe
             for (int i = 0; i < split.length; i++) {
@@ -184,7 +188,11 @@ public class Login extends javax.swing.JFrame {
                     }
 
             }else{
-                mostrarMensaje();
+                try {
+                    mostrarMensaje();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_jBtnLogActionPerformed
@@ -222,10 +230,15 @@ public class Login extends javax.swing.JFrame {
     /**
      * Metodo que muestra un mensaje para enviar al usuario
      */
-    public void mostrarMensaje() {
+    public void mostrarMensaje() throws ClassNotFoundException {
         int opc = JOptionPane.showConfirmDialog(null, "El usuario no existe, desea registrarse?");
         if (opc == 0) {
-            Registro cambio = new Registro();
+            Registro cambio = null;
+            try {
+                cambio = new Registro();
+            } catch (SQLException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
             cambio.show();
             this.hide();
         } else {

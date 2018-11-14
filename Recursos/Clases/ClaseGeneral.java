@@ -31,5 +31,7 @@ public class ClaseGeneral {
     public static String raiz = "0";
     //Variable para almacenar la info del correo que se va mostrar
     public static String[] correo = null;
+    //Conexion
+    public static boolean esExterno = false;
 
 }
