@@ -136,14 +136,14 @@ public class Listener extends Thread {
                             //Aca deben de colocar su numero de Grupo 
                             if (GrupoEmisor.equals("10")) {
 
-                                String respuesta = parameter.split("\\{")[2].replace("}", "").split(",")[7].split(":")[1];
+                                String respuesta = parameter.split("\\{")[2].replace("}", "").split(",")[8].split(":")[1];
                                 //Comprobar cual fue la respuesta
                                 if (respuesta.equals("false")) {
                                     BDD.getInstancia().setMensaje("El grupo " + GrupoReceptor + " no ha encontrado el usuario al cual enviaste el correo.");
                                     Not = new Notificacion();
                                     Not.setVisible(true);
                                 } else {
-                                    BDD.getInstancia().setMensaje("El grupo " + GrupoReceptor + " ha recibido el mensaje.");
+                                    BDD.getInstancia().setMensaje("El usuario: "+ Receptor + " del grupo " + GrupoReceptor + " ha recibido el mensaje.");
                                     Not = new Notificacion();
                                     Not.setVisible(true);
 
